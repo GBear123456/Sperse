@@ -149,8 +149,14 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
     currentFocusedField: string = '';
     currentFocusedElement: any = null;
     currentInputElement: any = null;
-    tooltipButtonLeft: number = 0;
+    tooltipButtonRight: number = 0;
     tooltipButtonTop: number = 0;
+    
+    // Bound methods for CKEditor event handling to avoid creating new references
+    private boundCKEditorCursorMove: any = null;
+    private boundCKEditorKeydown: any = null;
+    private boundCKEditorDocumentClick: any = null;
+    private boundCKEditorContentChange: any = null;
 
     @Input() tagsList = [];
     @Input() editorHeight;
@@ -212,12 +218,6 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         allowedContent: true,
         toolbarCanCollapse: true,
         startupShowBorders: false,
-        resize_enabled: true,
-        resize_dir: 'both', // Allow resizing in both directions (horizontal and vertical)
-        resize_minWidth: 300, // Minimum width in pixels
-        resize_minHeight: 200, // Minimum height in pixels
-        resize_maxWidth: 800, // Maximum width in pixels
-        resize_maxHeight: 600,
         qtBorder: 0,
         width: "100%",
         stylesSet: [],
@@ -794,10 +794,8 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         this.handleClick(event, this.ckEditorDocument!);
         
         // Update button position when clicking inside CKEditor
-        if (this.currentFocusedField === 'ckeditor' && this.ckEditor) {
-            console.log('CKEditor clicked, updating button position');
-            this.calculateButtonPosition('ckeditor', { target: this.ckEditor.container.$ });
-            this.changeDetectorRef.detectChanges();
+        if (this.currentFocusedField === 'ckeditor' && this.ckEditor && this.ckEditor.container) {
+            this.updateCKEditorButtonPosition();
         }
     }
     private handleClick(event: MouseEvent, contextDocument: Document) {
@@ -847,8 +845,6 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
     }
 
     onFieldFocus(fieldType: string, event: any) {
-        console.log('onFieldFocus called with:', { fieldType, event });
-        
         this.currentFocusedField = fieldType;
         this.currentFocusedElement = event.element || event.target;
         
@@ -867,8 +863,6 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         
         // Track which field is focused for tag insertion
         this.currentFocusedField = fieldType;
-        
-        console.log('currentFocusedField set to:', this.currentFocusedField);
         
         // Show the tags button when a field is focused
         this.changeDetectorRef.detectChanges();
@@ -944,9 +938,8 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         this.positionTooltipTarget(event);
         
         // For CKEditor, ensure button position is updated
-        if (fieldType === 'ckeditor' && this.ckEditor) {
-            console.log('Showing tags tooltip for CKEditor, updating button position');
-            this.calculateButtonPosition('ckeditor', { target: this.ckEditor.container.$ });
+        if (fieldType === 'ckeditor' && this.ckEditor && this.ckEditor.container) {
+            this.updateCKEditorButtonPosition();
         }
         
         // Show tooltip
@@ -1005,96 +998,48 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
                     document.body.removeChild(tempSpan);
                     
                     // Position button near the cursor with some offset
-                    cursorX = rect.left + Math.min(textWidth + 20, rect.width - 120);
-                    cursorY = rect.top + (rect.height / 2) - 15; // Center vertically
+                    cursorX = 8;
+                    cursorY = 15; // Center vertically
                 } else {
                     // Fallback: position near the right edge
-                    cursorX = rect.right - 120;
-                    cursorY = rect.top + (rect.height / 2) - 15;
+                    cursorX = 8;
+                    cursorY = 15;
                 }
             } catch (error) {
                 // Fallback: position near the right edge
-                cursorX = rect.right - 120;
-                cursorY = rect.top + (rect.height / 2) - 15;
+                cursorX =8;
+                cursorY =  15;
             }
             
-            this.tooltipButtonLeft = cursorX;
+            this.tooltipButtonRight = cursorX;
             this.tooltipButtonTop = cursorY;
             
         } else if (fieldType === 'ckeditor') {
-            // For CKEditor, position the button in a more appropriate location
-            let cursorX = rect.left;
-            let cursorY = rect.top;
-            
-            try {
-                if (this.ckEditor && this.ckEditor.instance) {
-                    // Try to get the current selection position
-                    const selection = this.ckEditor.instance.getSelection();
-                    if (selection && selection.getRanges && selection.getRanges().length > 0) {
-                        const range = selection.getRanges()[0];
-                        const rects = range.getClientRects();
-                        
-                        if (rects && rects.length > 0) {
-                            const lastRect = rects[rects.length - 1];
-                            // Position button near the cursor in CKEditor
-                            cursorX = lastRect.right + 10;
-                            cursorY = lastRect.top - 5;
-                        } else {
-                            // Fallback: position in top-right corner of CKEditor
-                            cursorX = rect.right - 120;
-                            cursorY = rect.top + 10;
-                        }
-                    } else {
-                        // No selection, position in top-right corner of CKEditor
-                        cursorX = rect.right - 120;
-                        cursorY = rect.top + 10;
-                    }
-                } else {
-                    // CKEditor not ready, position in top-right corner of the container
-                    cursorX = rect.right - 120;
-                    cursorY = rect.top + 10;
-                }
-            } catch (error) {
-                console.warn('Error getting CKEditor selection, using fallback positioning:', error);
-                // Fallback: position in top-right corner
-                cursorX = rect.right - 120;
-                cursorY = rect.top + 10;
+            // For CKEditor, use the improved positioning method
+            this.updateCKEditorButtonPosition();
+        }
+        
+        // Ensure button stays within viewport (only for non-CKEditor fields)
+        if (fieldType !== 'ckeditor') {
+            if (this.tooltipButtonRight < 0) {
+                this.tooltipButtonRight = 10;
+            }
+            if (this.tooltipButtonTop < 0) {
+                this.tooltipButtonTop = 10;
             }
             
-            // Ensure the button is positioned relative to the CKEditor container
-            // If we're in the CKEditor area, position it more appropriately
-            if (this.ckEditor && this.ckEditor.container) {
-                const ckContainer = this.ckEditor.container.$.getBoundingClientRect();
-                if (ckContainer) {
-                    // Position button in the top-right area of the CKEditor
-                    cursorX = ckContainer.right - 120;
-                    cursorY = ckContainer.top + 10;
-                }
+            // Ensure button doesn't go off the right edge
+            if (this.tooltipButtonRight > window.innerWidth - 120) {
+                this.tooltipButtonRight = window.innerWidth - 120;
             }
             
-            this.tooltipButtonLeft = cursorX;
-            this.tooltipButtonTop = cursorY;
+            // Ensure button doesn't go off the bottom edge
+            if (this.tooltipButtonTop > window.innerHeight - 50) {
+                this.tooltipButtonTop = window.innerHeight - 50;
+            }
         }
         
-        // Ensure button stays within viewport
-        if (this.tooltipButtonLeft < 0) {
-            this.tooltipButtonLeft = 10;
-        }
-        if (this.tooltipButtonTop < 0) {
-            this.tooltipButtonTop = 10;
-        }
-        
-        // Ensure button doesn't go off the right edge
-        if (this.tooltipButtonLeft > window.innerWidth - 120) {
-            this.tooltipButtonLeft = window.innerWidth - 120;
-        }
-        
-        // Ensure button doesn't go off the bottom edge
-        if (this.tooltipButtonTop > window.innerHeight - 50) {
-            this.tooltipButtonTop = window.innerHeight - 50;
-        }
-        
-        console.log('Button positioned at:', { left: this.tooltipButtonLeft, top: this.tooltipButtonTop, fieldType });
+        console.log('Button positioned at:', { left: this.tooltipButtonRight, top: this.tooltipButtonTop, fieldType });
     }
 
     calculateTooltipPosition(fieldType: string, event: any) {
@@ -1606,7 +1551,8 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         if (iframe) {
             this.ckEditorDocument = iframe.contentDocument || iframe.contentWindow?.document || null;
             if (this.ckEditorDocument) {
-                this.ckEditorDocument.addEventListener('click', this.handleCKEditorClick.bind(this));
+                // Use the new efficient click handler
+                this.setupCKEditorDocumentClickHandler();
             }
         }
         
@@ -1617,21 +1563,59 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         
         // Add content change listener to update button position
         if (this.ckEditor && this.ckEditor.instance) {
-            this.ckEditor.instance.on('change', this.onCKEditorContentChange.bind(this));
+            // Store bound method to avoid creating new references
+            this.boundCKEditorContentChange = this.onCKEditorContentChange.bind(this);
+            this.ckEditor.instance.on('change', this.boundCKEditorContentChange);
         }
         
         // Setup additional CKEditor event listeners
         this.setupCKEditorEventListeners();
         
+        // Initialize button position
+        // this.initializeCKEditorButtonPosition();
+        
         console.log('CKEditor ready, instance:', this.ckEditor);
+    }
+    onCKEditorManualFocus (event: any) {
+        this.currentFocusedField = 'ckeditor';
+        this.currentFocusedElement = event.target || this.ckEditor?.container?.$;
+        this.updateCKEditorButtonPosition();
+        this.addCKEditorCursorTracking();
+        this.changeDetectorRef.detectChanges();
+    }
+
+    onCKEditorClick (event: any) {
+        this.currentFocusedField = 'ckeditor';
+        this.currentFocusedElement = event.target || this.ckEditor?.container?.$;
+        this.updateCKEditorButtonPosition();
+        this.addCKEditorCursorTracking();
+        this.changeDetectorRef.detectChanges();
+    }
+    setupCKEditorDocumentClickHandler() {
+        if (this.ckEditorDocument) {
+            // Store bound method to avoid creating new references
+            this.boundCKEditorDocumentClick = this.handleCKEditorDocumentClick.bind(this);
+            
+            // Add click event listener to the iframe document
+            this.ckEditorDocument.addEventListener('click', this.boundCKEditorDocumentClick);
+        }
+    }
+    
+    handleCKEditorDocumentClick(event: MouseEvent) {
+        // Handle clicks in the CKEditor iframe
+        this.handleClick(event, this.ckEditorDocument!);
+        
+        // Update button position when clicking inside CKEditor
+        if (this.currentFocusedField === 'ckeditor' && this.ckEditor && this.ckEditor.container) {
+            this.updateCKEditorButtonPosition();
+        }
     }
     
     onCKEditorContentChange(event: any) {
         // Update button position when content changes in CKEditor
-        if (this.currentFocusedField === 'ckeditor' && this.ckEditor) {
+        if (this.currentFocusedField === 'ckeditor' && this.ckEditor && this.ckEditor.container) {
             console.log('CKEditor content changed, updating button position');
-            this.calculateButtonPosition('ckeditor', { target: this.ckEditor.container.$ });
-            this.changeDetectorRef.detectChanges();
+            this.updateCKEditorButtonPosition();
         }
     }
 
@@ -1652,8 +1636,6 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
     }
 
     onTagClick(event) {
-        console.log('onTagClick called with:', { event, currentFocusedField: this.currentFocusedField });
-        
         if (this.onTagItemClick.observers.length)
             this.onTagItemClick.emit(event.itemData);
         else if (this.templateEditMode) {
@@ -1662,7 +1644,6 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
             else this.addTextTag(event.itemData);
         } else {
             let value = this.getTagValue(event.itemData);
-            console.log('Tag value:', value);
             
             if (value) {
                 if (event.itemData == EmailTags.SenderCompanyLogo) {
@@ -1672,10 +1653,8 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
                 } else {
                     // Ensure we have the current focused field before inserting
                     if (this.currentFocusedField) {
-                        console.log('Inserting tag into focused field:', this.currentFocusedField);
                         this.insertTagIntoFocusedField(value);
                     } else {
-                        console.log('No field focused, falling back to CKEditor');
                         // Fallback to CKEditor if no field is focused
                         this.insertTagIntoCKEditor(value);
                     }
@@ -1699,23 +1678,17 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
     }
 
     insertTagIntoFocusedField(tagValue: string) {
-        console.log('insertTagIntoFocusedField called with:', { tagValue, currentFocusedField: this.currentFocusedField });
-        
         switch (this.currentFocusedField) {
             case 'subject':
-                console.log('Inserting tag into subject field');
                 this.insertTagIntoSubject(tagValue);
                 break;
             case 'preview':
-                console.log('Inserting tag into preview field');
                 this.insertTagIntoPreview(tagValue);
                 break;
             case 'ckeditor':
-                console.log('Inserting tag into CKEditor');
                 this.insertTagIntoCKEditor(tagValue);
                 break;
             default:
-                console.log('No field focused, falling back to CKEditor');
                 // Fallback to CKEditor if no field is focused
                 this.insertTagIntoCKEditor(tagValue);
                 break;
@@ -2102,6 +2075,17 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         this.showAIOption = false;
     }
 
+    onWindowResize() {
+        // Handle window resize events
+        this.changeDetectorRef.detectChanges();
+    }
+
+    setupCKEditorEventListeners() {
+        // Setup CKEditor event listeners
+    }
+
+   
+
     onContentChange(event: any) {
         this.editorContent = event.target.innerHTML;
         this.invalidate();
@@ -2399,24 +2383,32 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
     }
 
     ngOnDestroy() {
-        // Clean up event listeners to prevent memory leaks
+        // Clean up event listeners
         if (this.ckEditorDocument) {
-            this.ckEditorDocument.removeEventListener('click', this.handleCKEditorClick.bind(this));
+            if (this.boundCKEditorDocumentClick) {
+                this.ckEditorDocument.removeEventListener('click', this.boundCKEditorDocumentClick);
+                this.boundCKEditorDocumentClick = null;
+            }
         }
-        
-        // Clean up cursor tracking
-        this.removeCursorTracking();
         
         // Clean up CKEditor cursor tracking
         this.removeCKEditorCursorTracking();
         
-        // Clean up search debounce timer
-        if (this.searchDebounceTimer) {
-            clearTimeout(this.searchDebounceTimer);
+        // Clean up CKEditor content change listener
+        if (this.ckEditor && this.ckEditor.instance && this.boundCKEditorContentChange) {
+            this.ckEditor.instance.off('change', this.boundCKEditorContentChange);
+            this.boundCKEditorContentChange = null;
         }
         
-        // Clean up window resize listener
-        window.removeEventListener('resize', this.onWindowResize.bind(this));
+        // Clean up other event listeners
+        this.removeCursorTracking();
+        
+        // Clear references
+        this.ckEditor = null;
+        this.ckEditorDocument = null;
+        this.currentFocusedField = '';
+        this.currentFocusedElement = null;
+        this.currentInputElement = null;
     }
 
     onTagButtonClick(event: any) {
@@ -2442,38 +2434,149 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         console.log('Adding CKEditor cursor tracking');
         
         if (this.ckEditor && this.ckEditor.instance) {
+            // Store bound methods to avoid creating new references
+            this.boundCKEditorCursorMove = this.onCKEditorCursorMove.bind(this);
+            this.boundCKEditorKeydown = this.onCKEditorKeydown.bind(this);
+            
             // Listen for cursor movement in CKEditor
-            this.ckEditor.instance.on('selectionChange', this.onCKEditorCursorMove.bind(this));
-            this.ckEditor.instance.on('click', this.onCKEditorCursorMove.bind(this));
-            this.ckEditor.instance.on('keyup', this.onCKEditorCursorMove.bind(this));
-            this.ckEditor.instance.on('input', this.onCKEditorCursorMove.bind(this));
-            this.ckEditor.instance.on('keydown', this.onCKEditorCursorMove.bind(this));
+            this.ckEditor.instance.on('selectionChange', this.boundCKEditorCursorMove);
+            this.ckEditor.instance.on('click', this.boundCKEditorCursorMove);
+            this.ckEditor.instance.on('keyup', this.boundCKEditorCursorMove);
+            this.ckEditor.instance.on('input', this.boundCKEditorCursorMove);
+            
+            // Add specific handling for navigation keys
+            this.ckEditor.instance.on('keydown', this.boundCKEditorKeydown);
         }
     }
     
     removeCKEditorCursorTracking() {
         if (this.ckEditor && this.ckEditor.instance) {
-            // Remove event listeners
-            this.ckEditor.instance.off('selectionChange', this.onCKEditorCursorMove.bind(this));
-            this.ckEditor.instance.off('click', this.onCKEditorCursorMove.bind(this));
-            this.ckEditor.instance.off('keyup', this.onCKEditorCursorMove.bind(this));
-            this.ckEditor.instance.off('input', this.onCKEditorCursorMove.bind(this));
-            this.ckEditor.instance.off('keydown', this.onCKEditorCursorMove.bind(this));
-            this.ckEditor.instance.off('change', this.onCKEditorContentChange.bind(this));
+            // Remove event listeners using stored bound methods
+            if (this.boundCKEditorCursorMove) {
+                this.ckEditor.instance.off('selectionChange', this.boundCKEditorCursorMove);
+                this.ckEditor.instance.off('click', this.boundCKEditorCursorMove);
+                this.ckEditor.instance.off('keyup', this.boundCKEditorCursorMove);
+                this.ckEditor.instance.off('input', this.boundCKEditorCursorMove);
+            }
+            if (this.boundCKEditorKeydown) {
+                this.ckEditor.instance.off('keydown', this.boundCKEditorKeydown);
+            }
+            
+            // Clear bound method references
+            this.boundCKEditorCursorMove = null;
+            this.boundCKEditorKeydown = null;
+        }
+    }
+    
+    onCKEditorKeydown(event: any) {
+        // Handle navigation keys to ensure smooth positioning
+        if (event.data && event.data.keyCode) {
+            const keyCode = event.data.keyCode;
+            if (keyCode === 37 || keyCode === 38 || keyCode === 39 || keyCode === 40 || // Arrow keys
+                keyCode === 36 || keyCode === 35 || keyCode === 33 || keyCode === 34) { // Home, End, Page Up, Page Down
+                
+                // Use requestAnimationFrame for smoother positioning
+                requestAnimationFrame(() => {
+                    this.onCKEditorCursorMove(event);
+                });
+            }
         }
     }
     
     onCKEditorCursorMove(event: any) {
         // Update button position when cursor moves in CKEditor
-        if (this.currentFocusedField === 'ckeditor' && this.ckEditor) {
+        if (this.currentFocusedField === 'ckeditor' && this.ckEditor && this.ckEditor.instance) {
             console.log('CKEditor cursor moved, updating button position', { event, ckEditor: this.ckEditor });
-            this.calculateButtonPosition('ckeditor', { target: this.ckEditor.container.$ });
-            this.changeDetectorRef.detectChanges();
-        } else {
-            console.log('CKEditor cursor moved but not focused or not ready', { 
-                currentFocusedField: this.currentFocusedField, 
-                ckEditor: this.ckEditor 
+            
+            // Use requestAnimationFrame for smoother positioning
+            requestAnimationFrame(() => {
+                this.updateCKEditorButtonPosition();
             });
+        }
+    }
+    
+    updateCKEditorButtonPosition() {
+        try {
+            if (!this.ckEditor || !this.ckEditor.instance || !this.ckEditor.container) {
+                return;
+            }
+            
+            const selection = this.ckEditor.instance.getSelection();
+            if (!selection) {
+                console.log('No selection available, using fallback positioning');
+                this.positionButtonAtDefaultLocation();
+                return;
+            }
+            
+            const ranges = selection.getRanges();
+            if (!ranges || ranges.length === 0) {
+                console.log('No ranges found, using fallback positioning');
+                this.positionButtonAtDefaultLocation();
+                return;
+            }
+            
+            const range = ranges[0];
+            const rects = range.getClientRects();
+            
+            if (!rects || rects.length === 0) {
+                console.log('No client rects found, using fallback positioning');
+                this.positionButtonAtDefaultLocation();
+                return;
+            }
+            
+            // Use the last rectangle (most recent cursor position)
+            const lastRect = rects[rects.length - 1];
+            console.log('Last rect:', lastRect);
+            
+            // Get CKEditor container position for relative positioning
+            const containerRect = this.ckEditor.container.$.getBoundingClientRect();
+            console.log('CKEditor container rect:', containerRect);
+            
+            // Calculate position relative to CKEditor container
+            let buttonLeft = lastRect.left - containerRect.left + 10;
+            let buttonTop = lastRect.top - containerRect.top;
+            
+            // Ensure the button doesn't go outside the container bounds
+            const buttonWidth = 120;
+            const buttonHeight = 30;
+            
+            if (buttonTop + buttonHeight > containerRect.height) {
+                buttonTop = containerRect.height - buttonHeight;
+            }
+            if (buttonLeft < 0) {
+                buttonLeft = 10;
+            }
+            if (buttonTop < 0) {
+                buttonTop = 10;
+            }
+            if (buttonLeft > containerRect.width - buttonWidth) {
+                buttonLeft = containerRect.width - buttonWidth;
+            }
+            
+            // Update button position
+            this.tooltipButtonRight = buttonLeft;
+            this.tooltipButtonTop = buttonTop;
+            
+            console.log('Final button position:', { 
+                left: this.tooltipButtonRight, 
+                top: this.tooltipButtonTop 
+            });
+            
+            // Force change detection
+            this.changeDetectorRef.detectChanges();
+            
+        } catch (error) {
+            console.error('Error updating CKEditor button position:', error);
+            this.positionButtonAtDefaultLocation();
+        }
+    }
+    
+    positionButtonAtDefaultLocation() {
+        if (this.ckEditor && this.ckEditor.container) {
+            const containerRect = this.ckEditor.container.$.getBoundingClientRect();
+            this.tooltipButtonRight = 80;
+            this.tooltipButtonTop = 10;
+            this.changeDetectorRef.detectChanges();
         }
     }
 
@@ -2485,8 +2588,8 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         this.currentFocusedField = 'ckeditor';
         this.currentFocusedElement = event.target || this.ckEditor?.container?.$;
         
-        // Calculate button position immediately
-        this.calculateButtonPosition('ckeditor', { target: this.ckEditor?.container?.$ || event.target });
+        // Update button position immediately using the new method
+        this.updateCKEditorButtonPosition();
         
         // Add cursor tracking
         this.addCKEditorCursorTracking();
@@ -2495,17 +2598,16 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         this.changeDetectorRef.detectChanges();
         
         console.log('CKEditor focus handled, button should be visible at:', { 
-            left: this.tooltipButtonLeft, 
+            left: this.tooltipButtonRight, 
             top: this.tooltipButtonTop 
         });
     }
     
     // Method to ensure button is visible and positioned correctly for CKEditor
     ensureCKEditorButtonVisible() {
-        if (this.currentFocusedField === 'ckeditor' && this.ckEditor) {
+        if (this.currentFocusedField === 'ckeditor' && this.ckEditor && this.ckEditor.container) {
             console.log('Ensuring CKEditor button is visible and positioned correctly');
-            this.calculateButtonPosition('ckeditor', { target: this.ckEditor.container.$ });
-            this.changeDetectorRef.detectChanges();
+            this.updateCKEditorButtonPosition();
         }
     }
 
@@ -2515,7 +2617,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
             currentFocusedField: this.currentFocusedField,
             currentFocusedElement: this.currentFocusedElement,
             ckEditor: this.ckEditor,
-            tooltipButtonLeft: this.tooltipButtonLeft,
+            tooltipButtonRight: this.tooltipButtonRight,
             tooltipButtonTop: this.tooltipButtonTop,
             isTagsTooltipVisible: this.isTagsTooltipVisible,
             tagsList: this.tagsList
@@ -2526,84 +2628,27 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
     forceRefreshButtonPosition() {
         if (this.currentFocusedField && this.currentFocusedElement) {
             console.log('Force refreshing button position for:', this.currentFocusedField);
-            this.calculateButtonPosition(this.currentFocusedField, { target: this.currentFocusedElement });
-            this.changeDetectorRef.detectChanges();
+            if (this.currentFocusedField === 'ckeditor') {
+                this.updateCKEditorButtonPosition();
+            } else {
+                this.calculateButtonPosition(this.currentFocusedField, { target: this.currentFocusedElement });
+                this.changeDetectorRef.detectChanges();
+            }
         }
     }
     
-    // Method to handle window resize
-    onWindowResize() {
-        console.log('Window resized, updating button position');
-        this.forceRefreshButtonPosition();
-    }
-
-    // Method to handle manual CKEditor clicks
-    onCKEditorClick(event: any) {
-        console.log('CKEditor manually clicked:', event);
-        
-        // Set the current focused field
-        this.currentFocusedField = 'ckeditor';
-        this.currentFocusedElement = event.target || this.ckEditor?.container?.$;
-        
-        // Calculate button position immediately
-        this.calculateButtonPosition('ckeditor', { target: this.ckEditor?.container?.$ || event.target });
-        
-        // Add cursor tracking if not already added
-        this.addCKEditorCursorTracking();
-        
-        // Force change detection
-        this.changeDetectorRef.detectChanges();
-        
-        console.log('CKEditor click handled, button should be visible at:', { 
-            left: this.tooltipButtonLeft, 
-            top: this.tooltipButtonTop 
-        });
-    }
-
-    // Method to handle manual CKEditor focus by tabbing or other methods
-    onCKEditorManualFocus(event: any) {
-        console.log('CKEditor manually focused by tabbing or other method:', event);
-        
-        // Set the current focused field
-        this.currentFocusedField = 'ckeditor';
-        this.currentFocusedElement = event.target || this.ckEditor?.container?.$;
-        
-        // Calculate button position immediately
-        this.calculateButtonPosition('ckeditor', { target: this.ckEditor?.container?.$ || event.target });
-        
-        // Add cursor tracking if not already added
-        this.addCKEditorCursorTracking();
-        
-        // Force change detection
-        this.changeDetectorRef.detectChanges();
-        
-        console.log('CKEditor manual focus handled, button should be visible at:', { 
-            left: this.tooltipButtonLeft, 
-            top: this.tooltipButtonTop 
-        });
-    }
-
-    // Method to handle CKEditor instance events
-    setupCKEditorEventListeners() {
-        if (this.ckEditor && this.ckEditor.instance) {
-            // Listen for various CKEditor events that might affect button positioning
-            this.ckEditor.instance.on('instanceReady', () => {
-                console.log('CKEditor instance ready, setting up event listeners');
-                this.forceRefreshButtonPosition();
-            });
-            
-            this.ckEditor.instance.on('focus', () => {
-                console.log('CKEditor instance focused');
-                this.currentFocusedField = 'ckeditor';
-                this.forceRefreshButtonPosition();
-            });
-            
-            this.ckEditor.instance.on('blur', () => {
-                console.log('CKEditor instance blurred');
-                // Don't immediately clear currentFocusedField to allow for button clicks
+   
+    // Method to handle browser zoom changes
+    onBrowserZoomChange() {
+        console.log('Browser zoom changed, updating button position');
+        if (this.currentFocusedField === 'ckeditor') {
+            requestAnimationFrame(() => {
+                this.updateCKEditorButtonPosition();
             });
         }
     }
 
+
+   
 }
 

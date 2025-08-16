@@ -2,33 +2,116 @@
     width: 96vw;
 }
 
-// Tag button styles
+// Tag button styles - enhanced for cursor tracking
 .tags-button-container {
-    position: fixed !important;
-    z-index: 9999;
+    position: fixed;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding-right: 6px;
     pointer-events: auto;
-    
-    .tags-button {
-        display: inline-block;
-        background: #007bff;
-        color: white;
-        padding: 8px 16px;
-        border-radius: 4px;
+    top: 15px;
+    right: 8px;
+}
+
+.tags-button {
+    a {
+        font-size: 13px;
+        padding: 6px 12px 6px 8px;
+        border-radius: 6px;
+        line-height: 15px;
+        opacity: 50%;
+        background: #dce4ed;
+        color: #08295b;
         cursor: pointer;
-        font-size: 12px;
-        font-weight: 500;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        transition: all 0.2s ease;
-        
+
         &:hover {
-            background: #0056b3;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background: #e6e6e6;
+        }
+
+        &:after {
+            content: "";
+            position: relative;
+            left: 4px;
+            bottom: 2px;
+            cursor: default;
+            height: 0;
+            width: 0;
+            font-size: 0;
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            border-top: 3px solid #484848;
+            color: #08295b;
+        }
+    }
+}
+
+// Input container with tag button - simplified positioning
+.input-with-tag-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+// Responsive positioning improvements
+@media screen and (max-width: 768px) {
+    .tags-button-container {
+        .tags-button {
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+    }
+    
+    .input-with-tag-container {
+        flex-direction: column;
+        align-items: stretch;
+        
+        .tags-button-container {
+            position: relative !important;
+            right: auto;
+            top: auto;
+            transform: none;
+            margin-top: 8px;
+            align-self: flex-end;
         }
         
-        a {
-            color: white;
-            text-decoration: none;
-            display: block;
+        dx-text-box {
+            width: 100% !important;
+        }
+    }
+    
+    
+    .editor-div, .field-area {
+        position: relative;
+    }
+    
+    :host ::ng-deep .dx-tooltip {
+        max-width: 250px;
+        width: 250px !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .input-with-tag-container {
+        .tags-button-container {
+            .tags-button {
+                padding: 4px 8px;
+                font-size: 10px;
+                
+                a {
+                    font-size: 10px;
+                }
+            }
+        }
+    }
+    
+    .editor-div {
+        .tags-button-container {
+            .tags-button {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
         }
     }
 }
@@ -62,12 +145,35 @@
     }
 }
 
-:host ::ng-deep .editor-div {
+// Improved tooltip positioning and z-index management
+:host {
+    ::ng-deep .dx-tooltip-wrapper {
+        z-index: 9999 !important;
+    }
+    
+    ::ng-deep .dx-tooltip {
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border: 1px solid #e9ecef;
+        max-width: 300px;
+    }
+    
+    ::ng-deep .dx-tooltip-content {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+}
+
+// CKEditor tag button positioning - enhanced for cursor tracking
+.editor-div {
     position: relative;
     
     .tags-button-container {
-        position: absolute !important;
+        position: fixed !important;
+        right: 8px;
+        top: 15px;
         z-index: 1000;
+        pointer-events: auto;
     }
 }
 :host ::ng-deep .editor-div .cke_contents {
@@ -1046,64 +1152,6 @@
 
     }
 
-    .tags-button {
-        a {
-            font-size: 12px;
-            padding: 6px 12px 6px 8px;
-            border-radius: 8px;
-            line-height: 12px;
-            opacity: 50%;
-            background: #DCE4ED;
-            color: #08295B;
-            cursor: pointer;
-
-            &:hover {
-                background: #e6e6e6;
-            }
-
-            &:after {
-                content: "";
-                position: relative;
-                left: 4px;
-                bottom: 2px;
-                cursor: default;
-                height: 0;
-                width: 0;
-                font-size: 0;
-                border-left: 3px solid transparent;
-                border-right: 3px solid transparent;
-                border-top: 3px solid #484848;
-                color: #08295B;
-            }
-        }
-    }
-
-    @media (max-width: 768px) {
-        ::ng-deep .mat-dialog-actions {
-            width: 100%;
-
-            .mat-dialog-buttons {
-                align-items: center;
-                margin-left: 0;
-            }
-
-            #saveTemplateOptions {
-                width: 90%;
-                margin-right: 0;
-            }
-
-            #genrateAIOptions {
-                width: 90%;
-                
-            }
-
-            #refreshOptions {
-                width: 40px;
-                height: 40px;
-            }
-        }
-    }
-
     @media (max-width: 480px) {
         ::ng-deep .mat-dialog-actions {
             .mat-dialog-buttons {
@@ -1365,6 +1413,8 @@
     }
 }
 
+
+
 @media (min-width: 2300px) and (max-width: 2320px) {
     .w-71 {
         width: 1810px !important
@@ -1451,3 +1501,360 @@
 }
 
 
+:host {
+
+    .ai-prompt-widget {
+        width: 400px;
+        flex-shrink: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            display: flex;
+            height: 100%;
+            align-items: center;
+            border-radius: 10px;
+            padding: 0;
+            background: #fff;
+            z-index: 1;
+            
+            /* Ensure no toolbars appear in the AI prompt widget */
+            * {
+                -webkit-user-modify: read-write-plaintext-only;
+                -moz-user-modify: read-write;
+                -ms-user-modify: element;
+                -webkit-touch-callout: none;
+                -webkit-user-select: text;
+                -khtml-user-select: text;
+                -moz-user-select: text;
+                -ms-user-select: text;
+                user-select: text;
+                -webkit-spell-check: false;
+                -moz-spell-check: false;
+                -ms-spell-check: false;
+                spell-check: false;
+            }
+    
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                border-radius: 10px;
+                padding: 2px;
+                background: linear-gradient(93.5deg, #118EFF -16.25%, #8F7DF3 40.92%, #EA3A8A 106.71%);
+                -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                -webkit-mask-composite: destination-out;
+                mask-composite: exclude;
+                z-index: -1;
+            }
+    
+            .prompt-header {
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+                margin: 2px;
+                width: calc(100% - 4px);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 16px 15px;
+                background-color: #E9FFDE;
+            }
+    
+            .your-prompt-title {
+                font-family: Manrope, sans-serif;
+                font-size: 21px;
+                font-weight: 600;
+                line-height: 22px;
+                letter-spacing: -0.02em;
+                text-align: left;
+                text-underline-position: from-font;
+                text-decoration-skip-ink: none;
+                columns: #08295B;
+                margin: 0;
+            }
+    
+            .prompt-library-title {
+                background: #DCE4ED;
+                border-radius: 8px;
+                padding: 5px 10px;
+                font-family: Plus Jakarta Sans;
+                font-size: 12px;
+                font-weight: 600;
+                line-height: 27px;
+                text-align: left;
+                text-underline-position: from-font;
+                text-decoration-skip-ink: none;
+                cursor: pointer;
+                img {
+                    padding-left: 4px;
+                }
+            }
+    
+            .prompt-footer {
+                display: flex;
+                justify-content: space-between;
+                border-top: 1px solid #ccc;
+                width: calc(100% - 4px);
+                padding: 15px;
+    
+                button {
+                    background-color: transparent;
+                    border: none;
+                }
+    
+                .button-generate-ai-message {
+                    background: #00A8ED;
+                    width: 185px;
+                    color: white;
+                    padding: 10px 30px;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    &:focus {
+                        outline: none;
+                    }
+                }
+                .cancel-button {
+                    cursor: pointer;
+                }
+            }
+    
+            .gpt-model-toggle {
+                width: 36px;
+                height: 36px;
+                padding: 6px;
+                background: #0EA47E;
+                cursor: pointer;
+                border-radius: 4px;
+    
+                img {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+    
+            .content-container {
+                margin: 0 10px;
+                justify-content: center;
+                align-items: center;
+                background: #FFFFFF;
+                padding: 10px;
+                border-radius: 8px;
+                height: 60%;
+                
+                /* Ensure contenteditable elements inside don't show toolbar */
+                [contenteditable="true"] {
+                    /* Hide contenteditable toolbar */
+                    -webkit-user-modify: read-write-plaintext-only;
+                    -moz-user-modify: read-write;
+                    -ms-user-modify: element;
+                    
+                    /* Prevent toolbar and context menu */
+                    -webkit-touch-callout: none;
+                    -webkit-user-select: text;
+                    -khtml-user-select: text;
+                    -moz-user-select: text;
+                    -ms-user-select: text;
+                    user-select: text;
+                    
+                    /* Hide spell check and autocorrect */
+                    -webkit-spell-check: false;
+                    -moz-spell-check: false;
+                    -ms-spell-check: false;
+                    spell-check: false;
+                    
+                    /* Prevent text size adjustment */
+                    -webkit-text-size-adjust: none;
+                    -moz-text-size-adjust: none;
+                    -ms-text-size-adjust: none;
+                    text-size-adjust: none;
+                    
+                    /* Hide tap highlight */
+                    -webkit-tap-highlight-color: transparent;
+                }
+            }
+    
+            .ai-content-container {
+                height: 520px;
+                margin-bottom: 17px;
+            }
+    
+            .left-buttons {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 6px 0px 13px 0px;
+    
+                .ai-genrate-btn {
+                    position: relative;
+                    height: 44px;
+                    width: 122px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border: none;
+                    border-radius: 10px;
+                    background-color: #fff;
+                    cursor: pointer;
+                    text-align: center;
+                    transition: all 0.3s ease;
+                    font-family: 'Plus Jakarta Sans', sans-serif;
+                    font-weight: 600;
+                    z-index: 1;
+                    overflow: hidden;
+                    margin-top: 10px;
+                    margin-left: 0;
+    
+                    &::before {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        border-radius: 10px;
+                        padding: 2px;
+                        background: linear-gradient(93.5deg, #118EFF -16.25%, #8F7DF3 40.92%, #EA3A8A 106.71%);
+                        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                        -webkit-mask-composite: destination-out;
+                        mask-composite: exclude;
+                        z-index: -1;
+                    }
+    
+                    span {
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+                        font-size: 13px;
+                        color: #E83C8E;
+    
+                        &::before {
+                            content: '';
+                            display: inline-block;
+                            width: 15.27px;
+                            height: 18.37px;
+                            background: url("../../../../assets/common/icons/AI.png") no-repeat center;
+                            background-size: contain;
+                        }
+                    }
+    
+                    &:hover {
+                        background-color: #E83C8E;
+                        color: #fff;
+    
+                        span {
+                            color: #fff;
+                        }
+                    }
+                }
+    
+                @media (max-width: 768px) {
+                    .ai-genrate-btn {
+                        height: 40px;
+                        width: 100px;
+                        font-size: 12px;
+                    }
+                }
+            }
+    
+            .prompt-liabrary-button {
+                a {
+                    padding: 6px 12px 6px 8px;
+                    border-radius: 8px;
+                    opacity: 50%;
+                    background: #DCE4ED;
+                    color: #08295B;
+    
+                    font-family: Plus Jakarta Sans;
+                    font-size: 14px;
+                    font-weight: 500;
+                    line-height: 27px;
+                    letter-spacing: -0.01em;
+                    text-align: left;
+                    text-underline-position: from-font;
+                    text-decoration-skip-ink: none;
+                    margin-left: 12px;
+                    cursor: pointer;
+    
+                    &:hover {
+                        background: #e6e6e6;
+                    }
+    
+                    &:after {
+                        content: "";
+                        position: relative;
+                        left: 4px;
+                        bottom: 2px;
+                        cursor: default;
+                        height: 0;
+                        width: 0;
+                        font-size: 0;
+                        border-left: 3px solid transparent;
+                        border-right: 3px solid transparent;
+                        border-top: 3px solid #484848;
+                        color: #08295B;
+                    }
+                }
+            }
+    
+            .ai-model-button {
+                a {
+                    padding: 6px 12px 6px 8px;
+                    border-radius: 8px;
+                    opacity: 50%;
+                    background: #DCE4ED;
+                    color: #08295B;
+    
+                    font-family: Plus Jakarta Sans;
+                    font-size: 14px;
+                    font-weight: 500;
+                    line-height: 27px;
+                    letter-spacing: -0.01em;
+                    text-align: left;
+                    text-underline-position: from-font;
+                    text-decoration-skip-ink: none;
+                    margin-left: 12px;
+                    cursor: pointer;
+    
+                    &:hover {
+                        background: #e6e6e6;
+                    }
+    
+                    &:after {
+                        content: "";
+                        position: relative;
+                        left: 4px;
+                        bottom: 2px;
+                        cursor: default;
+                        height: 0;
+                        width: 0;
+                        font-size: 0;
+                        border-left: 3px solid transparent;
+                        border-right: 3px solid transparent;
+                        border-top: 3px solid #484848;
+                        color: #08295B;
+                    }
+                }
+            }
+    
+    }
+}
+.main-content {
+    flex: 1;
+    min-width: 0;
+    padding-left: 25px;
+}
+.content-wrapper {
+    display: flex;
+    width: 100%;
+    gap: 0;
+    
+    &.with-ai-prompt {
+        gap: 0px;
+    }
+}

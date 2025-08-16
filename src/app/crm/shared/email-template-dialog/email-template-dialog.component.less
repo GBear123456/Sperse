@@ -1,6 +1,457 @@
 .email-template-dialog {
     width: 96vw;
 }
+
+/* Global styles to hide contenteditable toolbars */
+:host ::ng-deep [contenteditable="true"] {
+    /* Hide contenteditable toolbar in all browsers */
+    -webkit-user-modify: read-write-plaintext-only;
+    -moz-user-modify: read-write;
+    -ms-user-modify: element;
+    
+    /* Prevent toolbar and context menu */
+    -webkit-touch-callout: none;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    
+    /* Hide spell check and autocorrect */
+    -webkit-spell-check: false;
+    -moz-spell-check: false;
+    -ms-spell-check: false;
+    spell-check: false;
+    
+    /* Prevent text size adjustment */
+    -webkit-text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+    text-size-adjust: none;
+    
+    /* Hide tap highlight */
+    -webkit-tap-highlight-color: transparent;
+    
+    /* Additional browser-specific toolbar hiding */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    
+    /* Hide any browser formatting toolbar */
+    &::-webkit-input-placeholder {
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    &::-moz-placeholder {
+        -moz-user-select: none;
+        -moz-touch-callout: none;
+    }
+    
+    &:-ms-input-placeholder {
+        -ms-user-select: none;
+        -ms-touch-callout: none;
+    }
+}
+
+:host {
+
+    .ai-prompt-widget {
+        width: 400px;
+        flex-shrink: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            display: flex;
+            height: 100%;
+            align-items: center;
+            border-radius: 10px;
+            padding: 0;
+            background: #fff;
+            z-index: 1;
+            
+            /* Ensure no toolbars appear in the AI prompt widget */
+            * {
+                -webkit-user-modify: read-write-plaintext-only;
+                -moz-user-modify: read-write;
+                -ms-user-modify: element;
+                -webkit-touch-callout: none;
+                -webkit-user-select: text;
+                -khtml-user-select: text;
+                -moz-user-select: text;
+                -ms-user-select: text;
+                user-select: text;
+                -webkit-spell-check: false;
+                -moz-spell-check: false;
+                -ms-spell-check: false;
+                spell-check: false;
+            }
+    
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                border-radius: 10px;
+                padding: 2px;
+                background: linear-gradient(93.5deg, #118EFF -16.25%, #8F7DF3 40.92%, #EA3A8A 106.71%);
+                -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                -webkit-mask-composite: destination-out;
+                mask-composite: exclude;
+                z-index: -1;
+            }
+    
+            .prompt-header {
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+                margin: 2px;
+                width: calc(100% - 4px);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 16px 15px;
+                background-color: #E9FFDE;
+            }
+    
+            .your-prompt-title {
+                font-family: Manrope, sans-serif;
+                font-size: 21px;
+                font-weight: 600;
+                line-height: 22px;
+                letter-spacing: -0.02em;
+                text-align: left;
+                text-underline-position: from-font;
+                text-decoration-skip-ink: none;
+                columns: #08295B;
+                margin: 0;
+            }
+    
+            .prompt-library-title {
+                background: #DCE4ED;
+                border-radius: 8px;
+                padding: 5px 10px;
+                font-family: Plus Jakarta Sans;
+                font-size: 12px;
+                font-weight: 600;
+                line-height: 27px;
+                text-align: left;
+                text-underline-position: from-font;
+                text-decoration-skip-ink: none;
+                cursor: pointer;
+                img {
+                    padding-left: 4px;
+                }
+            }
+    
+            .prompt-footer {
+                display: flex;
+                justify-content: space-between;
+                border-top: 1px solid #ccc;
+                width: calc(100% - 4px);
+                padding: 15px;
+    
+                button {
+                    background-color: transparent;
+                    border: none;
+                }
+    
+                .button-generate-ai-message {
+                    background: #00A8ED;
+                    width: 185px;
+                    color: white;
+                    padding: 10px 30px;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    &:focus {
+                        outline: none;
+                    }
+                }
+                .cancel-button {
+                    cursor: pointer;
+                }
+            }
+    
+            .gpt-model-toggle {
+                width: 36px;
+                height: 36px;
+                padding: 6px;
+                background: #0EA47E;
+                cursor: pointer;
+                border-radius: 4px;
+    
+                img {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+    
+            .content-container {
+                margin: 0 10px;
+                justify-content: center;
+                align-items: center;
+                background: #FFFFFF;
+                padding: 10px;
+                border-radius: 8px;
+                height: 60%;
+                
+                /* Ensure contenteditable elements inside don't show toolbar */
+                [contenteditable="true"] {
+                    /* Hide contenteditable toolbar */
+                    -webkit-user-modify: read-write-plaintext-only;
+                    -moz-user-modify: read-write;
+                    -ms-user-modify: element;
+                    
+                    /* Prevent toolbar and context menu */
+                    -webkit-touch-callout: none;
+                    -webkit-user-select: text;
+                    -khtml-user-select: text;
+                    -moz-user-select: text;
+                    -ms-user-select: text;
+                    user-select: text;
+                    
+                    /* Hide spell check and autocorrect */
+                    -webkit-spell-check: false;
+                    -moz-spell-check: false;
+                    -ms-spell-check: false;
+                    spell-check: false;
+                    
+                    /* Prevent text size adjustment */
+                    -webkit-text-size-adjust: none;
+                    -moz-text-size-adjust: none;
+                    -ms-text-size-adjust: none;
+                    text-size-adjust: none;
+                    
+                    /* Hide tap highlight */
+                    -webkit-tap-highlight-color: transparent;
+                }
+            }
+    
+            .ai-content-container {
+                height: 520px;
+                margin-bottom: 17px;
+            }
+    
+            .left-buttons {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 6px 0px 13px 0px;
+    
+                .ai-genrate-btn {
+                    position: relative;
+                    height: 44px;
+                    width: 122px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border: none;
+                    border-radius: 10px;
+                    background-color: #fff;
+                    cursor: pointer;
+                    text-align: center;
+                    transition: all 0.3s ease;
+                    font-family: 'Plus Jakarta Sans', sans-serif;
+                    font-weight: 600;
+                    z-index: 1;
+                    overflow: hidden;
+                    margin-top: 10px;
+                    margin-left: 0;
+    
+                    &::before {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        border-radius: 10px;
+                        padding: 2px;
+                        background: linear-gradient(93.5deg, #118EFF -16.25%, #8F7DF3 40.92%, #EA3A8A 106.71%);
+                        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                        -webkit-mask-composite: destination-out;
+                        mask-composite: exclude;
+                        z-index: -1;
+                    }
+    
+                    span {
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+                        font-size: 13px;
+                        color: #E83C8E;
+    
+                        &::before {
+                            content: '';
+                            display: inline-block;
+                            width: 15.27px;
+                            height: 18.37px;
+                            background: url("../../../../assets/common/icons/AI.png") no-repeat center;
+                            background-size: contain;
+                        }
+                    }
+    
+                    &:hover {
+                        background-color: #E83C8E;
+                        color: #fff;
+    
+                        span {
+                            color: #fff;
+                        }
+                    }
+                }
+    
+                @media (max-width: 768px) {
+                    .ai-genrate-btn {
+                        height: 40px;
+                        width: 100px;
+                        font-size: 12px;
+                    }
+                }
+            }
+    
+            .prompt-liabrary-button {
+                a {
+                    padding: 6px 12px 6px 8px;
+                    border-radius: 8px;
+                    opacity: 50%;
+                    background: #DCE4ED;
+                    color: #08295B;
+    
+                    font-family: Plus Jakarta Sans;
+                    font-size: 14px;
+                    font-weight: 500;
+                    line-height: 27px;
+                    letter-spacing: -0.01em;
+                    text-align: left;
+                    text-underline-position: from-font;
+                    text-decoration-skip-ink: none;
+                    margin-left: 12px;
+                    cursor: pointer;
+    
+                    &:hover {
+                        background: #e6e6e6;
+                    }
+    
+                    &:after {
+                        content: "";
+                        position: relative;
+                        left: 4px;
+                        bottom: 2px;
+                        cursor: default;
+                        height: 0;
+                        width: 0;
+                        font-size: 0;
+                        border-left: 3px solid transparent;
+                        border-right: 3px solid transparent;
+                        border-top: 3px solid #484848;
+                        color: #08295B;
+                    }
+                }
+            }
+    
+            .ai-model-button {
+                a {
+                    padding: 6px 12px 6px 8px;
+                    border-radius: 8px;
+                    opacity: 50%;
+                    background: #DCE4ED;
+                    color: #08295B;
+    
+                    font-family: Plus Jakarta Sans;
+                    font-size: 14px;
+                    font-weight: 500;
+                    line-height: 27px;
+                    letter-spacing: -0.01em;
+                    text-align: left;
+                    text-underline-position: from-font;
+                    text-decoration-skip-ink: none;
+                    margin-left: 12px;
+                    cursor: pointer;
+    
+                    &:hover {
+                        background: #e6e6e6;
+                    }
+    
+                    &:after {
+                        content: "";
+                        position: relative;
+                        left: 4px;
+                        bottom: 2px;
+                        cursor: default;
+                        height: 0;
+                        width: 0;
+                        font-size: 0;
+                        border-left: 3px solid transparent;
+                        border-right: 3px solid transparent;
+                        border-top: 3px solid #484848;
+                        color: #08295B;
+                    }
+                }
+            }
+    
+    }
+}
+
+.content-wrapper {
+    display: flex;
+    width: 100%;
+    gap: 0;
+    
+    &.with-ai-prompt {
+        gap: 0px;
+    }
+}
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+}
+
+@media (max-width: 1200px) {
+    .ai-prompt-widget {
+        width: 350px;
+        margin-left: 15px;
+    }
+    
+   
+}
+
+@media (max-width: 992px) {
+    .ai-prompt-widget {
+        width: 320px;
+        margin-left: 10px;
+    }
+    
+    .content-wrapper.with-ai-prompt {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        &.with-ai-prompt {
+            gap: 5px;
+        }
+    }
+    
+    .ai-prompt-widget {
+        width: 100%;
+        margin-left: 0;
+        order: 2;
+    }
+    
+    .main-content {
+        order: 1;
+    }
+}
+
 .right-div {
     padding-right: 10px;
 }
@@ -11,7 +462,7 @@
 .email-content {
     margin-top: 10px !important;
     margin-left: 25px !important;
-    margin-right: 8px !important;
+    margin-right: 25px !important;
     display: flex;
     flex-direction: column;
     height: calc(100vh - 90px);
@@ -218,12 +669,11 @@
         .row {
             margin-left: 0 !important;
             margin-right: 0 !important;
+        }
+        label.caption {
+            width: 90px !important;
+            margin-bottom: 0px !important;
 
-            label.caption {
-                width: 90px !important;
-                margin-bottom: 0px !important;
-
-            }
         }
 
         .row--subdiv {
@@ -715,6 +1165,10 @@
                 align-items: center;
                 padding: 16px 15px;
                 background-color: #e9ffde;
+                &:focus {
+                    border: none !important;
+                    outline: none !important;
+                }
             }
 
             .your-prompt-title {
@@ -985,7 +1439,7 @@
     }
 
     .tags-button-container {
-        position: fixed;
+        position: absolute;
         z-index: 1000;
         display: flex;
         align-items: center;
@@ -1265,6 +1719,43 @@
     &:focus {
         outline: none;
     }
+    
+    /* Hide contenteditable toolbar */
+    &::-webkit-input-placeholder {
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Disable browser's contenteditable toolbar */
+    -webkit-user-modify: read-write-plaintext-only;
+    -moz-user-modify: read-write;
+    -ms-user-modify: element;
+    
+    /* Prevent context menu and toolbar from appearing */
+    -webkit-touch-callout: none;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    
+    /* Additional properties to hide toolbar */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: text;
+    
+    /* Hide spell check and autocorrect UI */
+    -webkit-spell-check: false;
+    -moz-spell-check: false;
+    -ms-spell-check: false;
+    spell-check: false;
+    
+    /* Prevent browser from showing formatting toolbar */
+    -webkit-text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+    text-size-adjust: none;
 }
 
 .w-71 {
@@ -1833,6 +2324,11 @@ input.dx-texteditor-input {
         position: relative;
     }
 }
+
+.field-area.subject,
+.field-area.preview-text {
+    position: relative;
+}
 @media screen and (max-width: 1368px) {
     :host ::ng-deep #saveTemplateOptions {
         width: 120px !important;
@@ -1862,7 +2358,7 @@ input.dx-texteditor-input {
             content: "AI" !important;
             color: #E83C8E !important;
         }
-        &::after:hover{
+        &:hover::after{
             color: white !important;
 
         }

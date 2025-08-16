@@ -17,161 +17,225 @@
             </div>
         </div>
     </ng-container>
-    <div class="form-content row">
-        <dx-validation-group
-            [class.col-md-9]="showAIPrompt"
-            [class.col-md-12]="!showAIPrompt"
-            style="padding-left: 25px"
-        >
-            <div class="field-area subject">
-                <label class="caption">{{ ls.l("Template Name") }}:</label>
-                <dx-text-box
-                    name="title"
-                    placeholder=""
-                    [(value)]="data.title"
-                    validationGroup="templateValidation"
-                    width="100%"
-                    (onFocusIn)="onFieldFocusImproved('title', $event)"
-                    (onFocusOut)="onFieldBlur('title', $event)"
-                >
-                    <dx-validator>
-                        <dxi-validation-rule
-                            type="required"
-                            [message]="ls.l('RequiredField', ls.l('title'))"
-                        ></dxi-validation-rule>
-                    </dx-validator>
-                </dx-text-box>
-            </div>
-
-            <div class="field-area subject">
-                <label class="caption">{{ ls.l("Subject") }}:</label>
-                <dx-text-box
-                    name="subject"
-                    width="calc(100% - 31px)"
-                    placeholder=""
-                    [(value)]="data.subject"
-                    validationGroup="templateValidation"
-                    width="100%"
-                    (onFocusIn)="onFieldFocusImproved('subject', $event)"
-                    (onFocusOut)="onFieldBlur('subject', $event)"
-                >
-                    <dx-validator>
-                        <dxi-validation-rule
-                            type="required"
-                            [message]="ls.l('RequiredField', ls.l('subject'))"
-                        ></dxi-validation-rule>
-                    </dx-validator>
-                </dx-text-box>
-            </div>
-            <div class="field-area subject">
-                <label class="caption">{{ ls.l("Preview Text") }}:</label>
-                <dx-text-box
-                    name="previewText"
-                    width="calc(100% - 31px)"
-                    placeholder=""
-                    [(value)]="data.previewText"
-                    width="100%"
-                    validationGroup="templateValidation"
-                    (onFocusIn)="onFieldFocusImproved('previewText', $event)"
-                    (onFocusOut)="onFieldBlur('previewText', $event)"
-                >
-                </dx-text-box>
-            </div>
-            <div (keydown.escape)="onESC($event)" class="editor-div">
-                <ckeditor
-                    [(ngModel)]="data.body"
-                    [config]="ckConfig"
-                    (ready)="onReady($event)"
-                    (change)="onChange($event)"
-                    (focus)="onCKEditorFocusImproved($event)"
-                    (blur)="onCKEditorBlur($event)"
-                >
-                </ckeditor>
-                <div #tagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField" [style.left.px]="tooltipButtonLeft" [style.top.px]="tooltipButtonTop">
-                    <span #tagsButton [class]="'tags-button id' + uniqId">
-                        <a (click)="onTagButtonClick($event)">Add a Tag</a>
-                    </span>
-                </div>
-                <dx-tooltip [width]="250"
-                            [position]="tooltipPosition" 
-                            [(visible)]="isTagsTooltipVisible"
-                            [target]="'.tags-button.id' + uniqId">
-                    <div *dxTemplate="let data of 'content'" class="tags-container">
-                        <p class="tags-note">Supported Tags:</p>
-                        <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
-                            [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
-                            <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
-                             [class]="{disabled: !templateEditMode && !getTagValue(data)}">
-                                {{ getTagText(data) }}
-                            </div>
-                        </dx-list>
-                    </div>
-                </dx-tooltip>
-            </div>
-            <div class="attachment-div">
-                <div class="attachment-field-area">
-                    <ngx-file-drop
-                        accept="*.*"
-                        (onFileDrop)="addAttachments($event)"
-                    >
-                        <ng-template
-                            ngx-file-drop-content-tmp
-                            let-openFileSelector="openFileSelector"
+    <div class="form-content">
+        <div class="content-wrapper" [class.with-ai-prompt]="showAIPrompt">
+            <dx-validation-group
+                class="main-content"
+            >
+                <div class="field-area subject">
+                    <label class="caption">{{ ls.l("Template Name") }}:</label>
+                    <div class="input-with-tag-container">
+                        <dx-text-box
+                            name="title"
+                            placeholder=""
+                            [(value)]="data.title"
+                            validationGroup="templateValidation"
+                            width="calc(100% - 120px)"
+                            (onFocusIn)="onFieldFocus('title', $event)"
+                            (onFocusOut)="onFieldBlur('title', $event)"
                         >
-                            <a
-                                href="javascript:void(0);"
-                                class="attach-link"
-                                (click)="openDocuments()"
-                            >
-                                <img src="assets/common/icons/attach.svg" />
-                                {{ls.l("Add attachment")}}
-                            </a>
-                            <dx-check-box
-                                *ngIf="attachments && attachments.length"
-                                class="saveToDocs"
-                                [(value)]="data.saveAttachmentsToDocuments"
-                                [rtlEnabled]="true"
-                                [text]="ls.l('Save to Documents')"
-                            >
-                            </dx-check-box>
-                        </ng-template>
-                    </ngx-file-drop>
+                            <dx-validator>
+                                <dxi-validation-rule
+                                    type="required"
+                                    [message]="ls.l('RequiredField', ls.l('title'))"
+                                ></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                        <div #titleTagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField === 'title'" [style.right.px]="tooltipButtonRight" [style.top.px]="tooltipButtonTop">
+                            <span #titleTagsButton [class]="'tags-button title-tags-button id' + uniqId">
+                                <a (click)="onTagButtonClick($event)">Add a Tag</a>
+                            </span>
+                        </div>
+                        <dx-tooltip [width]="250"
+                                    [position]="tooltipPosition" 
+                                    [visible]="isTagsTooltipVisible && currentFocusedField === 'title'"
+                                    [target]="'.title-tags-button.id' + uniqId">
+                            <div *dxTemplate="let data of 'content'" class="tags-container">
+                                <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
+                                <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
+                                    [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
+                                    <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
+                                     [class]="{disabled: !getTagValue(data)}">
+                                        {{ getTagText(data) }}
+                                    </div>
+                                </dx-list>
+                            </div>
+                        </dx-tooltip>
+                    </div>
                 </div>
-                <div class="attachment-field-area bottom-text-ste"></div>
-                <div class="attachment-field-area bottom-text-ste">
-                    {{ charCount ? charCount : 0 }} chars
+    
+                <div class="field-area subject">
+                    <label class="caption">{{ ls.l("Subject") }}:</label>
+                    <div class="input-with-tag-container">
+                        <dx-text-box
+                            name="subject"
+                            width="calc(100% - 120px)"
+                            placeholder=""
+                            [(value)]="data.subject"
+                            validationGroup="templateValidation"
+                            (onFocusIn)="onFieldFocus('subject', $event)"
+                            (onFocusOut)="onFieldBlur('subject', $event)"
+                        >
+                            <dx-validator>
+                                <dxi-validation-rule
+                                    type="required"
+                                    [message]="ls.l('RequiredField', ls.l('subject'))"
+                                ></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                        <div #subjectTagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField === 'subject'" [style.right.px]="tooltipButtonRight" [style.top.px]="tooltipButtonTop">
+                            <span #subjectTagsButton [class]="'tags-button subject-tags-button id' + uniqId">
+                                <a (click)="onTagButtonClick($event)">Add a Tag</a>
+                            </span>
+                        </div>
+                        <dx-tooltip [width]="250"
+                                    [position]="tooltipPosition" 
+                                    [visible]="isTagsTooltipVisible && currentFocusedField === 'subject'"
+                                    [target]="'.subject-tags-button.id' + uniqId">
+                            <div *dxTemplate="let data of 'content'" class="tags-container">
+                                <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
+                                <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
+                                    [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
+                                    <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
+                                     [class]="{disabled: !getTagValue(data)}">
+                                        {{ getTagText(data) }}
+                                    </div>
+                                </dx-list>
+                            </div>
+                        </dx-tooltip>
+                    </div>
                 </div>
-            </div>
+                <div class="field-area subject">
+                    <label class="caption">{{ ls.l("Preview Text") }}:</label>
+                    <div class="input-with-tag-container">
+                        <dx-text-box
+                            name="previewText"
+                            width="calc(100% - 120px)"
+                            placeholder=""
+                            [(value)]="data.previewText"
+                            validationGroup="templateValidation"
+                            (onFocusIn)="onFieldFocus('previewText', $event)"
+                            (onFocusOut)="onFieldBlur('previewText', $event)"
+                        >
+                        </dx-text-box>
+                        <div #previewTagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField === 'previewText'" [style.right.px]="tooltipButtonRight" [style.top.px]="tooltipButtonTop">
+                            <span #previewTagsButton [class]="'tags-button preview-tags-button id' + uniqId">
+                                <a (click)="onTagButtonClick($event)">Add a Tag</a>
+                            </span>
+                        </div>
+                        <dx-tooltip [width]="250"
+                                    [position]="tooltipPosition" 
+                                    [visible]="isTagsTooltipVisible && currentFocusedField === 'previewText'"
+                                    [target]="'.preview-tags-button.id' + uniqId">
+                            <div *dxTemplate="let data of 'content'" class="tags-container">
+                                <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
+                                <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
+                                    [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
+                                    <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
+                                     [class]="{disabled: !getTagValue(data)}">
+                                        {{ getTagText(data) }}
+                                    </div>
+                                </dx-list>
+                            </div>
+                        </dx-tooltip>
+                    </div>
+                </div>
+                <div (keydown.escape)="onESC($event)" class="editor-div">
+                    <ckeditor
+                        [(ngModel)]="data.body"
+                        [config]="ckConfig"
+                        (ready)="onReady($event)"
+                        (change)="onChange($event)"
+                        (focus)="onCKEditorFocus($event)"
+                        (blur)="onFieldBlur('ckeditor', $event)"
+                        (click)="onCKEditorClick($event)"
+                    >
+                    </ckeditor>
+                    <div #tagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField === 'ckeditor'" [style.right.px]="tooltipButtonRight" [style.top.px]="tooltipButtonTop">
+                        <span #tagsButton [class]="'tags-button ckeditor-tags-button id' + uniqId">
+                            <a (click)="onTagButtonClick($event)">Add a Tag</a>
+                        </span>
+                    </div>
+                    <dx-tooltip [width]="250"
+                                [position]="tooltipPosition" 
+                                [visible]="isTagsTooltipVisible && currentFocusedField === 'ckeditor'"
+                                [target]="'.ckeditor-tags-button.id' + uniqId">
+                        <div *dxTemplate="let data of 'content'" class="tags-container">
+                            <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
+                            <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
+                                [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
+                                <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
+                                 [class]="{disabled: !getTagValue(data)}">
+                                    {{ getTagText(data) }}
+                                </div>
+                            </dx-list>
+                        </div>
+                    </dx-tooltip>
+                </div>
+                <div class="attachment-div">
+                    <div class="attachment-field-area">
+                        <ngx-file-drop
+                            accept="*.*"
+                            (onFileDrop)="addAttachments($event)"
+                        >
+                            <ng-template
+                                ngx-file-drop-content-tmp
+                                let-openFileSelector="openFileSelector"
+                            >
+                                <a
+                                    href="javascript:void(0);"
+                                    class="attach-link"
+                                    (click)="openDocuments()"
+                                >
+                                    <img src="assets/common/icons/attach.svg" />
+                                    {{ls.l("Add attachment")}}
+                                </a>
+                                <dx-check-box
+                                    *ngIf="attachments && attachments.length"
+                                    class="saveToDocs"
+                                    [(value)]="data.saveAttachmentsToDocuments"
+                                    [rtlEnabled]="true"
+                                    [text]="ls.l('Save to Documents')"
+                                >
+                                </dx-check-box>
+                            </ng-template>
+                        </ngx-file-drop>
+                    </div>
+                    <div class="attachment-field-area bottom-text-ste"></div>
+                    <div class="attachment-field-area bottom-text-ste">
+                        {{ charCount ? charCount : 0 }} chars
+                    </div>
+                </div>
+    
+                <div class="field-area attachments">
+                    <div
+                        *ngFor="let attachment of attachments; let i = index"
+                        class="attachment"
+                        [ngClass]="{ progress: !!attachment.loader }"
+                        [ngStyle]="{'background-size': (attachment.progress || 0) + '%'}"
+                    >
+                        <a
+                            target="_blank"
+                            [download]="attachment.name"
+                            [href]="attachment.url"
+                            (click)="attachmentClick($event, attachment)"
+                            class="name"
+                            >{{ attachment.name }}</a
+                        >&nbsp;<span class="size">
+                            ({{ attachment.size | filesize }}) </span
+                        ><i
+                            (click)="removeAttachment(attachment, i)"
+                            aria-hidden="true"
+                            class="delete fa fa-times"
+                        ></i>
+                    </div>
+                </div>
+            </dx-validation-group>
 
-            <div class="field-area attachments">
-                <div
-                    *ngFor="let attachment of attachments; let i = index"
-                    class="attachment"
-                    [ngClass]="{ progress: !!attachment.loader }"
-                    [ngStyle]="{'background-size': (attachment.progress || 0) + '%'}"
-                >
-                    <a
-                        target="_blank"
-                        [download]="attachment.name"
-                        [href]="attachment.url"
-                        (click)="attachmentClick($event, attachment)"
-                        class="name"
-                        >{{ attachment.name }}</a
-                    >&nbsp;<span class="size">
-                        ({{ attachment.size | filesize }}) </span
-                    ><i
-                        (click)="removeAttachment(attachment, i)"
-                        aria-hidden="true"
-                        class="delete fa fa-times"
-                    ></i>
-                </div>
-            </div>
-        </dx-validation-group>
+        </div>
 
         <div
-            class="container"
-            [ngClass]="showAIPrompt ? 'col-md-3' : 'hidden'"
-            *ngIf="showAIPrompt"
+            class="ai-prompt-widget" *ngIf="showAIPrompt"
         >
             <div
                 class="prompt-header d-flex justify-content-between align-items-center"
@@ -197,7 +261,7 @@
                     </h5>
 
                     <dx-tooltip
-                        [width]="350"
+                        [width]="380"
                         [position]="'bottom'"
                         [(visible)]="propmtTooltipVisible"
                         [target]="'.prompt-liabrary-button.id' + uniqId"

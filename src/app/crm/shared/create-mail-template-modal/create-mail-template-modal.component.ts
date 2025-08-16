@@ -40,6 +40,7 @@ import { EmailAttachment } from "@app/crm/shared/email-template-dialog/email-att
 import { TemplateDocumentsDialogData } from "@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface";
 import { TemplateDocumentsDialogComponent } from "@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog.component";
 import { EmailTags } from "@app/crm/contacts/contacts.const";
+import { PhoneFormatPipe } from "@shared/common/pipes/phone-format/phone-format.pipe";
 
 import {
     EmailTemplateServiceProxy,
@@ -58,7 +59,7 @@ import {
     selector: "create-mail-template-modal-dialog",
     templateUrl: "./create-mail-template-modal.component.html",
     styleUrls: ["./create-mail-template-modal.component.less"],
-    providers: [TenantSettingsServiceProxy],
+    providers: [TenantSettingsServiceProxy, PhoneFormatPipe],
 })
 export class CreateMailTemplateModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
@@ -68,6 +69,12 @@ export class CreateMailTemplateModalComponent implements OnInit {
     @ViewChild("scrollView") scrollView: DxScrollViewComponent;
     @ViewChild("contentEditableDiv")
     contentEditableDiv!: ElementRef<HTMLDivElement>;
+    
+    // Tag button container references
+    @ViewChild("titleTagsButtonContainer") titleTagsButtonContainer: ElementRef;
+    @ViewChild("subjectTagsButtonContainer") subjectTagsButtonContainer: ElementRef;
+    @ViewChild("previewTagsButtonContainer") previewTagsButtonContainer: ElementRef;
+    @ViewChild("tagsButtonContainer") tagsButtonContainer: ElementRef;
 
     @Output() onSave: EventEmitter<CreateEmailTemplateData> =
         new EventEmitter<CreateEmailTemplateData>();
@@ -93,14 +100,14 @@ export class CreateMailTemplateModalComponent implements OnInit {
     charCount: number;
     uniqId = Math.random().toString().slice(-7);
     
-    // Tag-related properties
     tagsList: any[] = [];
-    currentFocusedField: string = '';
-    currentFocusedElement: any = null;
-    isTagsTooltipVisible = false;
-    tooltipButtonLeft: number = 0;
+    tagsData: any = {};
+    tooltipButtonRight: number = 0;
     tooltipButtonTop: number = 0;
     tooltipPosition: string = 'bottom';
+    isTagsTooltipVisible: boolean = false;
+    currentFocusedField: string = '';
+    currentFocusedElement: any = null;
     
     ckConfig: any = {
         versionCheck: false,
@@ -205,6 +212,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
         private fb: FormBuilder,
         private domSanitizer: DomSanitizer,
         private tenantSettingsService: TenantSettingsServiceProxy,
+        private phonePipe: PhoneFormatPipe,
 
         @Inject(MAT_DIALOG_DATA) public data: CreateEmailTemplateData,
         @Inject(MAT_DIALOG_DATA) public params: { id?: number; contact?: any }
@@ -243,13 +251,98 @@ export class CreateMailTemplateModalComponent implements OnInit {
         this.dialogRef.close();
       }
     }
-    ngOnInit(): void {
+    ngOnInit() {
+        this.initializeTags();
         this.initDialogButtons();
-        console.log(this.data)
+        this.setupCKEditorConfig();
+        this.loadTemplateData();
+        
+        // Watch for contact changes and refresh tag data
+        this.watchContactChanges();
+    }
 
+    watchContactChanges() {
+        // If we have contact data, watch for changes
+        if (this.params.contact) {
+            // You can add logic here to watch for contact changes
+            // For now, we'll just ensure tag data is loaded when the component initializes
+            console.log('Watching for contact changes:', this.params.contact);
+        }
+    }
+
+    initializeTags() {
+        // Initialize with available email tags
+        this.tagsList = [
+            EmailTags.FirstName,
+            EmailTags.LastName,
+            EmailTags.SenderFullName,
+            EmailTags.DayOfWeek,
+            EmailTags.LastReferralContact,
+            EmailTags.CompanyName,
+            EmailTags.CompanyIndustry,
+            EmailTags.SenderPhone,
+            EmailTags.SenderEmail,
+            EmailTags.SenderWebSite1,
+            EmailTags.SenderWebSite2,
+            EmailTags.SenderWebSite3,
+            EmailTags.SenderCompany,
+            EmailTags.SenderCompanyTitle,
+            EmailTags.SenderCompanyLogo,
+            EmailTags.SenderCompanyPhone,
+            EmailTags.SenderCompanyEmail,
+            EmailTags.SenderCompanyWebSite,
+            EmailTags.SenderCalendly,
+            EmailTags.SenderAffiliateCode,
+            EmailTags.SenderEmailSignature,
+            EmailTags.SubscribeLink,
+            EmailTags.UnsubscribeLink
+        ];
+        
+        // Get actual tag data if we have contact information
+        this.loadTagData();
+    }
+
+    loadTagData() {
+        if (this.params.contact && this.params.contact.id) {
+            this.startLoading();
+            this.communicationProxy
+                .getEmailData(undefined, this.params.contact.id)
+                .pipe(finalize(() => this.finishLoading()))
+                .subscribe((res: any) => {
+                    if (res && res.tags) {
+                        this.tagsData = res.tags;
+                        this.changeDetectorRef.detectChanges();
+                    } else {
+                        this.initializePlaceholderTags();
+                    }
+                }, (error) => {
+                    this.initializePlaceholderTags();
+                });
+        } else {
+            this.initializePlaceholderTags();
+        }
+    }
+
+    initializePlaceholderTags() {
+        this.tagsData = {};
+        this.tagsList.forEach(tag => {
+            this.tagsData[tag] = `#${tag}#`;
+        });
+        this.changeDetectorRef.detectChanges();
+    }
+
+    setupCKEditorConfig() {
+        this.ckConfig.height = 550;
+        this.ckConfig.versionCheck = false;
+    }
+
+    loadTemplateData() {
+        console.log(this.data);
         this.params.id
             ? (this.modalTitle = "Edit Email Template")
             : "Create New Email Template";
+        
+        // Initialize AI models
         this.aiModels = [
             {
                 id: "1",
@@ -315,34 +408,12 @@ export class CreateMailTemplateModalComponent implements OnInit {
                 model: "gemini-1.5-flash-latest",
             },
         ];
-
-        this.ckConfig.height = 550;
-        this.ckConfig.versionCheck = false;
-
-        // Initialize tags list for email templates
-        this.tagsList = [
-            EmailTags.FirstName, EmailTags.LastName, EmailTags.SenderFullName, EmailTags.DayOfWeek, EmailTags.LastReferralContact,
-            EmailTags.CompanyName, EmailTags.CompanyIndustry,
-            EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite1,
-            EmailTags.SenderWebSite2, EmailTags.SenderWebSite3, EmailTags.SenderCompany,
-            EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo, EmailTags.SenderCompanyPhone,
-            EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite, EmailTags.SenderCalendly,
-            EmailTags.SenderAffiliateCode, EmailTags.SenderEmailSignature, EmailTags.SubscribeLink, EmailTags.UnsubscribeLink
-        ];
-
-        // Initialize tag button positioning after a short delay to ensure DOM is ready
-        setTimeout(() => {
-            this.initializeTagButtonPositioning();
-        }, 100);
     }
 
     // Initialize tag button positioning
     initializeTagButtonPositioning() {
-        // Set default position for the tag button
-        this.tooltipButtonLeft = 100;
-        this.tooltipButtonTop = 100;
-        
-        // Force change detection
+        this.tooltipButtonRight = 8;
+        this.tooltipButtonTop = 15;
         this.changeDetectorRef.detectChanges();
     }
 
@@ -391,11 +462,16 @@ export class CreateMailTemplateModalComponent implements OnInit {
                 this.templateLoaded = true;
                 this.editorData = res.body;
                 
-                // Ensure tag button is properly initialized after template loads
                 setTimeout(() => {
                     this.initializeTagButtonPositioning();
                 }, 200);
+                
+                this.loadTagData();
             });
+    }
+
+    refreshTagData() {
+        this.loadTagData();
     }
 
     updateDataLength() {
@@ -410,7 +486,9 @@ export class CreateMailTemplateModalComponent implements OnInit {
         this.changeDetectorRef.markForCheck();
     }
 
-    invalidate() {}
+    invalidate() {
+        this.changeDetectorRef.markForCheck();
+    }
 
     // AI prompt functions
     toggleAIPrompt() {
@@ -473,7 +551,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('ChatGPT Response:', data);
             this.invalidate();
             this.processing = false;
 
@@ -491,7 +568,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
         })
         .catch(error => {
             this.processing = false;
-            console.error('Error calling ChatGPT Function:', error);
             this.updateButtons();
         });
     }
@@ -503,7 +579,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
     }
     formatEmailContent(response: string): string {
         const formattedResponse = response
-            // .replace(/\n/g, "<br>")
             .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
         const updateHtmlRes = formattedResponse
             .replace(/^```html/, "")
@@ -533,13 +608,9 @@ export class CreateMailTemplateModalComponent implements OnInit {
     onReady(event: any) {
         this.ckEditor = event;
         
-        // Ensure CKEditor is properly initialized
         if (this.ckEditor && this.ckEditor.instance) {
-            // Add event listeners for better tag button positioning
-            this.ckEditor.instance.on('focus', this.onCKEditorFocusImproved.bind(this));
-            this.ckEditor.instance.on('blur', this.onCKEditorBlur.bind(this));
-            
-            // Force change detection to ensure everything is properly rendered
+            this.ckEditor.instance.on('focus', this.onCKEditorFocus.bind(this));
+            this.ckEditor.instance.on('blur', this.onFieldBlur.bind(this, 'ckeditor'));
             this.changeDetectorRef.detectChanges();
         }
     }
@@ -547,9 +618,8 @@ export class CreateMailTemplateModalComponent implements OnInit {
     onChange(event: any) {
         this.updateDataLength();
     }
-    // save && edit template data
-    saveTemplate() {
 
+    saveTemplate() {
         this.data.attachments = [
             ...this.attachments.filter((item) => !item.loader),
         ];
@@ -601,7 +671,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
                 });
             })
             .filter((item) => item !== null);
-        // Prepare template data
         const templateData = {
             id: this.templateEditMode ? this.params.id : undefined,
             name: this.data.title,
@@ -626,33 +695,27 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
         request$.pipe(finalize(() => this.finishLoading())).subscribe({
             next: (response: any) => {
-
                 this.data.attachments = this.data.attachments.map(item => ({
                     ...item,
                     fromTemplate: true,
                     loader: undefined,
                     xhr: undefined,
-                    url: undefined // Clean up URLs
+                    url: undefined
                 }));
                 this.onSave.emit(this.data);
                 this.dialogRef.close(this.data);
                 this.notifyService.success(this.ls.l('SuccessfullySaved'));
-                
-                // this.resetForm();
             },
             error: (error) => {
-                // Handle specific error messages from the backend
                 let errorMessage = this.ls.l("ErrorSavingTemplate");
                 if (error.error?.message) {
-                    errorMessage = error.error.message; // ABP error format
+                    errorMessage = error.error.message;
                 } else if (error.message) {
                     errorMessage = error.message;
                 }
                 this.notifyService.error(errorMessage);
-                console.error("Error saving template:", error);
             },
             complete: () => {
-                // Ensure loading is finished
                 this.finishLoading();
             },
         });
@@ -746,7 +809,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
         }
     }
 
-    // Upload a file
     uploadFile(file) {
         if (file.size > 5 * 1024 * 1024)
             return this.notifyService.warn(this.ls.l("FilesizeLimitWarn", 5));
@@ -787,7 +849,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
         this.attachments.push(attachment);
     }
 
-    // Send attachment to server
     sendAttachment(file, attachment) {
         return new Observable((subscriber) => {
             let xhr = new XMLHttpRequest(),
@@ -818,7 +879,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
         });
     }
 
-    // Open documents dialog to select files
     openDocuments() {
         const templateDocumentsDialogData: TemplateDocumentsDialogData = {
             fullHeight: true,
@@ -884,13 +944,11 @@ export class CreateMailTemplateModalComponent implements OnInit {
         );
     }
 
-    // Remove attachments loaded from a template
     removeTemplateAttachments() {
         this.attachments = this.attachments.filter((v) => !v.fromTemplate);
     }
 
     onPromptTooltipWheel(event: WheelEvent): void {
-        // Handle mouse wheel scrolling for the prompt library tooltip
         event.preventDefault();
         event.stopPropagation();
         
@@ -905,26 +963,26 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
     onFieldFocus(fieldType: string, event: any) {
         this.currentFocusedField = fieldType;
-        this.currentFocusedElement = event.target;
-        this.calculateButtonPosition(fieldType, event);
+        this.currentFocusedElement = event.element || event.target;
+        // this.calculateButtonPosition(fieldType, event);
+        console.log(this.currentFocusedField);
         this.changeDetectorRef.detectChanges();
     }
 
     onFieldBlur(fieldType: string, event: any) {
-        // Delay clearing the focused field to allow for button clicks
         setTimeout(() => {
             if (!this.isTagsTooltipVisible) {
                 this.currentFocusedField = '';
                 this.currentFocusedElement = null;
                 this.changeDetectorRef.detectChanges();
             }
-        }, 300); // Increased delay to prevent premature hiding
+        }, 300);
     }
 
     onCKEditorFocus(event: any) {
         this.currentFocusedField = 'ckeditor';
         this.currentFocusedElement = event.target || this.ckEditor?.container?.$;
-        this.calculateButtonPosition('ckeditor', { target: this.ckEditor?.container?.$ || event.target });
+        // this.calculateButtonPosition('ckeditor', { target: this.ckEditor?.container?.$ || event.target });
         this.changeDetectorRef.detectChanges();
     }
 
@@ -935,65 +993,81 @@ export class CreateMailTemplateModalComponent implements OnInit {
                 this.currentFocusedElement = null;
                 this.changeDetectorRef.detectChanges();
             }
-        }, 300); // Increased delay to prevent premature hiding
+        }, 300);
     }
 
-    calculateButtonPosition(fieldType: string, event: any) {
+    onCKEditorClick(event: any) {
+        if (this.currentFocusedField === 'ckeditor') {
+            // this.calculateButtonPosition('ckeditor', { target: this.ckEditor?.container?.$ || event.target });
+            this.changeDetectorRef.detectChanges();
+        }
+    }
+
+    // calculateButtonPosition(fieldType: string, event: any) {
+    //     const targetElement = event.target || event.element;
+    //     if (!targetElement) return;
+        
+    //     const rect = targetElement.getBoundingClientRect();
+        
+    //     if (fieldType === 'title' || fieldType === 'subject' || fieldType === 'previewText') {
+    //         this.tooltipButtonRight = 8;
+    //         this.tooltipButtonTop =  15;
+    //     } else if (fieldType === 'ckeditor') {
+    //         if (this.ckEditor && this.ckEditor.container) {
+    //             const ckContainer = this.ckEditor.container.$.getBoundingClientRect();
+    //             if (ckContainer) {
+    //                 this.tooltipButtonRight = 8
+    //                 this.tooltipButtonTop = 15;
+    //             }
+    //         } else {
+    //             this.tooltipButtonRight =8;
+    //             this.tooltipButtonTop =15;
+    //         }
+    //     }
+        
+    //     if (this.tooltipButtonRight < 0) this.tooltipButtonRight = 8;
+    //     if (this.tooltipButtonTop < 0) this.tooltipButtonTop = 15;
+    //     if (this.tooltipButtonRight > window.innerWidth - 120) this.tooltipButtonRight = 8;
+    //     if (this.tooltipButtonTop > window.innerHeight - 50) this.tooltipButtonTop = 15;
+    // }
+
+    showTagsTooltip(fieldType: string, event: any) {
+        this.currentFocusedField = fieldType;
+        this.currentFocusedElement = event.target;
+        
+        // this.calculateTooltipPosition(fieldType, event);
+        
+        // if (fieldType === 'ckeditor' && this.ckEditor) {
+        //     this.calculateButtonPosition('ckeditor', { target: this.ckEditor.container.$ });
+        // }
+        
+        this.isTagsTooltipVisible = true;
+        this.changeDetectorRef.detectChanges();
+    }
+
+    calculateTooltipPosition(fieldType: string, event: any) {
         const targetElement = event.target || event.element;
         if (!targetElement) return;
         
         const rect = targetElement.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
         
-        if (fieldType === 'title' || fieldType === 'subject' || fieldType === 'previewText') {
-            // For DevExtreme text boxes, position near the right edge but ensure it's visible
-            const buttonWidth = 120;
-            const buttonHeight = 30;
-            
-            // Calculate position to ensure button is fully visible
-            let left = rect.right - buttonWidth;
-            let top = rect.top + (rect.height / 2) - (buttonHeight / 2);
-            
-            // Ensure button doesn't go off-screen
-            if (left < 0) left = 10;
-            if (top < 0) top = 10;
-            if (top + buttonHeight > window.innerHeight) top = window.innerHeight - buttonHeight - 10;
-            
-            this.tooltipButtonLeft = left;
-            this.tooltipButtonTop = top;
-        } else if (fieldType === 'ckeditor') {
-            // For CKEditor, position in top-right corner
-            if (this.ckEditor && this.ckEditor.container) {
-                const ckContainer = this.ckEditor.container.$.getBoundingClientRect();
-                const buttonWidth = 120;
-                const buttonHeight = 30;
-                
-                let left = ckContainer.right - buttonWidth;
-                let top = ckContainer.top + 10;
-                
-                // Ensure button doesn't go off-screen
-                if (left < 0) left = 10;
-                if (top < 0) top = 10;
-                if (top + buttonHeight > window.innerHeight) top = window.innerHeight - buttonHeight - 10;
-                
-                this.tooltipButtonLeft = left;
-                this.tooltipButtonTop = top;
+        let position = 'bottom';
+        
+        if (rect.bottom + 250 > viewportHeight) {
+            position = 'top';
+        }
+        
+        if (rect.left + 250 > viewportWidth) {
+            if (position === 'top') {
+                position = 'top left';
             } else {
-                // Fallback positioning
-                const buttonWidth = 120;
-                const buttonHeight = 30;
-                
-                let left = rect.right - buttonWidth;
-                let top = rect.top + 10;
-                
-                // Ensure button doesn't go off-screen
-                if (left < 0) left = 10;
-                if (top < 0) top = 10;
-                if (top + buttonHeight > window.innerHeight) top = window.innerHeight - buttonHeight - 10;
-                
-                this.tooltipButtonLeft = left;
-                this.tooltipButtonTop = top;
+                position = 'bottom left';
             }
         }
+        
+        this.tooltipPosition = position;
     }
 
     onTagButtonClick(event: any) {
@@ -1010,47 +1084,47 @@ export class CreateMailTemplateModalComponent implements OnInit {
         }
     }
 
-    showTagsTooltip(fieldType: string, event: any) {
-        this.currentFocusedField = fieldType;
-        this.currentFocusedElement = event.target;
-        
-        this.calculateButtonPosition(fieldType, event);
-        
-        if (fieldType === 'ckeditor' && this.ckEditor) {
-            this.calculateButtonPosition('ckeditor', { target: this.ckEditor.container.$ });
-        }
-        
-        this.isTagsTooltipVisible = true;
-        this.changeDetectorRef.detectChanges();
-    }
-
     onTagClick(event: any) {
-        const tagValue = this.getTagValue(event.itemData);
-        
-        if (tagValue) {
-            if (event.itemData == EmailTags.SenderCompanyLogo) {
-                this.insertImageElement(tagValue);
-            } else if (event.itemData == EmailTags.SenderEmailSignature) {
-                this.insertHtml(tagValue);
-            } else {
-                if (this.currentFocusedField) {
-                    this.insertTagIntoFocusedField(tagValue);
+        if (this.templateEditMode) {
+            if (event.itemData == EmailTags.SenderCompanyLogo)
+                this.insertImageElement("#" + event.itemData + "#");
+            else this.addTextTag(event.itemData);
+        } else {
+            let value = this.getTagValue(event.itemData);
+            
+            if (value) {
+                if (event.itemData == EmailTags.SenderCompanyLogo) {
+                    if (value.startsWith('http') || value.startsWith('data:')) {
+                        this.insertImageElement(value);
+                    } else {
+                        this.insertImageElement("#" + event.itemData + "#");
+                    }
+                } else if (event.itemData == EmailTags.SenderEmailSignature) {
+                    if (value.includes('<') && value.includes('>')) {
+                        this.insertHtml(value);
+                    } else {
+                        this.insertHtml("#" + event.itemData + "#");
+                    }
                 } else {
-                    this.insertTagIntoCKEditor(tagValue);
+                    if (this.currentFocusedField) {
+                        this.insertTagIntoFocusedField(value);
+                    } else {
+                        this.insertTagIntoCKEditor(value);
+                    }
                 }
             }
         }
 
+        this.invalidate();
         this.isTagsTooltipVisible = false;
         
-        // Keep the button visible for a longer time after tag insertion
         setTimeout(() => {
             if (!this.currentFocusedField && !this.isTagsTooltipVisible) {
                 this.currentFocusedField = '';
                 this.currentFocusedElement = null;
                 this.changeDetectorRef.detectChanges();
             }
-        }, 1500); // Increased delay to 1.5 seconds
+        }, 1000);
     }
 
     insertTagIntoFocusedField(tagValue: string) {
@@ -1075,19 +1149,97 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
     insertTagIntoTitle(tagValue: string) {
         if (this.data.title !== undefined) {
-            this.data.title = (this.data.title || '') + tagValue;
+            const currentValue = this.data.title || '';
+            let newValue = currentValue;
+            
+            try {
+                const focusedElement = this.currentFocusedElement;
+                if (focusedElement && focusedElement.selectionStart !== undefined) {
+                    const cursorPos = focusedElement.selectionStart;
+                    newValue = currentValue.slice(0, cursorPos) + tagValue + currentValue.slice(cursorPos);
+                    this.data.title = newValue;
+                    
+                    setTimeout(() => {
+                        if (focusedElement && focusedElement.focus) {
+                            focusedElement.focus();
+                            if (focusedElement.setSelectionRange) {
+                                const newCursorPos = cursorPos + tagValue.length;
+                                focusedElement.setSelectionRange(newCursorPos, newCursorPos);
+                            }
+                        }
+                    }, 10);
+                } else {
+                    this.data.title = currentValue + tagValue;
+                }
+            } catch (error) {
+                this.data.title = currentValue + tagValue;
+            }
+            
+            this.changeDetectorRef.markForCheck();
         }
     }
 
     insertTagIntoSubject(tagValue: string) {
         if (this.data.subject !== undefined) {
-            this.data.subject = (this.data.subject || '') + tagValue;
+            const currentValue = this.data.subject || '';
+            let newValue = currentValue;
+            
+            try {
+                const focusedElement = this.currentFocusedElement;
+                if (focusedElement && focusedElement.selectionStart !== undefined) {
+                    const cursorPos = focusedElement.selectionStart;
+                    newValue = currentValue.slice(0, cursorPos) + tagValue + currentValue.slice(cursorPos);
+                    this.data.subject = newValue;
+                    
+                    setTimeout(() => {
+                        if (focusedElement && focusedElement.focus) {
+                            focusedElement.focus();
+                            if (focusedElement.setSelectionRange) {
+                                const newCursorPos = cursorPos + tagValue.length;
+                                focusedElement.setSelectionRange(newCursorPos, newCursorPos);
+                            }
+                        }
+                    }, 10);
+                } else {
+                    this.data.subject = currentValue + tagValue;
+                }
+            } catch (error) {
+                this.data.subject = currentValue + tagValue;
+            }
+            
+            this.changeDetectorRef.markForCheck();
         }
     }
 
     insertTagIntoPreview(tagValue: string) {
         if (this.data.previewText !== undefined) {
-            this.data.previewText = (this.data.previewText || '') + tagValue;
+            const currentValue = this.data.previewText || '';
+            let newValue = currentValue;
+            
+            try {
+                const focusedElement = this.currentFocusedElement;
+                if (focusedElement && focusedElement.selectionStart !== undefined) {
+                    const cursorPos = focusedElement.selectionStart;
+                    newValue = currentValue.slice(0, cursorPos) + tagValue + currentValue.slice(cursorPos);
+                    this.data.previewText = newValue;
+                    
+                    setTimeout(() => {
+                        if (focusedElement && focusedElement.focus) {
+                            focusedElement.focus();
+                            if (focusedElement.setSelectionRange) {
+                                const newCursorPos = cursorPos + tagValue.length;
+                                focusedElement.setSelectionRange(newCursorPos, newCursorPos);
+                            }
+                        }
+                    }, 10);
+                } else {
+                    this.data.previewText = currentValue + tagValue;
+                }
+            } catch (error) {
+                this.data.previewText = currentValue + tagValue;
+            }
+            
+            this.changeDetectorRef.markForCheck();
         }
     }
 
@@ -1099,119 +1251,58 @@ export class CreateMailTemplateModalComponent implements OnInit {
                 range.insertNode(this.ckEditor.instance.document.createTextNode(tagValue));
                 this.ckEditor.instance.fire('change');
             } else {
-                // If no selection, insert at the end
                 const currentContent = this.ckEditor.instance.getData();
                 this.ckEditor.instance.setData(currentContent + tagValue);
             }
         }
     }
 
-    insertImageElement(imageUrl: string) {
-        if (this.ckEditor && this.ckEditor.instance) {
-            const element = this.ckEditor.instance.document.createElement('img');
-            element.setAttribute('src', imageUrl);
-            element.setAttribute('alt', 'Company Logo');
-            
-            const selection = this.ckEditor.instance.getSelection();
-            if (selection && selection.getRanges && selection.getRanges().length > 0) {
-                const range = selection.getRanges()[0];
-                range.insertNode(element);
-            } else {
-                this.ckEditor.instance.insertElement(element);
-            }
-            
-            this.ckEditor.instance.fire('change');
+    getTagValue(name: string): string {
+        let value = this.tagsData && this.tagsData[name];
+        
+        if (name == EmailTags.SenderPhone && value) {
+            value = this.phonePipe.transform(value);
         }
-    }
-
-    insertHtml(htmlContent: string) {
-        if (this.ckEditor && this.ckEditor.instance) {
-            const selection = this.ckEditor.instance.getSelection();
-            if (selection && selection.getRanges && selection.getRanges().length > 0) {
-                const range = selection.getRanges()[0];
-                const fragment = this.ckEditor.instance.document.createDocumentFragment();
-                const tempDiv = this.ckEditor.instance.document.createElement('div');
-                tempDiv.innerHTML = htmlContent;
-                
-                while (tempDiv.firstChild) {
-                    fragment.appendChild(tempDiv.firstChild);
-                }
-                
-                range.insertNode(fragment);
-            } else {
-                this.ckEditor.instance.insertHtml(htmlContent);
-            }
-            
-            this.ckEditor.instance.fire('change');
+        
+        if (!value) {
+            value = "#" + name + "#";
         }
-    }
-
-    getTagValue(tag: string): string {
-        // Return the tag placeholder - in a real implementation, this would resolve to actual values
-        return `#${tag}#`;
+        
+        return value;
     }
 
     getTagText(tag: string): string {
-        // Return a human-readable version of the tag
         return tag.replace(/([A-Z])/g, ' $1').trim();
     }
 
-    // Additional methods to improve button positioning and visibility
-    @HostListener('window:resize')
-    onWindowResize() {
-        // Reposition button when window is resized
-        if (this.currentFocusedField && this.currentFocusedElement) {
-            this.calculateButtonPosition(this.currentFocusedField, { target: this.currentFocusedElement });
-            this.changeDetectorRef.detectChanges();
+    addTextTag(tag: string) {
+        if (this.ckEditor && this.ckEditor.instance) {
+            this.ckEditor.instance.insertHtml("#" + tag + "#");
         }
     }
 
-    @HostListener('document:click', ['$event'])
-    onDocumentClick(event: any) {
-        // Check if click is outside the tags button and tooltip
-        const targetElement = event.target;
-        
-        // If tags tooltip is visible, check if click is outside
-        if (this.isTagsTooltipVisible) {
-            const tooltipElement = document.querySelector('.dx-tooltip');
-            const tagsButtonElement = document.querySelector('.tags-button');
-            
-            if (tooltipElement && !tooltipElement.contains(targetElement) && 
-                tagsButtonElement && !tagsButtonElement.contains(targetElement)) {
-                this.isTagsTooltipVisible = false;
-                this.changeDetectorRef.detectChanges();
-            }
+    insertImageElement(imageUrl: string) {
+        if (this.ckEditor && this.ckEditor.instance) {
+            const imgElement = `<img src="${imageUrl}" alt="Image" style="max-width: 100%; height: auto;" />`;
+            this.ckEditor.instance.insertHtml(imgElement);
         }
     }
 
-    // Method to ensure button is always visible when field is focused
-    ensureButtonVisible() {
-        if (this.currentFocusedField && this.currentFocusedElement) {
-            this.calculateButtonPosition(this.currentFocusedField, { target: this.currentFocusedElement });
-            this.changeDetectorRef.detectChanges();
+    insertHtml(html: string) {
+        if (this.ckEditor && this.ckEditor.instance) {
+            this.ckEditor.instance.insertHtml(html);
         }
     }
 
-    // Override the existing focus methods to ensure better button positioning
-    onFieldFocusImproved(fieldType: string, event: any) {
-        this.currentFocusedField = fieldType;
-        this.currentFocusedElement = event.target;
+    updateFormValidation() {
+        if (this.validationGroup && this.validationGroup.instance) {
+            setTimeout(() => {
+                this.validationGroup.instance.validate();
+            }, 100);
+        }
         
-        // Use setTimeout to ensure DOM is ready before calculating position
-        setTimeout(() => {
-            this.calculateButtonPosition(fieldType, event);
-            this.changeDetectorRef.detectChanges();
-        }, 50);
-    }
-
-    onCKEditorFocusImproved(event: any) {
-        this.currentFocusedField = 'ckeditor';
-        this.currentFocusedElement = event.target || this.ckEditor?.container?.$;
-        
-        // Use setTimeout to ensure CKEditor is fully initialized
-        setTimeout(() => {
-            this.calculateButtonPosition('ckeditor', { target: this.ckEditor?.container?.$ || event.target });
-            this.changeDetectorRef.detectChanges();
-        }, 100);
+        if (this.currentFocusedField === 'ckeditor') {
+            this.updateDataLength();
+        }
     }
 }
