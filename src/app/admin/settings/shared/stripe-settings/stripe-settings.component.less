@@ -171,15 +171,25 @@
         }
 
         .api-keys-tab {
-            input {
-                width: 100%;
-                border: 1px solid #E1E7ED;
-                border-radius: 6px;
-                height: 45px;
-                padding: 0 10px;
+            .api-key-account {
+                width: 500px;
+                height: 100%;
 
-                &::placeholder {
-                    color: #b1b0ae;
+                &.isPartnerApiKey {
+                    border-color: #00A4CA !important;
+                    background-color: #E6EDFA3B !important;
+                }
+
+                input {
+                    width: 100%;
+                    border: 1px solid #E1E7ED;
+                    border-radius: 6px;
+                    height: 45px;
+                    padding: 0 10px;
+
+                    &::placeholder {
+                        color: #b1b0ae;
+                    }
                 }
             }
         }
