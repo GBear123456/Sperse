@@ -75,9 +75,8 @@
         
     </ng-container>   
     <div class="form-content">
-        <div class="row" style="width: 100%;">
-            <div [class]="showAIPrompt?'col-xl-9 col-lg-8 p-0':'col-md-12 p-0'">
-
+        <div class="content-wrapper" [class.with-ai-prompt]="showAIPrompt">
+            <div class="main-content">
                 <dx-scroll-view showScrollbar="onHover" #scrollView>
                     <dx-validation-group (onInitialized)="onValidationGroupInitialized($event)">
                         <div class="email-content" [class.scroll]="data.attachments && data.attachments.length" *ngIf="showNewEmailTab">
@@ -250,6 +249,26 @@
                                             [message]="ls.l('RequiredField', ls.l('Subject'))"></dxi-validation-rule>
                                     </dx-validator>
                                 </dx-text-box>
+                                <div #subjectTagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField === 'subject'" [style.right.px]="tooltipButtonRight" [style.top.px]="tooltipButtonTop">
+                                    <span #subjectTagsButton [class]="'tags-button subject-tags-button id' + uniqId">
+                                        <a (click)="onTagButtonClick($event)">Add a Tag</a>
+                                    </span>
+                                </div>
+                                <dx-tooltip [width]="250"
+                                            [position]="tooltipPosition" 
+                                            [visible]="isTagsTooltipVisible && currentFocusedField === 'subject'"
+                                            [target]="'.subject-tags-button.id' + uniqId">
+                                    <div *dxTemplate="let data of 'content'" class="tags-container">
+                                        <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
+                                        <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
+                                            [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
+                                            <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
+                                             [class]="{disabled: !templateEditMode && !getTagValue(data)}">
+                                                {{ getTagText(data) }}
+                                            </div>
+                                        </dx-list>
+                                    </div>
+                                </dx-tooltip>
                             </div>
 
                             <div class="field-area preview-text">
@@ -263,6 +282,26 @@
                                             (onFocusIn)="onFieldFocus('preview', $event)"
                                             (onFocusOut)="onFieldBlur('preview', $event)">
                                 </dx-text-box>
+                                <div #previewTagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField === 'preview'" [style.right.px]="tooltipButtonRight" [style.top.px]="tooltipButtonTop">
+                                    <span #previewTagsButton [class]="'tags-button preview-tags-button id' + uniqId">
+                                        <a (click)="onTagButtonClick($event)">Add a Tag</a>
+                                    </span>
+                                </div>
+                                <dx-tooltip [width]="250"
+                                            [position]="tooltipPosition" 
+                                            [visible]="isTagsTooltipVisible && currentFocusedField === 'preview'"
+                                            [target]="'.preview-tags-button.id' + uniqId">
+                                    <div *dxTemplate="let data of 'content'" class="tags-container">
+                                        <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
+                                        <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
+                                            [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
+                                            <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
+                                             [class]="{disabled: !templateEditMode && !getTagValue(data)}">
+                                                {{ getTagText(data) }}
+                                            </div>
+                                        </dx-list>
+                                    </div>
+                                </dx-tooltip>
                             </div>
 
                             <div class="field-area ckeditor bt-none" (keydown.escape)="onESC($event)">
@@ -278,14 +317,14 @@
                                     [style.width]="'100%'"
                                     >
                                 </ckeditor>
-                                <div #tagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField" [style.left.px]="tooltipButtonLeft" [style.top.px]="tooltipButtonTop">
+                                <div #tagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField === 'ckeditor'" [style.right.px]="tooltipButtonRight" [style.top.px]="tooltipButtonTop">
                                     <span #tagsButton [class]="'tags-button id' + uniqId">
                                         <a (click)="onTagButtonClick($event)">Add a Tag</a>
                                     </span>
                                 </div>
                                 <dx-tooltip [width]="250"
                                             [position]="tooltipPosition" 
-                                            [(visible)]="isTagsTooltipVisible"
+                                            [visible]="isTagsTooltipVisible && currentFocusedField === 'ckeditor'"
                                             [target]="'.tags-button.id' + uniqId">
                                     <div *dxTemplate="let data of 'content'" class="tags-container">
                                         <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
@@ -307,10 +346,7 @@
                                             <a href="javascript:void(0);" class="attach-link" (click)="openDocuments()">
                                                 <img src="assets/common/icons/attach.svg">{{ ls.l('Add attachment') }}
                                             </a>
-                                            <!-- <dx-check-box *ngIf="!templateEditMode && attachments && attachments.length"
-                                                class="saveToDocs" [(value)]="data.saveAttachmentsToDocuments"
-                                                [rtlEnabled]="true" [text]="ls.l('Save to Documents')">
-                                            </dx-check-box> -->
+                                           
                                         </ng-template>
                                     </ngx-file-drop>
                                 </div>
@@ -500,14 +536,10 @@
                                             </dx-button>
                                         </div>
                                         <div class="text-center"> 
-                                            <!-- <label class="label">
-                                                Subject:
-                                            </label>  -->
+                                         
                                             <h4 style="white-space: nowrap; margin: 0; padding: 0 10px; word-break: break-all;" [title]="templateData.subject"> {{templateData.subject}}</h4></div>
                                         <div class="text-center ">
-                                            <!-- <label class="label">
-                                                Preview Text:
-                                            </label> -->
+                                         
                                             <h6>{{templateData.previewText}}</h6> 
                                         </div>
 
@@ -537,16 +569,13 @@
                     </dx-validation-group>
                 </dx-scroll-view>
             </div>
-            <div [class]="showAIPrompt?'col-xl-3 col-lg-4 col-md-4 container':'hidden'" *ngIf="showAIPrompt">
+            <div class="ai-prompt-widget" *ngIf="showAIPrompt">
                     <div class="prompt-header d-flex justify-content-between align-items-center"
                         style="margin-bottom: 20px;">
                         <h5 class="your-prompt-title">
                             <img src="./assets/common/icons/AI.png" class="img" />
-                            <img src="./assets/common/icons/AI.png" class="img" />
                             Your AI Prompt
                         </h5>
-                       
-    
                         <div style="display: flex; align-items: center;">
                             <h5 class="your-prompt-title prompt-library-title" id="promptLibraryToggle"
                                 (click)="propmtTooltipVisible = true" [class]="'prompt-liabrary-button id' + uniqId">
@@ -554,7 +583,7 @@
                                 <img class="img" src="./assets/common/icons/down-arrow.png" />
                             </h5>
     
-                            <dx-tooltip [width]="350" [position]="'bottom'" [(visible)]="propmtTooltipVisible"
+                            <dx-tooltip [width]="380" [position]="'bottom'" [(visible)]="propmtTooltipVisible"
                                             [target]="'.prompt-liabrary-button.id' + uniqId">
                                 <div *dxTemplate="let data of 'content'" class="tags-container text-left p-2 prompt-tooltip-scroll" style="max-height: 500px; overflow-y: scroll; overflow-x: hidden; scrollbar-width: thin; -webkit-overflow-scrolling: touch; cursor: default;" tabindex="0" (wheel)="onPromptTooltipWheel($event)">
                                     <div *ngFor="let group of groupedPromptLibrary; let groupIndex = index">
@@ -585,8 +614,8 @@
                     <dx-scroll-view showScrollbar="onHover" #scrollAIView>
                         <div class="content-container" *ngIf="!showAIOption">
                             <div class="html-container-div" contenteditable="true" dir="ltr" lang="en" autocomplete="off" autocorrect="off"
-                                autocapitalize="off" spellcheck="false" (input)="onContentChange($event)"
-                                (paste)="onPaste($event)" #contentEditableDiv>
+                                autocapitalize="off" spellcheck="false" data-gramm="false" data-gramm_editor="false" 
+                                (input)="onContentChange($event)" (paste)="onPaste($event)" #contentEditableDiv>
                                 <p>
                                     Consectetur adipiscing elit, <strong>sed do eiusmod</strong> tempor incididunt
                                     ut
