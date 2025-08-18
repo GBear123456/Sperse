@@ -847,7 +847,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
     onFieldFocus(fieldType: string, event: any) {
         this.currentFocusedField = fieldType;
         this.currentFocusedElement = event.element || event.target;
-        
+        this.isTagsTooltipVisible = false;
         // Calculate button position based on cursor position
         this.calculateButtonPosition(fieldType, event);
         
