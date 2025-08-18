@@ -932,7 +932,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         this.currentFocusedElement = event.target;
         
         // Calculate tooltip position based on field type and cursor position
-        this.calculateTooltipPosition(fieldType, event);
+        // this.calculateTooltipPosition(fieldType, event);
         
         // Position the hidden target element for the tooltip
         this.positionTooltipTarget(event);
@@ -1041,38 +1041,38 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         
     }
 
-    calculateTooltipPosition(fieldType: string, event: any) {
-        const targetElement = event.target;
-        const rect = targetElement.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const viewportWidth = window.innerWidth;
+    // calculateTooltipPosition(fieldType: string, event: any) {
+    //     const targetElement = event.target;
+    //     const rect = targetElement.getBoundingClientRect();
+    //     const viewportHeight = window.innerHeight;
+    //     const viewportWidth = window.innerWidth;
         
-        // Default position
-        let position = 'bottom';
+    //     // Default position
+    //     let position = 'bottom';
         
-        // Check if there's enough space below
-        if (rect.bottom + 250 > viewportHeight) {
-            position = 'top';
-        }
+    //     // Check if there's enough space below
+    //     if (rect.bottom + 250 > viewportHeight) {
+    //         position = 'top';
+    //     }
         
-        // Check if there's enough space to the right
-        if (rect.left + 250 > viewportWidth) {
-            if (position === 'top') {
-                position = 'top left';
-            } else {
-                position = 'bottom left';
-            }
-        }
+    //     // Check if there's enough space to the right
+    //     if (rect.left + 250 > viewportWidth) {
+    //         if (position === 'top') {
+    //             position = 'top left';
+    //         } else {
+    //             position = 'bottom left';
+    //         }
+    //     }
         
-        // For subject and preview fields, prefer top positioning to avoid covering the input
-        if (fieldType === 'subject' || fieldType === 'preview') {
-            if (rect.top > 250) {
-                position = 'top';
-            }
-        }
+    //     // For subject and preview fields, prefer top positioning to avoid covering the input
+    //     if (fieldType === 'subject' || fieldType === 'preview') {
+    //         if (rect.top > 250) {
+    //             position = 'top';
+    //         }
+    //     }
         
-        this.tooltipPosition = position;
-    }
+    //     this.tooltipPosition = position;
+    // }
     onESC(event: KeyboardEvent) {
         const fullscreen = document.querySelector('.cke_maximized');
         if (fullscreen) {
