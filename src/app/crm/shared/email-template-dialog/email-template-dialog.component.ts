@@ -1637,11 +1637,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
     onTagClick(event) {
         if (this.onTagItemClick.observers.length)
             this.onTagItemClick.emit(event.itemData);
-        else if (this.templateEditMode) {
-            if (event.itemData == EmailTags.SenderCompanyLogo)
-                this.insertImageElement("#" + event.itemData + "#");
-            else this.addTextTag(event.itemData);
-        } else {
+        else {
             let value = this.getTagValue(event.itemData);
             
             if (value) {
@@ -1830,7 +1826,6 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
                             // Update the selection to be after the inserted tag
                             range.collapse(false);
                             selection.removeAllRanges();
-                            selection.addRange(range);
                             
                             // Focus the editor
                             this.ckEditor.focus();
@@ -2564,31 +2559,17 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
     
     removeCKEditorCursorTracking() {
         if (this.ckEditor) {
-            // Remove event listeners (remove .instance)
-            if (this.boundCKEditorCursorMove) {
-                this.ckEditor.off('selectionChange', this.boundCKEditorCursorMove);
-                this.ckEditor.off('click', this.boundCKEditorCursorMove);
-                this.ckEditor.off('keyup', this.boundCKEditorCursorMove);
-                this.ckEditor.off('input', this.boundCKEditorCursorMove);
-            }
-            if (this.boundCKEditorKeydown) {
-                this.ckEditor.off('keydown', this.boundCKEditorKeydown);
-            }
-            
-            // Clear bound method references
             this.boundCKEditorCursorMove = null;
             this.boundCKEditorKeydown = null;
         }
     }
     
     onCKEditorKeydown(event: any) {
-        // Handle navigation keys to ensure smooth positioning
         if (event.data && event.data.keyCode) {
             const keyCode = event.data.keyCode;
-            if (keyCode === 37 || keyCode === 38 || keyCode === 39 || keyCode === 40 || // Arrow keys
-                keyCode === 36 || keyCode === 35 || keyCode === 33 || keyCode === 34) { // Home, End, Page Up, Page Down
+            if (keyCode === 37 || keyCode === 38 || keyCode === 39 || keyCode === 40 || 
+                keyCode === 36 || keyCode === 35 || keyCode === 33 || keyCode === 34) { 
                 
-                // Use requestAnimationFrame for smoother positioning
                 requestAnimationFrame(() => {
                     this.onCKEditorCursorMove(event);
                 });
@@ -2597,11 +2578,8 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
     }
     
     onCKEditorCursorMove(event: any) {
-        // Update button position when cursor moves in CKEditor
         if (this.currentFocusedField === 'ckeditor' && this.ckEditor && this.ckEditor.instance) {
-            console.log('CKEditor cursor moved, updating button position', { event, ckEditor: this.ckEditor });
             
-            // Use requestAnimationFrame for smoother positioning
             requestAnimationFrame(() => {
                 this.updateCKEditorButtonPosition();
             });
