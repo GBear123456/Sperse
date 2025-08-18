@@ -1039,7 +1039,6 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
             }
         }
         
-        console.log('Button positioned at:', { left: this.tooltipButtonRight, top: this.tooltipButtonTop, fieldType });
     }
 
     calculateTooltipPosition(fieldType: string, event: any) {
@@ -1697,49 +1696,157 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
 
     insertTagIntoSubject(tagValue: string) {
         if (this.subjectField && this.subjectField.instance) {
-            const currentValue = this.data.subject || '';
-            const cursorPosition = this.subjectField.instance.option('value')?.length ||0;
-            const newValue = currentValue.slice(0, cursorPosition) + tagValue + currentValue.slice(cursorPosition);
-            this.data.subject = newValue;
-            this.subjectField.instance.option('value', newValue);
-            
-            // Set cursor position after the inserted tag
-            setTimeout(() => {
-                this.subjectField.instance.focus();
-                const newCursorPosition = cursorPosition + tagValue.length;
-                this.subjectField.instance.option('value', newValue);
-                // Note: DevExtreme TextBox doesn't support cursor positioning directly
-                // The tag will be inserted at the end for now
-            }, 100);
+            try {
+                // Get the underlying DOM element
+                const domElement = this.subjectField.instance.element();
+                if (domElement && domElement.tagName === 'INPUT') {
+                    const input = domElement as HTMLInputElement;
+                    
+                    // Get current cursor position and selection
+                    const selectionStart = input.selectionStart || 0;
+                    const selectionEnd = input.selectionEnd || 0;
+                    const currentValue = this.data.subject || '';
+                    
+                    // Check if there's selected text
+                    const hasSelection = selectionStart !== selectionEnd;
+                    
+                    let newValue: string;
+                    let newCursorPosition: number;
+                    
+                    if (hasSelection) {
+                        // Replace selected text with tag
+                        newValue = currentValue.slice(0, selectionStart) + tagValue + currentValue.slice(selectionEnd);
+                        newCursorPosition = selectionStart + tagValue.length;
+                    } else {
+                        // Insert tag at cursor position
+                        newValue = currentValue.slice(0, selectionStart) + tagValue + currentValue.slice(selectionStart);
+                        newCursorPosition = selectionStart + tagValue.length;
+                    }
+                    
+                    // Update the value
+                    this.data.subject = newValue;
+                    this.subjectField.instance.option('value', newValue);
+                    
+                    // Set cursor position after the inserted tag
+                    setTimeout(() => {
+                        input.focus();
+                        input.setSelectionRange(newCursorPosition, newCursorPosition);
+                    }, 10);
+                    
+                } else {
+                    // Fallback: append to end
+                    this.data.subject = (this.data.subject || '') + tagValue;
+                    this.subjectField.instance.option('value', this.data.subject);
+                }
+            } catch (error) {
+                console.error('Error inserting tag into subject:', error);
+                // Fallback: append to end
+                this.data.subject = (this.data.subject || '') + tagValue;
+                this.subjectField.instance.option('value', this.data.subject);
+            }
         }
     }
-
+    
     insertTagIntoPreview(tagValue: string) {
         if (this.PreviewTextElement && this.PreviewTextElement.instance) {
-            const currentValue = this.data.previewText || '';
-            const cursorPosition = this.PreviewTextElement.instance.option('value')?.length || 0;
-            const newValue = currentValue.slice(0, cursorPosition) + tagValue + currentValue.slice(cursorPosition);
-            this.data.previewText = newValue;
-            this.PreviewTextElement.instance.option('value', newValue);
-            
-            // Set cursor position after the inserted tag
-            setTimeout(() => {
-                this.PreviewTextElement.instance.focus();
-                const newCursorPosition = cursorPosition + tagValue.length;
-                this.PreviewTextElement.instance.option('value', newValue);
-                // Note: DevExtreme TextBox doesn't support cursor positioning directly
-                // The tag will be inserted at the end for now
-            }, 100);
+            try {
+                // Get the underlying DOM element
+                const domElement = this.PreviewTextElement.instance.element();
+                if (domElement && domElement.tagName === 'INPUT') {
+                    const input = domElement as HTMLInputElement;
+                    
+                    // Get current cursor position and selection
+                    const selectionStart = input.selectionStart || 0;
+                    const selectionEnd = input.selectionEnd || 0;
+                    const currentValue = this.data.previewText || '';
+                    
+                    // Check if there's selected text
+                    const hasSelection = selectionStart !== selectionEnd;
+                    
+                    let newValue: string;
+                    let newCursorPosition: number;
+                    
+                    if (hasSelection) {
+                        // Replace selected text with tag
+                        newValue = currentValue.slice(0, selectionStart) + tagValue + currentValue.slice(selectionEnd);
+                        newCursorPosition = selectionStart + tagValue.length;
+                    } else {
+                        // Insert tag at cursor position
+                        newValue = currentValue.slice(0, selectionStart) + tagValue + currentValue.slice(selectionStart);
+                        newCursorPosition = selectionStart + tagValue.length;
+                    }
+                    
+                    // Update the value
+                    this.data.previewText = newValue;
+                    this.PreviewTextElement.instance.option('value', newValue);
+                    
+                    // Set cursor position after the inserted tag
+                    setTimeout(() => {
+                        input.focus();
+                        input.setSelectionRange(newCursorPosition, newCursorPosition);
+                    }, 10);
+                    
+                } else {
+                    // Fallback: append to end
+                    this.data.previewText = (this.data.previewText || '') + tagValue;
+                    this.PreviewTextElement.instance.option('value', this.data.previewText);
+                }
+            } catch (error) {
+                console.error('Error inserting tag into preview:', error);
+                // Fallback: append to end
+                this.data.previewText = (this.data.previewText || '') + tagValue;
+                this.PreviewTextElement.instance.option('value', this.data.previewText);
+            }
         }
     }
 
+    
     insertTagIntoCKEditor(tagValue: string) {
+        
         if (this.ckEditor) {
             if (this.selectedTab === "html-editor") {
                 this.data.body += "<div>" + tagValue + "</div>";
             } else {
-                this.ckEditor.insertText(tagValue);
+                
+                try {
+                    // Get the current selection
+                    const selection = this.ckEditor.getSelection();
+                    
+                    if (selection) {
+                        // Get the current ranges
+                        const ranges = selection.getRanges();
+                        
+                        if (ranges && ranges.length > 0) {
+                            const range = ranges[0];
+                            
+                            // If there's selected text, delete it first
+                            if (!range.collapsed) {
+                                range.deleteContents();
+                            }
+                            
+                            // Insert the tag at the current position
+                            range.insertNode(this.ckEditor.document.createText(tagValue));
+                            
+                            // Update the selection to be after the inserted tag
+                            range.collapse(false);
+                            selection.removeAllRanges();
+                            selection.addRange(range);
+                            
+                            // Focus the editor
+                            this.ckEditor.focus();
+                            
+                        } else {
+                            this.ckEditor.insertHtml(tagValue);
+                        }
+                    } else {
+                        this.ckEditor.insertHtml(tagValue);
+                    }
+                } catch (error) {
+                    console.error('Error in selection API insertion:', error);
+                }
             }
+        } else {
+            console.warn('CKEditor not initialized');
         }
     }
 
@@ -2439,36 +2546,33 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
     }
 
     addCKEditorCursorTracking() {
-        // Add special handling for CKEditor
-        console.log('Adding CKEditor cursor tracking');
-        
-        if (this.ckEditor && this.ckEditor.instance) {
+        if (this.ckEditor) {
             // Store bound methods to avoid creating new references
             this.boundCKEditorCursorMove = this.onCKEditorCursorMove.bind(this);
             this.boundCKEditorKeydown = this.onCKEditorKeydown.bind(this);
             
-            // Listen for cursor movement in CKEditor
-            this.ckEditor.instance.on('selectionChange', this.boundCKEditorCursorMove);
-            this.ckEditor.instance.on('click', this.boundCKEditorCursorMove);
-            this.ckEditor.instance.on('keyup', this.boundCKEditorCursorMove);
-            this.ckEditor.instance.on('input', this.boundCKEditorCursorMove);
+            // Listen for cursor movement in CKEditor (remove .instance)
+            this.ckEditor.on('selectionChange', this.boundCKEditorCursorMove);
+            this.ckEditor.on('click', this.boundCKEditorCursorMove);
+            this.ckEditor.on('keyup', this.boundCKEditorCursorMove);
+            this.ckEditor.on('input', this.boundCKEditorCursorMove);
             
             // Add specific handling for navigation keys
-            this.ckEditor.instance.on('keydown', this.boundCKEditorKeydown);
+            this.ckEditor.on('keydown', this.boundCKEditorKeydown);
         }
     }
     
     removeCKEditorCursorTracking() {
-        if (this.ckEditor && this.ckEditor.instance) {
-            // Remove event listeners using stored bound methods
+        if (this.ckEditor) {
+            // Remove event listeners (remove .instance)
             if (this.boundCKEditorCursorMove) {
-                this.ckEditor.instance.off('selectionChange', this.boundCKEditorCursorMove);
-                this.ckEditor.instance.off('click', this.boundCKEditorCursorMove);
-                this.ckEditor.instance.off('keyup', this.boundCKEditorCursorMove);
-                this.ckEditor.instance.off('input', this.boundCKEditorCursorMove);
+                this.ckEditor.off('selectionChange', this.boundCKEditorCursorMove);
+                this.ckEditor.off('click', this.boundCKEditorCursorMove);
+                this.ckEditor.off('keyup', this.boundCKEditorCursorMove);
+                this.ckEditor.off('input', this.boundCKEditorCursorMove);
             }
             if (this.boundCKEditorKeydown) {
-                this.ckEditor.instance.off('keydown', this.boundCKEditorKeydown);
+                this.ckEditor.off('keydown', this.boundCKEditorKeydown);
             }
             
             // Clear bound method references
