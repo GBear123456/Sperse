@@ -611,19 +611,14 @@ export class CreateMailTemplateModalComponent implements OnInit, AfterViewInit {
     }
     onReady(event: any) {
         console.log('CKEditor ready event:', event);
-        this.ckEditor = event;
+        // Store the editor instance directly, not the entire event
+        this.ckEditor = event.editor || event;
         
-        if (this.ckEditor && this.ckEditor.instance) {
-            console.log('CKEditor instance available:', this.ckEditor.instance);
-            this.ckEditor.instance.on('focus', this.onCKEditorFocus.bind(this));
-            this.ckEditor.instance.on('blur', this.onFieldBlur.bind(this, 'ckeditor'));
+        if (this.ckEditor) {
+            console.log('CKEditor instance available:', this.ckEditor);
+            this.ckEditor.on('focus', this.onCKEditorFocus.bind(this));
+            this.ckEditor.on('blur', this.onFieldBlur.bind(this, 'ckeditor'));
             this.changeDetectorRef.detectChanges();
-        } else if (this.ckEditor) {
-            console.log('CKEditor available but no instance:', this.ckEditor);
-            // Check if methods are available directly on the ckEditor object
-            if (this.ckEditor.insertText || this.ckEditor.insertHtml) {
-                console.log('CKEditor methods available directly');
-            }
         }
     }
 
@@ -1213,64 +1208,49 @@ export class CreateMailTemplateModalComponent implements OnInit, AfterViewInit {
     }
 
     insertTagIntoCKEditor(tagValue: string) {
-        console.log('CKEditor instance:', this.ckEditor);
-        this.data.body += "<div>" + tagValue + "</div>";
-
         if (this.ckEditor) {
             try {
-                // For CKEditor 4, the instance should be available
-                if (this.ckEditor.instance) {
-                    // Ensure CKEditor is focused
-                    this.ckEditor.instance.focus();
+                // Get the current selection
+                const selection = this.ckEditor.getSelection();
+                
+                if (selection) {
+                    // Get the current ranges
+                    const ranges = selection.getRanges();
                     
-                    // Try to insert at cursor position first
-                    const selection = this.ckEditor.instance.getSelection();
-                    if (selection && selection.getRanges && selection.getRanges().length > 0) {
-                        const range = selection.getRanges()[0];
-                        // Create a text node and insert it
-                        const textNode = this.ckEditor.instance.document.createTextNode(tagValue);
-                        range.insertNode(textNode);
+                    if (ranges && ranges.length > 0) {
+                        const range = ranges[0];
                         
-                        // Update the data binding
-                        const newContent = this.ckEditor.instance.getData();
-                        this.data.body = newContent;
+                        // If there's selected text, delete it first
+                        if (!range.collapsed) {
+                            range.deleteContents();
+                        }
                         
-                        // Trigger change events
-                        this.ckEditor.instance.fire('change');
-                        this.ckEditor.instance.fire('input');
+                        // Insert the tag at the current position
+                        range.insertNode(this.ckEditor.document.createText(tagValue));
                         
-                        // Move cursor after the inserted text
+                        // Update the selection to be after the inserted tag
                         range.collapse(false);
-                        selection.selectRanges([range]);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
                         
-                        return;
+                        // Focus the editor
+                        this.ckEditor.focus();
+                        
+                    } else {
+                        this.ckEditor.insertHtml(tagValue);
                     }
-                    
-                    // If no selection, append to the end
-                    const currentContent = this.ckEditor.instance.getData();
-                    const newContent = currentContent + tagValue;
-                    
-                    this.ckEditor.instance.setData(newContent);
-                    this.data.body = newContent;
-                    
-                    // Trigger change events
-                    this.ckEditor.instance.fire('change');
-                    this.ckEditor.instance.fire('input');
                 } else {
-                    console.warn('CKEditor instance not available');
+                    this.ckEditor.insertHtml(tagValue);
                 }
             } catch (error) {
-                console.error('Error inserting tag into CKEditor:', error);
-                // Last resort: append to the end
-                if (this.ckEditor.instance) {
-                    const currentContent = this.ckEditor.instance.getData();
-                    const newContent = currentContent + tagValue;
-                    this.ckEditor.instance.setData(newContent);
-                    this.data.body = newContent;
-                }
+                console.error('Error in selection API insertion:', error);
+                // Fallback to simple insertion
+                // this.ckEditor.insertHtml(tagValue);
             }
         } else {
             console.warn('CKEditor not initialized');
+            // Fallback: append to data.body
+            this.data.body += tagValue;
         }
     }
 
