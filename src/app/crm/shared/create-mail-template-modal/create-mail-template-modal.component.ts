@@ -54,6 +54,7 @@ import {
     FileInfo,
     TenantSettingsServiceProxy,
 } from "@shared/service-proxies/service-proxies";
+import { parseDate } from "devextreme/localization";
 
 
 @Component({
@@ -533,7 +534,7 @@ export class CreateMailTemplateModalComponent implements OnInit, AfterViewInit {
         const payload = {
             model,
             prompt,
-            system: 'You are an expert email marketer. Your task is to create compelling email HTML content based on user input.',
+            system: 'You are an expert email marketer. Your task is to create compelling email HTML content based on user input. return subject and body in the same response. body is HTML format. return data format is json {subject: string, body: string}',
         };
 
         fetch('/.netlify/functions/openai', {
@@ -566,10 +567,19 @@ export class CreateMailTemplateModalComponent implements OnInit, AfterViewInit {
         });
     }
     extractContent(content: any): { subject: string; body: string } {
-        const subjectMatch = content.match(/^Subject: (.*?)(?:\n\n|$)/);
-        const subject = subjectMatch ? subjectMatch[1] : "";
-        const body = content.replace(/^Subject: .*?\n\n/, "");
-        return { subject, body };
+        const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/);
+        if (jsonMatch) {
+        const jsonContent = jsonMatch[1];
+        const parsedData = JSON.parse(jsonContent);
+        
+        console.log('Subject:', parsedData.subject);
+        console.log('Body:', parsedData.body);
+
+        return { subject: parsedData.subject, body: parsedData.body}
+
+        }
+        
+        return { subject: "", body: "" };
     }
     formatEmailContent(response: string): string {
         const formattedResponse = response

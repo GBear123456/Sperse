@@ -936,7 +936,7 @@
                     background: #00A8ED;
                     width: 185px;
                     color: white;
-                    padding: 10px 30px;
+                    padding: 10px 4px;
                     border-radius: 10px;
                     cursor: pointer;
                     &:focus {
@@ -1519,20 +1519,22 @@
             z-index: 1;
             
             /* Ensure no toolbars appear in the AI prompt widget */
-            * {
-                -webkit-user-modify: read-write-plaintext-only;
-                -moz-user-modify: read-write;
-                -ms-user-modify: element;
-                -webkit-touch-callout: none;
-                -webkit-user-select: text;
-                -khtml-user-select: text;
-                -moz-user-select: text;
-                -ms-user-select: text;
-                user-select: text;
-                -webkit-spell-check: false;
-                -moz-spell-check: false;
-                -ms-spell-check: false;
-                spell-check: false;
+            .content-container {
+                .html-container-div[contenteditable="true"] {
+                    -webkit-user-modify: read-write-plaintext-only;
+                    -moz-user-modify: read-write;
+                    -ms-user-modify: element;
+                    -webkit-touch-callout: none;
+                    -webkit-user-select: text;
+                    -khtml-user-select: text;
+                    -moz-user-select: text;
+                    -ms-user-select: text;
+                    user-select: text;
+                    -webkit-spell-check: false;
+                    -moz-spell-check: false;
+                    -ms-spell-check: false;
+                    spell-check: false;
+                }
             }
     
             &::before {

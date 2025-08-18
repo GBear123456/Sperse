@@ -2156,10 +2156,19 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
 
 
     extractContent(content: any): { subject: string; body: string } {
-        const subjectMatch = content.match(/^Subject: (.*?)(?:\n\n|$)/);
-        const subject = subjectMatch ? subjectMatch[1] : "";
-        const body = content.replace(/^Subject: .*?\n\n/, "");
-        return { subject, body };
+        const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/);
+        if (jsonMatch) {
+        const jsonContent = jsonMatch[1];
+        const parsedData = JSON.parse(jsonContent);
+        
+        console.log('Subject:', parsedData.subject);
+        console.log('Body:', parsedData.body);
+
+        return { subject: parsedData.subject, body: parsedData.body}
+
+        }
+        
+        return { subject: "", body: "" };
     }
 
     formatEmailContent(response: string): string {
