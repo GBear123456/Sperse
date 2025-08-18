@@ -684,7 +684,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
       }
     openCreateOrEditTemplate(id?: number): void {
         const dialogRef = this.dialog.open(CreateMailTemplateModalComponent, {
-            data: { id, contact: this.data.contact },
+            data: { id, contact: this.data.contact, tagsList: this.tagsList, tags: this.data.tags, contactIds: this.data.contactIds },
             panelClass: ["slider"],
             hasBackdrop: true,
             closeOnNavigation: true,
@@ -2111,7 +2111,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         const payload = {
             model,
             prompt,
-            system: 'You are an expert email marketer. Your task is to create compelling email HTML content based on user input.',
+            system: 'You are an expert email marketer. Your task is to create compelling email HTML content based on user input. return subject and body in the same response. body is HTML format. return data format is json {subject: string, body: string}',
         };
 
         fetch('/.netlify/functions/openai', {
@@ -2374,10 +2374,10 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
 
     abbrTitle (title: string) :string {
         if(title){
-            if (title.length <= 50) {
+            if (title.length <= 70) {
                 return title;
             }
-            return title.substring(0, 50) + '...';
+            return title.substring(0, 70) + '...';
         } 
         else return title;
     }
@@ -2612,17 +2612,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
     }
 
     // Method to log current state for debugging
-    logCurrentState() {
-        console.log('Current state:', {
-            currentFocusedField: this.currentFocusedField,
-            currentFocusedElement: this.currentFocusedElement,
-            ckEditor: this.ckEditor,
-            tooltipButtonRight: this.tooltipButtonRight,
-            tooltipButtonTop: this.tooltipButtonTop,
-            isTagsTooltipVisible: this.isTagsTooltipVisible,
-            tagsList: this.tagsList
-        });
-    }
+    
 
     // Method to force refresh button position
     forceRefreshButtonPosition() {

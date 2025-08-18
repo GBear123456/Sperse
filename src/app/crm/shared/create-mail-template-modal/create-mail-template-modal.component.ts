@@ -2,6 +2,7 @@
 import {
     Component,
     OnInit,
+    AfterViewInit,
     Inject,
     ViewChild,
     Input,
@@ -61,7 +62,7 @@ import {
     styleUrls: ["./create-mail-template-modal.component.less"],
     providers: [TenantSettingsServiceProxy, PhoneFormatPipe],
 })
-export class CreateMailTemplateModalComponent implements OnInit {
+export class CreateMailTemplateModalComponent implements OnInit, AfterViewInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
     @ViewChild(DxValidationGroupComponent)
@@ -71,7 +72,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
     contentEditableDiv!: ElementRef<HTMLDivElement>;
     
     // Tag button container references
-    @ViewChild("titleTagsButtonContainer") titleTagsButtonContainer: ElementRef;
     @ViewChild("subjectTagsButtonContainer") subjectTagsButtonContainer: ElementRef;
     @ViewChild("previewTagsButtonContainer") previewTagsButtonContainer: ElementRef;
     @ViewChild("tagsButtonContainer") tagsButtonContainer: ElementRef;
@@ -215,7 +215,7 @@ export class CreateMailTemplateModalComponent implements OnInit {
         private phonePipe: PhoneFormatPipe,
 
         @Inject(MAT_DIALOG_DATA) public data: CreateEmailTemplateData,
-        @Inject(MAT_DIALOG_DATA) public params: { id?: number; contact?: any }
+        @Inject(MAT_DIALOG_DATA) public params: { id?: number; contact?: any; tagsList?: any[]; tags?: any; contactIds?: any[] }
     ) {
         this.data = this.data || {
             title: "",
@@ -228,7 +228,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
             attachments: [],
             saveAttachmentsToDocuments: true
         };
-       
         if (this.params.id) {
             this.loadTemplate(this.params.id);
             this.templateEditMode = true;
@@ -241,68 +240,62 @@ export class CreateMailTemplateModalComponent implements OnInit {
         const fullscreen = document.querySelector('.cke_maximized');
         if (fullscreen) {
             event.stopPropagation();
-        
-    //   const isFullscreen = document.querySelector('.cke_maximized') !== null;
-    //   if (isFullscreen) {
-    //     // Let CKEditor handle it, prevent dialog from closing
-    //     event.stopPropagation();
-      } else {
-        // Manually close dialog when not fullscreen
-        this.dialogRef.close();
-      }
+        } else {
+            this.dialogRef.close();
+        }
     }
     ngOnInit() {
-        this.initializeTags();
         this.initDialogButtons();
         this.setupCKEditorConfig();
         this.loadTemplateData();
+        
+        // Initialize tagsList from dialog data
+        if (this.params && this.params.tagsList) {
+            this.tagsList = this.params.tagsList;
+        }
+        
+        // Load tag data to initialize tagsData
+        this.loadTagData();
         
         // Watch for contact changes and refresh tag data
         this.watchContactChanges();
     }
 
+    ngAfterViewInit() {
+        // Ensure tags are loaded after view is initialized
+        setTimeout(() => {
+            if (this.tagsList && this.tagsList.length > 0) {
+                this.changeDetectorRef.detectChanges();
+            }
+            
+            // Verify tooltip setup
+            this.verifyTooltipSetup();
+        }, 100);
+    }
+
+    verifyTooltipSetup() {
+        const subjectTarget = document.querySelector('.subject-tags-button.id' + this.uniqId);
+        const previewTarget = document.querySelector('.preview-tags-button.id' + this.uniqId);
+        const ckeditorTarget = document.querySelector('.ckeditor-tags-button.id' + this.uniqId);
+        
+       
+    }
+
     watchContactChanges() {
-        // If we have contact data, watch for changes
         if (this.params.contact) {
-            // You can add logic here to watch for contact changes
-            // For now, we'll just ensure tag data is loaded when the component initializes
-            console.log('Watching for contact changes:', this.params.contact);
         }
     }
 
-    initializeTags() {
-        // Initialize with available email tags
-        this.tagsList = [
-            EmailTags.FirstName,
-            EmailTags.LastName,
-            EmailTags.SenderFullName,
-            EmailTags.DayOfWeek,
-            EmailTags.LastReferralContact,
-            EmailTags.CompanyName,
-            EmailTags.CompanyIndustry,
-            EmailTags.SenderPhone,
-            EmailTags.SenderEmail,
-            EmailTags.SenderWebSite1,
-            EmailTags.SenderWebSite2,
-            EmailTags.SenderWebSite3,
-            EmailTags.SenderCompany,
-            EmailTags.SenderCompanyTitle,
-            EmailTags.SenderCompanyLogo,
-            EmailTags.SenderCompanyPhone,
-            EmailTags.SenderCompanyEmail,
-            EmailTags.SenderCompanyWebSite,
-            EmailTags.SenderCalendly,
-            EmailTags.SenderAffiliateCode,
-            EmailTags.SenderEmailSignature,
-            EmailTags.SubscribeLink,
-            EmailTags.UnsubscribeLink
-        ];
-        
-        // Get actual tag data if we have contact information
-        this.loadTagData();
-    }
+  
 
     loadTagData() {
+        // If tagsList is provided from parent component, use it directly
+        if (this.params.tagsList && this.params.tagsList.length > 0) {
+            this.tagsList = this.params.tagsList;
+            this.initializePlaceholderTags();
+            return;
+        }
+        
         if (this.params.contact && this.params.contact.id) {
             this.startLoading();
             this.communicationProxy
@@ -325,9 +318,11 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
     initializePlaceholderTags() {
         this.tagsData = {};
-        this.tagsList.forEach(tag => {
-            this.tagsData[tag] = `#${tag}#`;
-        });
+        if (this.tagsList && this.tagsList.length > 0) {
+            this.tagsList.forEach(tag => {
+                this.tagsData[tag] = `#${tag}#`;
+            });
+        }
         this.changeDetectorRef.detectChanges();
     }
 
@@ -337,7 +332,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
     }
 
     loadTemplateData() {
-        console.log(this.data);
         this.params.id
             ? (this.modalTitle = "Edit Email Template")
             : "Create New Email Template";
@@ -606,12 +600,20 @@ export class CreateMailTemplateModalComponent implements OnInit {
         this.invalidate();
     }
     onReady(event: any) {
+        console.log('CKEditor ready event:', event);
         this.ckEditor = event;
         
         if (this.ckEditor && this.ckEditor.instance) {
+            console.log('CKEditor instance available:', this.ckEditor.instance);
             this.ckEditor.instance.on('focus', this.onCKEditorFocus.bind(this));
             this.ckEditor.instance.on('blur', this.onFieldBlur.bind(this, 'ckeditor'));
             this.changeDetectorRef.detectChanges();
+        } else if (this.ckEditor) {
+            console.log('CKEditor available but no instance:', this.ckEditor);
+            // Check if methods are available directly on the ckEditor object
+            if (this.ckEditor.insertText || this.ckEditor.insertHtml) {
+                console.log('CKEditor methods available directly');
+            }
         }
     }
 
@@ -963,26 +965,16 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
     onFieldFocus(fieldType: string, event: any) {
         this.currentFocusedField = fieldType;
-        this.currentFocusedElement = event.element || event.target;
-        // this.calculateButtonPosition(fieldType, event);
-        console.log(this.currentFocusedField);
         this.changeDetectorRef.detectChanges();
     }
 
     onFieldBlur(fieldType: string, event: any) {
-        setTimeout(() => {
-            if (!this.isTagsTooltipVisible) {
-                this.currentFocusedField = '';
-                this.currentFocusedElement = null;
-                this.changeDetectorRef.detectChanges();
-            }
-        }, 300);
+      
     }
 
     onCKEditorFocus(event: any) {
         this.currentFocusedField = 'ckeditor';
         this.currentFocusedElement = event.target || this.ckEditor?.container?.$;
-        // this.calculateButtonPosition('ckeditor', { target: this.ckEditor?.container?.$ || event.target });
         this.changeDetectorRef.detectChanges();
     }
 
@@ -998,48 +990,18 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
     onCKEditorClick(event: any) {
         if (this.currentFocusedField === 'ckeditor') {
-            // this.calculateButtonPosition('ckeditor', { target: this.ckEditor?.container?.$ || event.target });
+            // Ensure CKEditor is focused when clicked
+            if (this.ckEditor && this.ckEditor.instance) {
+                this.ckEditor.instance.focus();
+            }
             this.changeDetectorRef.detectChanges();
         }
     }
 
-    // calculateButtonPosition(fieldType: string, event: any) {
-    //     const targetElement = event.target || event.element;
-    //     if (!targetElement) return;
-        
-    //     const rect = targetElement.getBoundingClientRect();
-        
-    //     if (fieldType === 'title' || fieldType === 'subject' || fieldType === 'previewText') {
-    //         this.tooltipButtonRight = 8;
-    //         this.tooltipButtonTop =  15;
-    //     } else if (fieldType === 'ckeditor') {
-    //         if (this.ckEditor && this.ckEditor.container) {
-    //             const ckContainer = this.ckEditor.container.$.getBoundingClientRect();
-    //             if (ckContainer) {
-    //                 this.tooltipButtonRight = 8
-    //                 this.tooltipButtonTop = 15;
-    //             }
-    //         } else {
-    //             this.tooltipButtonRight =8;
-    //             this.tooltipButtonTop =15;
-    //         }
-    //     }
-        
-    //     if (this.tooltipButtonRight < 0) this.tooltipButtonRight = 8;
-    //     if (this.tooltipButtonTop < 0) this.tooltipButtonTop = 15;
-    //     if (this.tooltipButtonRight > window.innerWidth - 120) this.tooltipButtonRight = 8;
-    //     if (this.tooltipButtonTop > window.innerHeight - 50) this.tooltipButtonTop = 15;
-    // }
-
+  
     showTagsTooltip(fieldType: string, event: any) {
         this.currentFocusedField = fieldType;
         this.currentFocusedElement = event.target;
-        
-        // this.calculateTooltipPosition(fieldType, event);
-        
-        // if (fieldType === 'ckeditor' && this.ckEditor) {
-        //     this.calculateButtonPosition('ckeditor', { target: this.ckEditor.container.$ });
-        // }
         
         this.isTagsTooltipVisible = true;
         this.changeDetectorRef.detectChanges();
@@ -1129,9 +1091,6 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
     insertTagIntoFocusedField(tagValue: string) {
         switch (this.currentFocusedField) {
-            case 'title':
-                this.insertTagIntoTitle(tagValue);
-                break;
             case 'subject':
                 this.insertTagIntoSubject(tagValue);
                 break;
@@ -1244,27 +1203,75 @@ export class CreateMailTemplateModalComponent implements OnInit {
     }
 
     insertTagIntoCKEditor(tagValue: string) {
-        if (this.ckEditor && this.ckEditor.instance) {
-            const selection = this.ckEditor.instance.getSelection();
-            if (selection && selection.getRanges && selection.getRanges().length > 0) {
-                const range = selection.getRanges()[0];
-                range.insertNode(this.ckEditor.instance.document.createTextNode(tagValue));
-                this.ckEditor.instance.fire('change');
-            } else {
-                const currentContent = this.ckEditor.instance.getData();
-                this.ckEditor.instance.setData(currentContent + tagValue);
+        console.log('CKEditor instance:', this.ckEditor);
+        this.data.body += "<div>" + tagValue + "</div>";
+
+        if (this.ckEditor) {
+            try {
+                // For CKEditor 4, the instance should be available
+                if (this.ckEditor.instance) {
+                    // Ensure CKEditor is focused
+                    this.ckEditor.instance.focus();
+                    
+                    // Try to insert at cursor position first
+                    const selection = this.ckEditor.instance.getSelection();
+                    if (selection && selection.getRanges && selection.getRanges().length > 0) {
+                        const range = selection.getRanges()[0];
+                        // Create a text node and insert it
+                        const textNode = this.ckEditor.instance.document.createTextNode(tagValue);
+                        range.insertNode(textNode);
+                        
+                        // Update the data binding
+                        const newContent = this.ckEditor.instance.getData();
+                        this.data.body = newContent;
+                        
+                        // Trigger change events
+                        this.ckEditor.instance.fire('change');
+                        this.ckEditor.instance.fire('input');
+                        
+                        // Move cursor after the inserted text
+                        range.collapse(false);
+                        selection.selectRanges([range]);
+                        
+                        return;
+                    }
+                    
+                    // If no selection, append to the end
+                    const currentContent = this.ckEditor.instance.getData();
+                    const newContent = currentContent + tagValue;
+                    
+                    this.ckEditor.instance.setData(newContent);
+                    this.data.body = newContent;
+                    
+                    // Trigger change events
+                    this.ckEditor.instance.fire('change');
+                    this.ckEditor.instance.fire('input');
+                } else {
+                    console.warn('CKEditor instance not available');
+                }
+            } catch (error) {
+                console.error('Error inserting tag into CKEditor:', error);
+                // Last resort: append to the end
+                if (this.ckEditor.instance) {
+                    const currentContent = this.ckEditor.instance.getData();
+                    const newContent = currentContent + tagValue;
+                    this.ckEditor.instance.setData(newContent);
+                    this.data.body = newContent;
+                }
             }
+        } else {
+            console.warn('CKEditor not initialized');
         }
     }
 
     getTagValue(name: string): string {
-        let value = this.tagsData && this.tagsData[name];
+        let value = this.params.tags && this.params.tags[name];
         
         if (name == EmailTags.SenderPhone && value) {
             value = this.phonePipe.transform(value);
         }
         
-        if (!value) {
+        if (!value && this.params.contactIds) {
             value = "#" + name + "#";
         }
         
@@ -1277,20 +1284,88 @@ export class CreateMailTemplateModalComponent implements OnInit {
 
     addTextTag(tag: string) {
         if (this.ckEditor && this.ckEditor.instance) {
-            this.ckEditor.instance.insertHtml("#" + tag + "#");
+            try {
+                // Ensure CKEditor is focused
+                this.ckEditor.instance.focus();
+                
+                // For CKEditor 4, use insertHtml method
+                this.ckEditor.instance.insertHtml("#" + tag + "#");
+                
+                // Update the data binding
+                const newContent = this.ckEditor.instance.getData();
+                this.data.body = newContent;
+                
+                // Trigger change events
+                this.ckEditor.instance.fire('change');
+                this.ckEditor.instance.fire('input');
+            } catch (error) {
+                console.error('Error adding text tag to CKEditor:', error);
+                // Fallback to manual insertion
+                const currentContent = this.ckEditor.instance.getData();
+                const newContent = currentContent + "#" + tag + "#";
+                this.ckEditor.instance.setData(newContent);
+                this.data.body = newContent;
+            }
+        } else {
+            console.warn('CKEditor not initialized or instance not available');
         }
     }
 
     insertImageElement(imageUrl: string) {
         if (this.ckEditor && this.ckEditor.instance) {
             const imgElement = `<img src="${imageUrl}" alt="Image" style="max-width: 100%; height: auto;" />`;
-            this.ckEditor.instance.insertHtml(imgElement);
+            
+            try {
+                // Ensure CKEditor is focused
+                this.ckEditor.instance.focus();
+                
+                // For CKEditor 4, use insertHtml method
+                this.ckEditor.instance.insertHtml(imgElement);
+                
+                // Update the data binding
+                const newContent = this.ckEditor.instance.getData();
+                this.data.body = newContent;
+                
+                // Trigger change events
+                this.ckEditor.instance.fire('change');
+                this.ckEditor.instance.fire('input');
+            } catch (error) {
+                console.error('Error inserting image into CKEditor:', error);
+                // Fallback to manual insertion
+                const currentContent = this.ckEditor.instance.getData();
+                const newContent = currentContent + imgElement;
+                this.ckEditor.instance.setData(newContent);
+                this.data.body = newContent;
+            }
+        } else {
+            console.warn('CKEditor not initialized or instance not available');
         }
     }
 
     insertHtml(html: string) {
         if (this.ckEditor && this.ckEditor.instance) {
-            this.ckEditor.instance.insertHtml(html);
+            try {
+                // Ensure CKEditor is focused
+                this.ckEditor.instance.focus();
+                
+                // For CKEditor 4, use insertHtml method
+                this.ckEditor.instance.insertHtml(html);
+                
+                // Update the data binding
+                const newContent = this.ckEditor.instance.getData();
+                this.data.body = newContent;
+                this.ckEditor.instance.fire('change');
+                this.ckEditor.instance.fire('input');
+            } catch (error) {
+                console.error('Error inserting HTML into CKEditor:', error);
+                // Fallback to manual insertion
+                const currentContent = this.ckEditor.instance.getData();
+                const newContent = currentContent + html;
+                this.ckEditor.instance.setData(newContent);
+                this.data.body = newContent;
+            }
+        } else {
+            console.warn('CKEditor not initialized or instance not available');
         }
     }
 

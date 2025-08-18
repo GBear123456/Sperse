@@ -30,7 +30,7 @@
                             placeholder=""
                             [(value)]="data.title"
                             validationGroup="templateValidation"
-                            width="calc(100% - 120px)"
+                            width="calc(100% - 10px)"
                             (onFocusIn)="onFieldFocus('title', $event)"
                             (onFocusOut)="onFieldBlur('title', $event)"
                         >
@@ -41,26 +41,6 @@
                                 ></dxi-validation-rule>
                             </dx-validator>
                         </dx-text-box>
-                        <div #titleTagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField === 'title'" [style.right.px]="tooltipButtonRight" [style.top.px]="tooltipButtonTop">
-                            <span #titleTagsButton [class]="'tags-button title-tags-button id' + uniqId">
-                                <a (click)="onTagButtonClick($event)">Add a Tag</a>
-                            </span>
-                        </div>
-                        <dx-tooltip [width]="250"
-                                    [position]="tooltipPosition" 
-                                    [visible]="isTagsTooltipVisible && currentFocusedField === 'title'"
-                                    [target]="'.title-tags-button.id' + uniqId">
-                            <div *dxTemplate="let data of 'content'" class="tags-container">
-                                <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
-                                <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
-                                    [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
-                                    <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
-                                     [class]="{disabled: !getTagValue(data)}">
-                                        {{ getTagText(data) }}
-                                    </div>
-                                </dx-list>
-                            </div>
-                        </dx-tooltip>
                     </div>
                 </div>
     
@@ -69,7 +49,7 @@
                     <div class="input-with-tag-container">
                         <dx-text-box
                             name="subject"
-                            width="calc(100% - 120px)"
+                            width="calc(100% - 10px)"
                             placeholder=""
                             [(value)]="data.subject"
                             validationGroup="templateValidation"
@@ -83,21 +63,21 @@
                                 ></dxi-validation-rule>
                             </dx-validator>
                         </dx-text-box>
-                        <div #subjectTagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField === 'subject'" [style.right.px]="tooltipButtonRight" [style.top.px]="tooltipButtonTop">
+                        <div #subjectTagsButtonContainer class="tags-button-container" *ngIf="currentFocusedField === 'subject' && tagsList && tagsList.length > 0" >
                             <span #subjectTagsButton [class]="'tags-button subject-tags-button id' + uniqId">
                                 <a (click)="onTagButtonClick($event)">Add a Tag</a>
                             </span>
                         </div>
                         <dx-tooltip [width]="250"
                                     [position]="tooltipPosition" 
-                                    [visible]="isTagsTooltipVisible && currentFocusedField === 'subject'"
+                                    [visible]="isTagsTooltipVisible && currentFocusedField === 'subject' && tagsList && tagsList.length > 0"
                                     [target]="'.subject-tags-button.id' + uniqId">
-                            <div *dxTemplate="let data of 'content'" class="tags-container">
+                           <div *dxTemplate="let data of 'content'" class="tags-container">
                                 <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
-                                <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
+                                <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="params.tagsList"
                                     [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
                                     <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
-                                     [class]="{disabled: !getTagValue(data)}">
+                                        [class]="{disabled: !templateEditMode && !getTagValue(data)}">
                                         {{ getTagText(data) }}
                                     </div>
                                 </dx-list>
@@ -110,7 +90,7 @@
                     <div class="input-with-tag-container">
                         <dx-text-box
                             name="previewText"
-                            width="calc(100% - 120px)"
+                            width="calc(100% - 10px)"
                             placeholder=""
                             [(value)]="data.previewText"
                             validationGroup="templateValidation"
@@ -118,14 +98,14 @@
                             (onFocusOut)="onFieldBlur('previewText', $event)"
                         >
                         </dx-text-box>
-                        <div #previewTagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField === 'previewText'" [style.right.px]="tooltipButtonRight" [style.top.px]="tooltipButtonTop">
+                        <div #previewTagsButtonContainer class="tags-button-container" *ngIf="currentFocusedField === 'previewText' && tagsList && tagsList.length > 0">
                             <span #previewTagsButton [class]="'tags-button preview-tags-button id' + uniqId">
                                 <a (click)="onTagButtonClick($event)">Add a Tag</a>
                             </span>
                         </div>
                         <dx-tooltip [width]="250"
                                     [position]="tooltipPosition" 
-                                    [visible]="isTagsTooltipVisible && currentFocusedField === 'previewText'"
+                                    [visible]="isTagsTooltipVisible && currentFocusedField === 'previewText' && tagsList && tagsList.length > 0"
                                     [target]="'.preview-tags-button.id' + uniqId">
                             <div *dxTemplate="let data of 'content'" class="tags-container">
                                 <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
@@ -151,14 +131,14 @@
                         (click)="onCKEditorClick($event)"
                     >
                     </ckeditor>
-                    <div #tagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField === 'ckeditor'" [style.right.px]="tooltipButtonRight" [style.top.px]="tooltipButtonTop">
+                    <div #tagsButtonContainer class="tags-button-container" *ngIf="currentFocusedField === 'ckeditor' && tagsList && tagsList.length > 0" >
                         <span #tagsButton [class]="'tags-button ckeditor-tags-button id' + uniqId">
                             <a (click)="onTagButtonClick($event)">Add a Tag</a>
                         </span>
                     </div>
                     <dx-tooltip [width]="250"
                                 [position]="tooltipPosition" 
-                                [visible]="isTagsTooltipVisible && currentFocusedField === 'ckeditor'"
+                                [visible]="isTagsTooltipVisible && currentFocusedField === 'ckeditor' && tagsList && tagsList.length > 0"
                                 [target]="'.ckeditor-tags-button.id' + uniqId">
                         <div *dxTemplate="let data of 'content'" class="tags-container">
                             <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>

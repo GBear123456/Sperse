@@ -164,7 +164,7 @@
                     background: #00A8ED;
                     width: 185px;
                     color: white;
-                    padding: 10px 30px;
+                    padding: 10px 4px;
                     border-radius: 10px;
                     cursor: pointer;
                     &:focus {
@@ -1580,8 +1580,8 @@
     display: grid !important;
     grid-template-columns: 11fr 4fr !important;
     .header {
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: 3fr 1fr;
         align-items: center;
         gap: 20px;
         width: 100%;
@@ -1620,7 +1620,6 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: flex-end;
-            width: 50%;
             margin-top: 40px;
         }
 
@@ -2342,6 +2341,12 @@ input.dx-texteditor-input {
     }
 }
 @media screen and (max-width: 768px) {
+    ::ng-deep .mat-dialog-header {
+        .header {
+            grid-template-columns: 1fr 1fr !important;
+        }
+
+    }
     .email-sub-txt {
         width: 100px;
         font-size: 13px;
