@@ -263,7 +263,7 @@
                                         <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
                                             [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
                                             <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
-                                             [class]="{disabled: !templateEditMode && !getTagValue(data)}">
+                                             [class]="{disabled:  !getTagValue(data)}">
                                                 {{ getTagText(data) }}
                                             </div>
                                         </dx-list>
@@ -296,7 +296,7 @@
                                         <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
                                             [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
                                             <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
-                                             [class]="{disabled: !templateEditMode && !getTagValue(data)}">
+                                             [class]="{disabled:  !getTagValue(data)}">
                                                 {{ getTagText(data) }}
                                             </div>
                                         </dx-list>
@@ -331,7 +331,7 @@
                                         <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
                                             [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
                                             <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
-                                             [class]="{disabled: !templateEditMode && !getTagValue(data)}">
+                                             [class]="{disabled:  !getTagValue(data)}">
                                                 {{ getTagText(data) }}
                                             </div>
                                         </dx-list>
@@ -711,7 +711,7 @@
                     </div>  -->
             </div>
         </div>
-        <!-- <div class="bank-decode-wrapper" *ngIf="!templateEditMode && false">
+        <!-- <div class="bank-decode-wrapper" *ngIf=" false">
             <bank-code-decode [content]="data.body" [source]="'CRMEmail'" (onDecodeStart)="startLoading()"
                 (onDecodeFinish)="finishLoading()"></bank-code-decode>
         </div> -->

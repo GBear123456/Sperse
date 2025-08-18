@@ -1052,15 +1052,11 @@ export class CreateMailTemplateModalComponent implements OnInit, AfterViewInit {
     }
 
     onTagClick(event: any) {
-        if (this.templateEditMode) {
-            if (event.itemData == EmailTags.SenderCompanyLogo)
-                this.insertImageElement("#" + event.itemData + "#");
-            else this.addTextTag(event.itemData);
-        } else {
-            let value = this.getTagValue(event.itemData);
-            
-            if (value) {
-                if (event.itemData == EmailTags.SenderCompanyLogo) {
+        
+        let value = this.getTagValue(event.itemData);
+        
+        if (value) {
+            if (event.itemData == EmailTags.SenderCompanyLogo) {
                     if (value.startsWith('http') || value.startsWith('data:')) {
                         this.insertImageElement(value);
                     } else {
@@ -1080,7 +1076,7 @@ export class CreateMailTemplateModalComponent implements OnInit, AfterViewInit {
                     }
                 }
             }
-        }
+        
 
         this.invalidate();
         this.isTagsTooltipVisible = false;
@@ -1231,7 +1227,6 @@ export class CreateMailTemplateModalComponent implements OnInit, AfterViewInit {
                         // Update the selection to be after the inserted tag
                         range.collapse(false);
                         selection.removeAllRanges();
-                        selection.addRange(range);
                         
                         // Focus the editor
                         this.ckEditor.focus();
