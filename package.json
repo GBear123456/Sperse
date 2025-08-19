@@ -138,6 +138,7 @@
     "ngx-zendesk-webwidget": "^3.0.1",
     "number-to-words": "^1.2.4",
     "odata-query": "^5.0.0",
+    "openai": "^5.10.2",
     "parse-address": "^0.0.10",
     "parse-full-name": "^1.2.3",
     "pluralize": "^8.0.0",
