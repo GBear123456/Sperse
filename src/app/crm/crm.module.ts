@@ -45,6 +45,10 @@ import { DxChartModule, DxFileManagerModule } from 'devextreme-angular';
 import { DxPieChartModule } from 'devextreme-angular';
 import { FileUploadModule } from 'ng2-file-upload';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
+import { NgxFileDropModule } from 'ngx-file-drop';
+import { CKEditorModule } from 'ckeditor4-angular';
+
+
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
@@ -206,6 +210,8 @@ import { LocationNetworkCardComponent } from './traffic-stats/lead-conversion-jo
 import { DeviceSessionPanelComponent } from './traffic-stats/lead-conversion-journey/components/device-session-panel/device-session-panel.component';
 import { CustomFieldsTrackingComponent } from './traffic-stats/lead-conversion-journey/components/custom-fields-tracking/custom-fields-tracking.component';
 import { UrlAgentPanelComponent } from './traffic-stats/lead-conversion-journey/components/url-agent-panel/url-agent-panel.component';
+import {CreateMailTemplateModalComponent} from './shared/create-mail-template-modal/create-mail-template-modal.component'
+
 
 @NgModule({
   imports: [
@@ -279,6 +285,7 @@ import { UrlAgentPanelComponent } from './traffic-stats/lead-conversion-journey/
     LeftMenuModule,
     ZapierModule,
     EditTenantModule,
+    CKEditorModule,
     LucideAngularModule.pick({
       House,
       Users,
@@ -330,6 +337,7 @@ import { UrlAgentPanelComponent } from './traffic-stats/lead-conversion-journey/
       ArrowLeft,
       ArrowRight,
     }),
+    NgxFileDropModule
   ],
   declarations: [
     ClientsComponent,
@@ -399,6 +407,7 @@ import { UrlAgentPanelComponent } from './traffic-stats/lead-conversion-journey/
     DeviceSessionPanelComponent,
     CustomFieldsTrackingComponent,
     UrlAgentPanelComponent,
+    CreateMailTemplateModalComponent
   ],
   providers: [
     ImportServiceProxy,
