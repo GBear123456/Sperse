@@ -999,16 +999,16 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
                     
                     // Position button near the cursor with some offset
                     cursorX = 8;
-                    cursorY = 15; // Center vertically
+                    cursorY = 10; // Center vertically
                 } else {
                     // Fallback: position near the right edge
                     cursorX = 8;
-                    cursorY = 15;
+                    cursorY = 10;
                 }
             } catch (error) {
                 // Fallback: position near the right edge
                 cursorX =8;
-                cursorY =  15;
+                cursorY =  10;
             }
             
             this.tooltipButtonRight = cursorX;
