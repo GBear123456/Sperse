@@ -1,21 +1,23 @@
 :host {
-    ::ng-deep .form-control-feedback {
-        color: #f4516c !important;
-    }
+  ::ng-deep .form-control-feedback {
+    color: var(--danger-color) !important;
+  }
 
-    .content {
-        height: calc(~"100vh - 80px");
-    }
+  .content {
+    height: calc(~'100vh - 80px');
+  }
 
-    ::ng-deep dx-select-box, ::ng-deep dx-text-box {
-        .dx-placeholder, input {
-            font-size: 15px;
-        }
+  ::ng-deep dx-select-box,
+  ::ng-deep dx-text-box {
+    .dx-placeholder,
+    input {
+      font-size: 15px;
     }
+  }
 
-    .custom-reg-date {
-        .edit {
-            margin-left: 5px;
-        }
+  .custom-reg-date {
+    .edit {
+      margin-left: 5px;
     }
+  }
 }

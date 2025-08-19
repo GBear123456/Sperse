@@ -1,0 +1,60 @@
+<div class="min-h-screen p-4 bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-wrap justify-between">
+            <app-conversion-tracking-header></app-conversion-tracking-header>
+            <app-traffic-stats-filters
+                searchPlaceholder="Search affilate codes..."
+            ></app-traffic-stats-filters>
+        </div>
+        <app-conversion-tracking-metrics></app-conversion-tracking-metrics>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            <div
+                class="rounded-xl text-card-foreground border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-top-affiliates></app-top-affiliates>
+            </div>
+            <div
+                class="rounded-xl text-card-foreground border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-conversion-share-chart></app-conversion-share-chart>
+            </div>
+            <div
+                class="rounded-xl text-card-foreground border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-visits-trend-chart></app-visits-trend-chart>
+            </div>
+            <div
+                class="rounded-xl text-card-foreground border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-hourly-traffic-heatmap></app-hourly-traffic-heatmap>
+            </div>
+            <div
+                class="rounded-xl text-card-foreground border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-monthly-revenue-chart></app-monthly-revenue-chart>
+            </div>
+            <div
+                class="rounded-xl text-card-foreground border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-conversion-trends-chart></app-conversion-trends-chart>
+            </div>
+            <div
+                class="rounded-xl text-card-foreground border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-traffic-conversions-chart></app-traffic-conversions-chart>
+            </div>
+            <div
+                class="rounded-xl text-card-foreground border bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+            >
+                <app-top-affiliate-performance></app-top-affiliate-performance>
+            </div>
+        </div>
+        <app-key-metrics-panel></app-key-metrics-panel>
+    </div>
+    <div class="mt-8 text-center">
+        <p class="text-sm text-gray-500">
+            Conversion tacking • Real-time data • Last updated:
+            {{ currentDateTime }}
+        </p>
+    </div>
+</div>

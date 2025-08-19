@@ -1,343 +1,344 @@
 .lists-tooltip-container {
-    font-size: 15px;
-    height: 100%;
-    position: relative;
+  font-size: 15px;
+  height: 100%;
+  position: relative;
 
-    .actions {
-        min-width: 150px;
-        text-align: left;
-        white-space: nowrap;
+  .actions {
+    min-width: 150px;
+    text-align: left;
+    white-space: nowrap;
 
-        .apply {
-            display: inline;
-        }
+    .apply {
+      display: inline;
+    }
+  }
+
+  .title {
+    float: left;
+    font-size: 18px;
+    font-weight: 500;
+    padding-top: 5px;
+  }
+
+  .filter-apply,
+  .filter-clear {
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.7;
+    letter-spacing: 0.3px;
+    color: var(--primary-color);
+    padding: 5px;
+    float: right;
+
+    &:hover {
+      color: var(--info-color);
     }
 
-    .title {
-        float: left;
-        font-size: 18px;
-        font-weight: 500;
-        padding-top: 5px;
+    &.disabled {
+      color: var(--muted-color);
+      cursor: unset;
+      pointer-events: none;
+    }
+  }
+
+  .custom-search {
+    width: 100%;
+    z-index: 10;
+
+    ::ng-deep dx-text-box {
+      &.dx-show-clear-button .dx-icon-clear {
+        display: block;
+      }
+
+      .dx-placeholder {
+        font-weight: 400;
+        left: 34px;
+      }
+
+      .dx-texteditor-input {
+        padding-left: 34px;
+      }
+
+      .dx-texteditor-container {
+        &::before {
+          content: '\f027';
+          font: 18px/1 DXIcons;
+          position: absolute;
+          top: 50%;
+          margin-top: -17px;
+          width: 34px;
+          height: 34px;
+          background-position: 8px 8px;
+          background-size: 18px 18px;
+          padding: 8px;
+          text-align: center;
+          line-height: 18px;
+          color: var(--muted-color);
+        }
+      }
+    }
+  }
+
+  ::ng-deep dx-list {
+    height: auto;
+    &.highlightSelected .dx-item.dx-list-item-selected,
+    &.highlightSelected .dx-item.filtered {
+      background-color: var(--menu-hover-bg);
     }
 
-    .filter-apply, .filter-clear {
-        cursor: pointer;
-        font-size: 14px;
-        line-height: 1.7;
-        letter-spacing: 0.3px;
-        color: #00AEEF;
-        padding: 5px;
-        float: right;
+    &.disableHindmost {
+      .dx-item {
+        &:first-child,
+        &:last-child {
+          pointer-events: none;
+          cursor: default;
 
-        &:hover {
-            color: lighten(#00AEEF, 20%);
-        }
-
-        &.disabled {
-            color: #999;
-            cursor: unset;
-            pointer-events: none;
-        }
-    }
-
-    .custom-search {
-        width: 100%;
-        z-index: 10;
-
-        ::ng-deep dx-text-box {
-            &.dx-show-clear-button .dx-icon-clear {
-                display: block;
-            }
-
-            .dx-placeholder {
-                font-weight: 400;
-                left: 34px;
-            }
-
-            .dx-texteditor-input {
-                padding-left: 34px;
-            }
-
-            .dx-texteditor-container {
-
-                &::before {
-                    content: "\f027";
-                    font: 18px/1 DXIcons;
-                    position: absolute;
-                    top: 50%;
-                    margin-top: -17px;
-                    width: 34px;
-                    height: 34px;
-                    background-position: 8px 8px;
-                    background-size: 18px 18px;
-                    padding: 8px;
-                    text-align: center;
-                    line-height: 18px;
-                    color: #999999;
-                }
-            }
-        }
-    }
-
-    ::ng-deep dx-list {
-        height: auto;
-        &.highlightSelected .dx-item.dx-list-item-selected,
-        &.highlightSelected .dx-item.filtered {
-            background-color: #effafe;
-        }
-
-        &.disableHindmost {
-            .dx-item {
-                &:first-child,
-                &:last-child {
-                    pointer-events: none;
-                    cursor: default;
-
-                    &.dx-state-hover {
-                        background-color: transparent;
-                    }
-
-                    &.dx-state-focused {
-                        background-color: initial;
-                        color: #333;
-                    }
-
-                    .item-row:before {
-                        background: #ccc !important;
-                    }
-                }
-            }
-        }
-
-        &.funnel-styling {
-            .dx-list-item {
-                .item-row[id] {
-                    position: relative;
-                    border: 0;
-                    padding-left: 15px;
-
-                    &::before {
-                        width: 15px;
-                        height: 15px;
-                        content: '';
-                        display: block;
-                        position: absolute;
-                        left: -5px;
-                        top: 45%;
-                        transform: translateY(-50%);
-                        border-radius: 50%;
-                    }
-                }
-
-                .item-row[index="-5"],
-                .item-row[index="negative"] {
-                    &::before {
-                        background: #b52626;
-                    }
-                }
-
-                .item-row[index="-4"] {
-                    &::before {
-                        background: #f02929;
-                    }
-                }
-
-                .item-row[index="-3"] {
-                    &::before {
-                        background: #f05b29;
-                    }
-                }
-
-                .item-row[index="-2"] {
-                    &::before {
-                        background: #f4ae55;
-                    }
-                }
-
-                .item-row[index="-1"] {
-                    &::before {
-                        background: #f7d15e;
-                    }
-                }
-
-                .item-row[index="0"] {
-                    &::before {
-                        background: #00aeef;
-                    }
-                }
-
-                .item-row[index="1"] {
-                    &::before {
-                        background: #b6cf5e;
-                    }
-                }
-
-                .item-row[index="2"] {
-                    &::before {
-                        background: #86c45d;
-                    }
-                }
-
-                .item-row[index="3"] {
-                    &::before {
-                        background: #46aa6e;
-                    }
-                }
-
-                .item-row[index="4"] {
-                    &::before {
-                        background: #0e9360;
-                    }
-                }
-
-                .item-row[index="5"],
-                .item-row[index="positive"] {
-                    &::before {
-                        background: #005f3b;
-                    }
-                }
-            }
-        }
-
-        .dx-list-item {
-            .item-row {
-                display: flex;
-                justify-content: space-between;
-
-                a.dx-link-filter {
-                    width: 30px;
-                    background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
-                    cursor: pointer;
-                }
-
-                .head-line {
-                    font-size: 15px;
-                    font-weight: 500;
-                }
-
-                .suffix {
-                    font-style: italic;
-                    font-size: 15px;
-                }
-
-                .addition-line {
-                    font-size: 12px;
-                }
-
-                .item-text {
-                    width: 100%;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-            }
-
-            &.dx-state-hover {
-                background-color: #f5f5f5;
-            }
-
-            [filtered=true] {
-                background-color: #effafe !important;
-            }
-
-            .dx-list-select-radiobutton.dx-radiobutton.dx-widget {
-                margin: 0;
-            }
-
-            .dx-state-focused {
-                background-color: #FFF;
-                color: #333;
-            }
-        }
-
-        &.unclicked .dx-list-item {
+          &.dx-state-hover {
             background-color: transparent;
-            cursor: default;
-            color: #333;
+          }
 
-            &.dx-state-focused {
-                color: #333333;
-                background-color: transparent;
-            }
+          &.dx-state-focused {
+            background-color: initial;
+            color: var(--text-color);
+          }
+
+          .item-row:before {
+            background: var(--muted-color) !important;
+          }
         }
-
-        .dx-placeholder {
-            font-weight: 400;
-        }
-
-        .dx-item-content {
-            text-align: left;
-        }
-
-        .dx-icon-clear {
-            right: 0;
-        }
-
-        .bottomInput {
-            display: none;
-        }
-
-        .dx-list-item-selected {
-            .bottomInput {
-                display: flex;
-                align-items: center;
-
-                .input-wrap {
-                    input {
-                        padding: 5px 6px;
-                        margin-right: 10px;
-                    }
-                }
-
-                .dx-button {
-                    border: 0;
-                    margin: 0 0 0 4px;
-
-                    .dx-button-content {
-                        padding: 4px;
-                    }
-
-                    &[aria-label="check"] {
-                        .dx-icon {
-                            color: #24c26c;
-                        }
-                    }
-
-                    &[aria-label="close"] {
-                        .dx-icon {
-                            color: #ed501a;
-                        }
-                    }
-                }
-            }
-        }
-
-        &[accessKey="attributes-select"] {
-            .dx-list-item-before-bag.dx-list-select-checkbox-container {
-                vertical-align: top;
-
-                .dx-checkbox-container {
-                    position: relative;
-                    top: 10px;
-                }
-            }
-        }
+      }
     }
 
-    ::ng-deep dx-tabs {
-        height: 40px;
-        overflow: hidden;
-        .dx-tabs-nav-button-left .dx-button-content {
-            border-right: 1px solid #ddd;
+    &.funnel-styling {
+      .dx-list-item {
+        .item-row[id] {
+          position: relative;
+          border: 0;
+          padding-left: 15px;
+
+          &::before {
+            width: 15px;
+            height: 15px;
+            content: '';
+            display: block;
+            position: absolute;
+            left: -5px;
+            top: 45%;
+            transform: translateY(-50%);
+            border-radius: 50%;
+          }
         }
-        .dx-tabs-nav-button-right .dx-button-content {
-            border-left: 1px solid #ddd;
+
+        .item-row[index='-5'],
+        .item-row[index='negative'] {
+          &::before {
+            background: var(--danger-color);
+          }
         }
-        .dx-tab {
-            border: none;
-            background-color: transparent;
-            &::after {
-                border: none;
-            }
+
+        .item-row[index='-4'] {
+          &::before {
+            background: var(--danger-color-bg, #f02929);
+          }
         }
+
+        .item-row[index='-3'] {
+          &::before {
+            background: var(--warning-color);
+          }
+        }
+
+        .item-row[index='-2'] {
+          &::before {
+            background: var(--warning-color-bg, #f4ae55);
+          }
+        }
+
+        .item-row[index='-1'] {
+          &::before {
+            background: var(--warning-color-light, #f7d15e);
+          }
+        }
+
+        .item-row[index='0'] {
+          &::before {
+            background: var(--primary-color);
+          }
+        }
+
+        .item-row[index='1'] {
+          &::before {
+            background: var(--success-color-bg, #b6cf5e);
+          }
+        }
+
+        .item-row[index='2'] {
+          &::before {
+            background: var(--success-color);
+          }
+        }
+
+        .item-row[index='3'] {
+          &::before {
+            background: var(--success-color-dark, #46aa6e);
+          }
+        }
+
+        .item-row[index='4'] {
+          &::before {
+            background: var(--success-color-darker, #0e9360);
+          }
+        }
+
+        .item-row[index='5'],
+        .item-row[index='positive'] {
+          &::before {
+            background: var(--success-color-darkest, #005f3b);
+          }
+        }
+      }
     }
+
+    .dx-list-item {
+      .item-row {
+        display: flex;
+        justify-content: space-between;
+
+        a.dx-link-filter {
+          width: 30px;
+          background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
+          cursor: pointer;
+        }
+
+        .head-line {
+          font-size: 15px;
+          font-weight: 500;
+        }
+
+        .suffix {
+          font-style: italic;
+          font-size: 15px;
+        }
+
+        .addition-line {
+          font-size: 12px;
+        }
+
+        .item-text {
+          width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+
+      &.dx-state-hover {
+        background-color: var(--hover-bg);
+      }
+
+      [filtered='true'] {
+        background-color: var(--menu-hover-bg) !important;
+        color: var(--muted-color) !important;
+      }
+
+      .dx-list-select-radiobutton.dx-radiobutton.dx-widget {
+        margin: 0;
+      }
+
+      .dx-state-focused {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+      }
+    }
+
+    &.unclicked .dx-list-item {
+      background-color: transparent;
+      cursor: default;
+      color: var(--text-color);
+
+      &.dx-state-focused {
+        color: var(--text-color);
+        background-color: transparent;
+      }
+    }
+
+    .dx-placeholder {
+      font-weight: 400;
+    }
+
+    .dx-item-content {
+      text-align: left;
+    }
+
+    .dx-icon-clear {
+      right: 0;
+    }
+
+    .bottomInput {
+      display: none;
+    }
+
+    .dx-list-item-selected {
+      .bottomInput {
+        display: flex;
+        align-items: center;
+
+        .input-wrap {
+          input {
+            padding: 5px 6px;
+            margin-right: 10px;
+          }
+        }
+
+        .dx-button {
+          border: 0;
+          margin: 0 0 0 4px;
+
+          .dx-button-content {
+            padding: 4px;
+          }
+
+          &[aria-label='check'] {
+            .dx-icon {
+              color: var(--success-color);
+            }
+          }
+
+          &[aria-label='close'] {
+            .dx-icon {
+              color: var(--danger-color);
+            }
+          }
+        }
+      }
+    }
+
+    &[accessKey='attributes-select'] {
+      .dx-list-item-before-bag.dx-list-select-checkbox-container {
+        vertical-align: top;
+
+        .dx-checkbox-container {
+          position: relative;
+          top: 10px;
+        }
+      }
+    }
+  }
+
+  ::ng-deep dx-tabs {
+    height: 40px;
+    overflow: hidden;
+    .dx-tabs-nav-button-left .dx-button-content {
+      border-right: 1px solid var(--border-color);
+    }
+    .dx-tabs-nav-button-right .dx-button-content {
+      border-left: 1px solid var(--border-color);
+    }
+    .dx-tab {
+      border: none;
+      background-color: transparent;
+      &::after {
+        border: none;
+      }
+    }
+  }
 }

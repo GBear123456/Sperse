@@ -63,7 +63,6 @@ import { LanguagesComponent } from './languages/languages.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { CreateOrEditRoleModalComponent } from './roles/create-or-edit-role-modal/create-or-edit-role-modal.component';
 import { RolesComponent } from './roles/roles.component';
-import { SettingsComponent } from './settings/settings/settings.component';
 import { EditionComboComponent } from './shared/edition-combo.component';
 import { FeaturesModule } from '@app/shared/features/features.module';
 import { PermissionComboComponent } from './shared/permission-combo.component';
@@ -76,40 +75,7 @@ import { UiCustomizationComponent } from './ui-customization/ui-customization.co
 import { ImpersonationService } from './users/impersonation.service';
 import { UsersComponent } from './users/users.component';
 import { JobsComponent } from './jobs/jobs.component';
-import { GeneralSettingsComponent } from './settings/shared/general-settings/general-settings.component';
-import { DomainSettingsComponent } from './settings/shared/domain-settings/domain-settings.component';
-import { StripeSettingsComponent } from './settings/shared/stripe-settings/stripe-settings.component';
-import { PaypalSettingsComponent } from './settings/shared/paypal-settings/paypal-settings.component';
-import { PaymentProvidersSettingsComponent } from './settings/shared/payment-provider-settings/payment-providers-settings.component';
-import { AddSpreedlyProviderDialog } from './settings/shared/payment-provider-settings/add-spreedly-provider-dialog/add-spreedly-provider-dialog.component';
-import { FacebookSettingsComponent } from './settings/shared/facebook-settings/facebook-settings.component';
-import { GoogleSettingsComponent } from './settings/shared/google-settings/google-settings.component';
-import { LinkedInSettingsComponent } from './settings/shared/linkedin-settings/linkedin-settings.component';
-import { DiscordSettingsComponent } from './settings/shared/discord-settings/discord-settings.component';
-import { MailchimpSettingsComponent } from './settings/shared/mailchimp-settings/mailchimp-settings.component';
-import { ExternalAuthInfoComponent } from './settings/shared/helpers/external-auth-info/external-auth-info.component';
-import { YTelSettingsComponent } from './settings/shared/ytel-settings/ytel-settings.component';
-import { TrackingToolsSettingsComponent } from './settings/shared/tracking-tools-settings/tracking-tools-settings.component';
-import { TrackingToolSectionComponent } from './settings/shared/tracking-tools-settings/tracking-tool-section/tracking-tool-section.component';
-import { BugsnagSettingsComponent } from './settings/shared/bugsnag-settings/bugsnag-settings.component';
-import { SecuritySettingsComponent } from './settings/shared/security-settings/security-settings.component';
-import { EmailSettingsComponent } from './settings/shared/email-settings/email-settings.component';
-import { UserManagementSettingsComponent } from './settings/shared/user-management-settings/user-management-settings.component';
-import { TenantManagementSettingsComponent } from './settings/shared/tenant-management-settings/tenant-management-settings.component';
-import { AppearanceSettingsComponent } from './settings/shared/appearance-settings/appearance-settings.component';
-import { MemberPortalSettingsComponent } from './settings/shared/member-portal-settings/member-portal-settings.component';
-import { SendgridSettingsComponent } from './settings/shared/sendgrid-settings/sendgrid-settings.component';
-import { GmailSettingsComponent } from './settings/shared/gmail-settings/gmail-settings.component';
-import { KlaviyoSettingsComponent } from './settings/shared/klaviyo-settings/klaviyo-settings.component';
-import { EpcvipLinkSettingsComponent } from './settings/shared/epcvip-link-settings/epcvip-link-settings.component';
-import { EpcvipEmailSettingsComponent } from './settings/shared/epcvip-email-settings/epcvip-email-settings.component';
-import { IAgeSettingsComponent } from './settings/shared/iage-settings/iage-settings.component';
-import { OngageSettingsComponent } from './settings/shared/ongage-settings/ongage-settings.component';
-import { RapidSettingsComponent } from './settings/shared/rapid-settings/rapid-settings.component';
-import { SalesTalkSettingsComponent } from './settings/shared/sales-talk-settings/sales-talk-settings.component';
 import { AIIntegrationSettingsComponent } from './settings/shared/ai-integration-settings/ai-integration-settings.component';
-import { UploadSSLCertificateModalComponent } from './settings/shared/domain-settings/modals/upload-ssl-cert-modal.component';
-import { AddOrEditSSLBindingModalComponent } from './settings/shared/domain-settings/modals/add-or-edit-ssl-binding-modal.component';
 import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 import { ContactsModule } from '../crm/contacts/contacts.module';
@@ -196,47 +162,14 @@ import { CurrencySelectorModule } from '@shared/common/currency-selector/currenc
         CreateOrEditRoleModalComponent,
         AuditLogsComponent,
         AuditLogDetailModalComponent,
-        SettingsComponent,
         MaintenanceComponent,
         JobsComponent,
         LanguagesComponent,
         LanguageTextsComponent,
         CreateOrEditLanguageModalComponent,
         EditTextModalComponent,
-        GeneralSettingsComponent,
-        DomainSettingsComponent,
-        StripeSettingsComponent,
-        PaypalSettingsComponent,
-        PaymentProvidersSettingsComponent,
-        AddSpreedlyProviderDialog,
-        FacebookSettingsComponent,
-        GoogleSettingsComponent,
-        LinkedInSettingsComponent,
-        DiscordSettingsComponent,
-        MailchimpSettingsComponent,
-        ExternalAuthInfoComponent,
-        YTelSettingsComponent,
-        TrackingToolsSettingsComponent,
-        TrackingToolSectionComponent,
-        BugsnagSettingsComponent,
-        SecuritySettingsComponent,
-        EmailSettingsComponent,
-        UserManagementSettingsComponent,
-        TenantManagementSettingsComponent,
-        AppearanceSettingsComponent,
-        MemberPortalSettingsComponent,
-        SendgridSettingsComponent,
-        GmailSettingsComponent,
-        KlaviyoSettingsComponent,
-        EpcvipLinkSettingsComponent,
-        EpcvipEmailSettingsComponent,
-        IAgeSettingsComponent,
-        OngageSettingsComponent,
-        RapidSettingsComponent,
-        SalesTalkSettingsComponent,
+
         AIIntegrationSettingsComponent,
-        UploadSSLCertificateModalComponent,
-        AddOrEditSSLBindingModalComponent,
         UiCustomizationComponent,
         EditionsComponent,
         CreateOrEditEditionModalComponent,
@@ -256,9 +189,6 @@ import { CurrencySelectorModule } from '@shared/common/currency-selector/currenc
         CreateOrEditLanguageModalComponent,
         CreateOrEditRoleModalComponent,
         AuditLogDetailModalComponent,
-        UploadSSLCertificateModalComponent,
-        AddOrEditSSLBindingModalComponent,
-        AddSpreedlyProviderDialog
     ],
     exports: [
         StorageChangeDialog

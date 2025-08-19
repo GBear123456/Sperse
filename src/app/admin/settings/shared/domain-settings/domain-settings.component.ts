@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, ViewChild, Injector, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, Injector, ChangeDetectionStrategy } from '@angular/core';
 
 /** Third party imports */
 import { throwError, Observable, of } from 'rxjs';
@@ -7,6 +7,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { MatDialog } from '@angular/material/dialog';
 import { switchMap, finalize, map, tap } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
+import { Grid, House, Plus, Shield, ShoppingCart, Users } from 'lucide-angular';
 
 /** Application imports */
 import {
@@ -34,6 +35,13 @@ import { AppService } from '@app/app.service';
     providers: [TenantSslCertificateServiceProxy, TenantHostServiceProxy, ContactLandingPageServiceProxy]
 })
 export class DomainSettingsComponent extends SettingsComponentBase implements OnInit {
+    readonly HouseIcon = House;
+    readonly GridIcon = Grid;
+    readonly UsersIcon = Users;
+    readonly CartIcon = ShoppingCart;
+    readonly ShieldIcon = Shield;
+    readonly PlusIcon = Plus;
+
     @ViewChild('customDomainsGrid') customDomainsGrid: DxDataGridComponent;
     @ViewChild('sslGrid') sslGrid: DxDataGridComponent;
     public sslGridDataSource: TenantSslCertificateInfo[];

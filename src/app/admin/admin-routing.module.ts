@@ -6,7 +6,6 @@ import { LanguageTextsComponent } from './languages/language-texts/language-text
 import { LanguagesComponent } from './languages/languages.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { RolesComponent } from './roles/roles.component';
-import { SettingsComponent } from './settings/settings/settings.component';
 import { TenantsComponent } from './tenants/tenants.component';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
 import { UsersComponent } from './users/users.component';
@@ -26,7 +25,11 @@ import { TenantLandingPagesComponent } from './tenant-landing-pages/tenant-landi
                     { path: 'auditLogs', component: AuditLogsComponent, data: { permission: AppPermissions.AdministrationAuditLogs } },
                     { path: 'maintenance', component: MaintenanceComponent, data: { permission: AppPermissions.AdministrationHostMaintenance } },
                     { path: 'jobs', component: JobsComponent, data: { permission: AppPermissions.AdministrationHangfireDashboard } },
-                    { path: 'settings', component: SettingsComponent, data: { permission: AppPermissions.AdministrationTenantSettings + '|' + AppPermissions.AdministrationHostSettings + '|' + AppPermissions.AdministrationTenantHosts } },
+                    { 
+                        path: 'settings', 
+                        loadChildren: () => import('app/admin/settings/settings/settings.module').then(m => m.SettingModule), 
+                        data: { permission: AppPermissions.AdministrationTenantSettings + '|' + AppPermissions.AdministrationHostSettings + '|' + AppPermissions.AdministrationTenantHosts } 
+                    },
                     { path: 'languages', component: LanguagesComponent, data: { permission: AppPermissions.AdministrationLanguages } },
                     { path: 'languages/:name/texts', component: LanguageTextsComponent, data: { permission: AppPermissions.AdministrationLanguagesChangeTexts } },
                     { 

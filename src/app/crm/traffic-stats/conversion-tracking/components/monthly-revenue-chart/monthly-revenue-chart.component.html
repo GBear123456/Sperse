@@ -1,0 +1,35 @@
+<div class="bg-[#fff] p-6 rounded-xl dark:bg-gray-800">
+  <!-- Header -->
+  <div class="mb-2">
+    <h2
+      class="text-xl font-semibold text-green-600 flex items-center space-x-2 dark:text-green-400"
+    >
+      <lucide-icon
+        name="dollar-sign"
+        class="w-5 h-5 text-green-600 dark:text-green-400"
+      ></lucide-icon>
+      <span>Monthly Revenue</span>
+    </h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400">Revenue trends over the past 12 months</p>
+  </div>
+
+  <!-- Chart -->
+  <dx-chart
+    [dataSource]="revenueData"
+    [commonSeriesSettings]="{
+      argumentField: 'month',
+      valueField: 'value',
+      type: 'line',
+      point: { visible: true, size: 6 }
+    }"
+    [tooltip]="{ enabled: true, format: { type: 'currency', precision: 0 } }"
+    [legend]="{ visible: false }"
+    [valueAxis]="{ label: { customizeText: formatCurrency } }"
+    palette="Soft"
+    class="w-full h-72"
+  >
+    <dxi-series name="Revenue"></dxi-series>
+
+    <!-- Removed dxo-argument-axis to avoid linter errors -->
+  </dx-chart>
+</div>

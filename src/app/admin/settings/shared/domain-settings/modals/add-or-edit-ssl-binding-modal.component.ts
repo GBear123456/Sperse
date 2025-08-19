@@ -2,8 +2,6 @@
 import {
     Component,
     ViewChild,
-    Output,
-    EventEmitter,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Inject
@@ -16,6 +14,7 @@ import { finalize, map, tap } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
+import { NotifyService } from 'abp-ng2-module';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -24,7 +23,6 @@ import {
     TenantSslCertificateInfo, UpdateSslBindingInput,
     CheckHostNameDnsMappingInput, TenantHostType, HostingType
 } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from 'abp-ng2-module';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';

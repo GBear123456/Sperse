@@ -8,7 +8,7 @@ import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { SettingsComponent } from '../settings/settings.component';
+import { SettingsNewComponent } from '../settings/settings.new.component';
 
 @Directive()
 export abstract class SettingsComponentBase extends AppComponentBase implements OnDestroy {
@@ -17,7 +17,7 @@ export abstract class SettingsComponentBase extends AppComponentBase implements 
 
     abstract getSaveObs(): Observable<any>;
 
-    private parentComponent: SettingsComponent;
+    private parentComponent: SettingsNewComponent;
     private _destroy: Subject<any> = new Subject();
 
     constructor(
@@ -26,7 +26,7 @@ export abstract class SettingsComponentBase extends AppComponentBase implements 
         super(_injector);
         this.changeDetection = _injector.get(ChangeDetectorRef);
         this.clipboardService = _injector.get(ClipboardService);
-        this.parentComponent = _injector.get(SettingsComponent);
+        this.parentComponent = _injector.get(SettingsNewComponent);
 
         this.parentComponent.saveSubject.pipe(
             takeUntil(this._destroy.asObservable())

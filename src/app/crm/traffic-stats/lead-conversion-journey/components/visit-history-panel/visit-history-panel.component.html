@@ -1,0 +1,93 @@
+<div
+  class="bg-[#fff] p-4 rounded-xl border border-gray-200 dark:bg-gray-800 dark:border-gray-700 w-full"
+>
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-2">
+    <h2
+      class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400 leading-none flex items-center space-x-2"
+    >
+      <lucide-icon
+        name="history"
+        class="w-5 h-5 text-purple-700 dark:text-purple-400"
+      ></lucide-icon>
+      <span>Visit History</span>
+    </h2>
+    <div
+      class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 ml-auto"
+    >
+      {{ visits.length }} visits
+    </div>
+  </div>
+
+  <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Previous visits and session details</p>
+
+  <!-- Scrollable Visit List -->
+  <div class="max-h-[450px] overflow-y-auto pr-1">
+    <div
+      *ngFor="let visit of visits"
+      class="group p-3 transition-colors border-b last:border-b-0 cursor-pointer relative bg-green-50 dark:bg-green-800 hover:bg-green-100 dark:hover:bg-green-900 border-green-200 dark:border-green-700"
+    >
+      <!-- Row 1: Visit ID and Date -->
+      <div
+        class="flex justify-between items-center text-sm text-gray-700 dark:text-gray-300 font-semibold mb-3"
+      >
+        <div class="flex items-center space-x-2">
+          <div
+            class="inline-flex items-center border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-gray-100 dark:bg-gray-700 text-xs rounded-md text-gray-900 dark:text-white"
+          >
+            #{{ visit.id }}
+          </div>
+          <span class="text-sm font-medium text-gray-900 dark:text-white">
+            {{ visit.date }}
+            <span class="text-xs text-gray-500 dark:text-gray-400">{{ visit.time }}</span>
+          </span>
+        </div>
+        <lucide-icon
+          name="eye"
+          class="h-4 w-4 text-gray-900 dark:text-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
+        ></lucide-icon>
+      </div>
+
+      <!-- Row 2: Duration, Pages, IP + Flag -->
+      <div class="flex items-center justify-between space-x-4 mb-3">
+        <div class="flex items-center space-x-3">
+          <div class="flex items-center space-x-1">
+            <lucide-icon
+              name="clock"
+              class="w-3 h-3 text-purple-600 dark:text-purple-400"
+            ></lucide-icon>
+            <span class="text-xs text-gray-700 dark:text-gray-300">{{ visit.duration }}</span>
+          </div>
+          <div class="flex items-center space-x-1">
+            <lucide-icon
+              name="mouse-pointer"
+              class="w-3 h-3 text-purple-600 dark:text-purple-400"
+            ></lucide-icon>
+            <span class="text-xs text-gray-700 dark:text-gray-300">{{ visit.pages }} pages</span>
+          </div>
+        </div>
+        <div class="flex space-x-2">
+          <lucide-icon
+            name="smartphone"
+            class="w-4 h-4 text-gray-600 dark:text-gray-300"
+          ></lucide-icon>
+          <lucide-icon name="globe" class="w-4 h-4 text-gray-600 dark:text-gray-300"></lucide-icon>
+        </div>
+      </div>
+
+      <!-- Row 3: Device + User -->
+      <div class="flex justify-between items-center text-xs text-gray-600 dark:text-gray-400">
+        <div class="flex items-center space-x-1">
+          <img
+            *ngIf="visit.countryCode"
+            [src]="getFlagUrl(visit.countryCode)"
+            class="w-4 h-3 border rounded-sm"
+            alt="flag"
+          />
+          <span>{{ visit.ip }}</span>
+        </div>
+        <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">{{ visit.user }}</a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,231 +1,276 @@
+@import '../../../styles/theme.less';
 :host {
-    left: 60px;
-    position: relative;
-    display: block;
-    // width: calc(~"100vw - 60px"); width for layout, need add it and fix some styles later
-    ::ng-deep header {
-        height: 82px;
-        background: #f3f7fa;
-        display: flex;
-        border-bottom: 1px solid #e5e9ec;
-        box-shadow: -2px 2px 6px 0 rgba(0, 0, 0, 0.1);
-        align-items: center;
-        justify-content: space-between;
+  left: 60px;
+  position: relative;
+  display: block;
+  // width: calc(~"100vw - 60px"); width for layout, need add it and fix some styles later
 
-        mat-progress-spinner {
-            width: 44px;
-            height: 44px;
-            margin: 5px 0 5px 0;
-
-            ::ng-deep path {
-                stroke: #00aeef;
-            }
-        }
-    }
+  &.modern {
+    left: 0px;
 
     .close-button {
-        top: 22px;
-    }
+      top: 15px;
+      left: 15px;
+      z-index: 2;
+      box-shadow: none;
+      border: 1px solid var(--divider-color);
+      border-radius: 10px;
 
-    .box-shadow-wrapper {
-        box-shadow: -2px 2px 6px 0 rgba(0, 0, 0, 0.1);
-    }
-
-    ::ng-deep mat-sidenav {
-        width: 288px;
-        border-right: none;
-        padding-bottom: 10px;
-        overflow-y: hidden;
-
-        .mat-tab-nav-bar {
-            border: none;
-            padding-top: 12px;
-        }
-
-        .mat-drawer-inner-container {
-            overflow: hidden;
-        }
-    }
-
-    ::ng-deep .mat-sidenav-content {
-        border-left: 1px solid #e5e9ec;
-        border-right: 1px solid #e5e9ec;
-        background: #fff;
-        margin-right: inherit !important;
-    }
-
-    mat-sidenav.right_sidenav {
-        width: 400px;
-        padding-top: 0;
-
-        ::ng-deep .mat-tab-label {
-            text-transform: uppercase;
-            font-size: 12px;
-            line-height: 1.67;
-            letter-spacing: 0.5px;
-            text-align: left;
-            font-weight: 300;
-            color: #7f8790;
-            opacity: 1;
-        }
-
-        ::ng-deep .mat-tab-label-active {
-            border-bottom: none;
-            background: #fff;
-            font-weight: 500;
-            color: #202b35;
-        }
+      &::before,
+      &::after {
+        top: 13px;
+        left: 19px;
+        height: 13px;
+        width: 1.5px;
+        background-color: var(--text-color);
+      }
     }
 
     mat-sidenav-container {
-        width: calc(~"100% - 60px");
-        height: calc(~"100vh - 220px");
+      width: 100%;
+      height: calc(~'100vh - 75px');
+
+      .nav-icon {
+        // margin: 14px 9px auto 0;
+        margin: 5px 9px 0px 9px;
+      }
     }
 
-    ::ng-deep .mat-tab-links {
-        flex-direction: column;
-
-        .mat-tab-disabled {
-            opacity: 0.3 !important;
-            pointer-events: none;
-        }
+    ::ng-deep .mat-sidenav-content {
+      border-left: none;
     }
 
-    ::ng-deep i.icons {
-        background-repeat: no-repeat;
+    ::ng-deep .mat-sidenav-content ng-component {
+      height: 100%;
+    }
 
-        &.email {
-            background-image: url("../../../assets/common/icons/email.svg");
-        }
-
-        &.phone {
-            &.type-H, &.type-P, &.type-C, &.type-U {
-                background-image: url("../../../assets/common/icons/phone.svg");
-            }
-
-            &.type-W {
-                background-image: url("../../../assets/common/icons/phone-work.svg");
-            }
-
-            &.type-M {
-                background-image: url("../../../assets/common/icons/phone-mobile.svg");
-            }
-
-            &.type-F {
-                background-image: url("../../../assets/common/icons/fax.svg");
-                background-size: 30px;
-                background-position: -5px !important;
-            }
-        }
+    ::ng-deep .mat-tab-nav-bar {
+      // padding-bottom: 50px;
+      .mat-tab-header-pagination {
+        display: none !important;
+      }
     }
 
     .mat-tab-link {
-        font-family: var(--app-font-family);
-        justify-content: left;
-        text-decoration: none;
-        text-align: left;
-        padding-left: 18px;
-        margin-left: 14px;
-        font-weight: 300;
-        color: #424c56;
-        font-size: 14px;
-        line-height: 1.71;
-        letter-spacing: 0.6px;
-        opacity: 1;
-        height: 45px;
-        width: auto;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 27px;
+      text-align: left;
+      border: 0px;
+      border-radius: 10px;
+      margin-right: 15px;
+      display: flex;
+      align-items: center;
+      align-content: center;
+      &.active {
+        color: #fff;
+        background-color: var(--primary-color);
+        path {
+          stroke: #fff;
+        }
+      }
     }
 
-    .mat-tab-link.active {
-        color: #212c36;
-        font-weight: 500;
-        border-left: 3px solid #00aeef;
+    .main-content {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .close-button {
+    top: 22px;
+  }
+
+  .box-shadow-wrapper {
+    box-shadow: -2px 2px 6px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  ::ng-deep mat-sidenav {
+    width: 288px;
+    border-right: none;
+    padding-bottom: 10px;
+    overflow-y: hidden;
+    background: var(--background-color);
+
+    .mat-tab-nav-bar {
+      // border: none;
+      // padding-top: 12px;
+      border: none;
     }
 
-    ::ng-deep h1 {
-        margin-top: 5px;
+    .mat-drawer-inner-container {
+      overflow: hidden;
     }
+    .mat-tab-header-pagination-controls-enabled {
+      border: none;
+    }
+  }
 
-    ::ng-deep h3.lab {
-        color: #b1b6bc;
-        text-transform: uppercase;
-        font-size: 16px;
-    }
+  ::ng-deep .mat-sidenav-content {
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    background: var(--background-color);
+    margin-right: inherit !important;
+  }
 
-    ::ng-deep ul {
-        padding-left: 0;
-    }
-
-    ::ng-deep li {
-        list-style-type: none;
-    }
-
-    ::ng-deep .mat-ink-bar {
-        background-color: #00aeef !important;
-    }
-
-    ::ng-deep .green {
-        color: #37d749;
-    }
-
-    ::ng-deep .red {
-        color: #ff6066;
-    }
-
-    ::ng-deep .grey {
-        color: #424c56;
-    }
+  mat-sidenav.right_sidenav {
+    width: 400px;
+    padding-top: 0;
+    border-left: none;
 
     ::ng-deep .mat-tab-label {
-        border-bottom: none;
+      text-transform: uppercase;
+      font-size: 12px;
+      line-height: 1.67;
+      letter-spacing: 0.5px;
+      text-align: left;
+      font-weight: 300;
+      color: var(--muted-color);
+      opacity: 1;
     }
 
     ::ng-deep .mat-tab-label-active {
-        border-bottom: none;
+      border-bottom: none;
+      background: var(--card-bg);
+      font-weight: 500;
+      color: var(--text-color);
+    }
+  }
+
+  mat-sidenav-container {
+    width: calc(~'100% - 60px');
+    height: calc(~'100vh - 220px');
+  }
+
+  ::ng-deep .mat-tab-links {
+    flex-direction: column;
+
+    .mat-tab-disabled {
+      opacity: 0.3 !important;
+      pointer-events: none;
+    }
+  }
+
+  ::ng-deep i.icons {
+    background-repeat: no-repeat;
+
+    &.email {
+      background-image: url('../../../assets/common/icons/email.svg');
     }
 
-    ::ng-deep .mat-tab-body-wrapper {
-        padding: 20px;
-        position: static !important;
-    }
+    &.phone {
+      &.type-H,
+      &.type-P,
+      &.type-C,
+      &.type-U {
+        background-image: url('../../../assets/common/icons/phone.svg');
+      }
 
-    ::ng-deep .mat-tab-body {
+      ::ng-deep .mat-tab-body {
         position: absolute !important;
-        margin-top: 60px;
-    }
+        margin-top: 130px;
+      }
 
-    ::ng-deep .mat-tab-body-content {
-        overflow: hidden !important;
-    }
+      &.type-M {
+        background-image: url('../../../assets/common/icons/phone-mobile.svg');
+      }
 
-    ::ng-deep mat-dialog-container {
-        overflow: visible !important;
-        min-width: 400px;
+      &.type-F {
+        background-image: url('../../../assets/common/icons/fax.svg');
+        background-size: 30px;
+        background-position: -5px !important;
+      }
     }
+  }
 
-    ::ng-deep .mat-dialog-content {
-        max-height: initial;
-    }
+  .mat-tab-link {
+    font-family: var(--app-font-family);
+    justify-content: left;
+    text-decoration: none;
+    text-align: left;
+    padding-left: 18px;
+    margin-left: 14px;
+    font-weight: 300;
+    color: var(--text-color);
+    font-size: 14px;
+    line-height: 1.71;
+    letter-spacing: 0.6px;
+    opacity: 1;
+    height: 45px;
+    width: auto;
+  }
 
-    ::ng-deep .cdk-global-scrollblock {
-        overflow-y: hidden;
-    }
+  .mat-tab-link.active {
+    color: var(--headline-title-color);
+    font-weight: 500;
+    border-left: 3px solid var(--primary-color);
+  }
 
-    ::ng-deep .button-clean-red {
-        position: absolute;
-        padding: 0;
-        margin-left: 0;
-        width: 70px;
-        left: 0;
-    }
+  ::ng-deep h1 {
+    margin-top: 5px;
+  }
 
-    ::ng-deep .main-content {
-        margin: 0;
-        width: 100%;
-        height: 100%;
-    }
+  ::ng-deep h3.lab {
+    color: var(--muted-color);
+    text-transform: uppercase;
+    font-size: 16px;
+  }
 
-    ::ng-deep .dx-scrollbar-vertical {
-        z-index: 1;
+  ::ng-deep ul {
+    padding-left: 0;
+  }
+
+  ::ng-deep li {
+    list-style-type: none;
+  }
+
+  ::ng-deep .mat-ink-bar {
+    background-color: var(--primary-color) !important;
+  }
+
+  ::ng-deep .green {
+    color: var(--success-color);
+  }
+
+  ::ng-deep .red {
+    color: var(--danger-color);
+  }
+
+  ::ng-deep .grey {
+    color: var(--text-color);
+  }
+
+  ::ng-deep mat-dialog-container {
+    overflow: visible !important;
+    min-width: 400px;
+  }
+
+  ::ng-deep .mat-dialog-content {
+    max-height: initial;
+  }
+
+  ::ng-deep .cdk-global-scrollblock {
+    overflow-y: hidden;
+  }
+
+  ::ng-deep .button-clean-red {
+    position: absolute;
+    padding: 0;
+    margin-left: 0;
+    width: 70px;
+    left: 0;
+  }
+
+  ::ng-deep .main-content {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    &.right-side-opened {
+      width: calc(100% - 400px);
     }
+  }
+
+  ::ng-deep .dx-scrollbar-vertical {
+    z-index: 1;
+  }
 }

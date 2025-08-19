@@ -1,261 +1,265 @@
 .tags-tooltip-container {
-    font-size: 15px;
-    width: 300px!important;
-    height: 400px!important;
-    overflow: hidden;
+  font-size: 15px;
+  width: 300px !important;
+  height: 400px !important;
+  overflow: hidden;
 
-    .title {
+  .title {
+    float: left;
+    font-size: 18px;
+    font-weight: 500;
+    padding-top: 5px;
+  }
+
+  .filter-apply,
+  .filter-clear {
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.21;
+    letter-spacing: 0.3px;
+    color: var(--primary-color);
+    padding: 10px 5px;
+    float: right;
+
+    &:hover {
+      color: var(--info-color);
+    }
+
+    &.disabled {
+      color: var(--muted-color);
+      cursor: unset;
+      pointer-events: none;
+    }
+  }
+
+  .add-button {
+    position: absolute;
+    right: 27px;
+    top: 57px;
+    font-size: 24px;
+    z-index: 1;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--primary-color);
+  }
+
+  ::ng-deep dx-tree-list {
+    /* Customize radio container */
+    .dx-editor-cell {
+      .radio-container {
+        .checkmark {
+          left: 23px;
+        }
+      }
+    }
+
+    .radio-container {
+      height: 20px;
+      display: block;
+      position: relative;
+      margin-bottom: 0px;
+      cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+
+      &:hover input ~ .checkmark {
+        background-color: var(--muted-color);
+      }
+
+      input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+
+        &:checked ~ .checkmark {
+          background-color: var(--info-color);
+        }
+        &:checked ~ .checkmark:after {
+          display: block;
+        }
+      }
+
+      .checkmark {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 20px;
+        width: 20px;
+        background-color: var(--card-bg);
+        border-radius: 50%;
+        &:after {
+          content: '';
+          position: absolute;
+          display: none;
+          top: 7px;
+          left: 7px;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: var(--background-color);
+        }
+      }
+    }
+  }
+
+  ::ng-deep .dx-widget {
+    .dx-placeholder {
+      font-weight: 400;
+    }
+    .dx-state-focused {
+      .dx-placeholder {
+        top: -15px !important;
+      }
+    }
+    .dx-item-content {
+      text-align: left;
+
+      .dx-searchbox {
+        width: 100%;
+      }
+    }
+    .dx-icon-clear {
+      right: 0px;
+    }
+    .dx-treelist-text-content {
+      line-height: 1.7;
+      padding-left: 10px;
+    }
+
+    .dx-toolbar-after {
+      padding-left: 0px !important;
+      width: 300px;
+      left: 0px;
+
+      .dx-treelist-addrow-button {
+        border: none !important;
+        i {
+          color: var(--primary-color);
+        }
+      }
+
+      .dx-toolbar-button {
         float: left;
-        font-size: 18px;
-        font-weight: 500;
-        padding-top: 5px;
-    }
-
-    .filter-apply, .filter-clear {
-        cursor: pointer;
-        font-size: 14px;
-        line-height: 1.21;
-        letter-spacing: 0.3px;
-        color: #00AEEF;
-        padding: 10px 5px;
-        float: right;
-
-        &:hover {
-            color: lighten(#00AEEF, 20%);
+        &:first-child {
+          margin-top: 4px;
         }
-
-        &.disabled {
-            color: #999;
-            cursor: unset;
-            pointer-events: none;
-        }
-    }
-
-    .add-button {
-        position: absolute;
-        right: 27px;
-        top: 57px;
-        font-size: 24px;
-        z-index: 1;
-        font-weight: 500;
-        cursor: pointer;
-        color: #00AEEF;
-    }
-
-    ::ng-deep dx-tree-list {
-        /* Customize radio container */
-        .dx-editor-cell {
-            .radio-container {
-                .checkmark {
-                    left: 23px;
-                }
-            }
-        }
-
-        .radio-container {
-            height: 20px;
-            display: block;
-            position: relative;
-            margin-bottom: 0px;
-            cursor: pointer;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-
-            &:hover input ~ .checkmark {
-                background-color: #ccc;
-            }
-
-            input {
-                position: absolute;
-                opacity: 0;
-                cursor: pointer;
-                height: 0;
-                width: 0;
-
-                &:checked ~ .checkmark {
-                    background-color: #2196F3;
-                }
-                &:checked ~ .checkmark:after {
-                   display: block;
-                }
-
-            }
-
-            .checkmark {
-                position: absolute;
-                top: 0;
-                right: 0;
-                height: 20px;
-                width: 20px;
-                background-color: #eee;
-                border-radius: 50%;
-                &:after {
-                    content: "";
-                    position: absolute;
-                    display: none;
-                    top: 7px;
-                    left: 7px;
-                    width: 6px;
-                    height: 6px;
-                    border-radius: 50%;
-                    background: white;
-                }
-            }
-        }
-    }
-
-    ::ng-deep .dx-widget {
-        .dx-placeholder {
-            font-weight: 400;
-        }
-        .dx-state-focused {
-            .dx-placeholder {
-                top: -15px!important;
-            }
-        }
-        .dx-item-content {
-            text-align: left;
-
-            .dx-searchbox {
-                width: 100%;
-            }
-        }
-        .dx-icon-clear {
-            right: 0px;
-        }
-        .dx-treelist-text-content {
-            line-height: 1.7;
-            padding-left: 10px;
-        }
-
-        .dx-toolbar-after {
-            padding-left: 0px!important;
-            width: 300px;
-            left: 0px;
-
-            .dx-treelist-addrow-button {
-                border: none!important;
-                i {
-                    color: #00AEEF;
-                }
-            }
-
-            .dx-toolbar-button {
-                float: left;
-                &:first-child {
-                    margin-top: 4px;
-                }
-            }
-            .dx-treelist-search-panel {
-                margin: 0px!important;
-                input {
-                    border: none;
-                }
-            }
-
-            .dx-item.dx-toolbar-item.dx-toolbar-button, .dx-texteditor-input {
-                width: 100%;
-            }
-
-            .dx-treelist-search-panel.dx-textbox.dx-texteditor.dx-searchbox.dx-show-clear-button.dx-widget {
-                width: 100% !important;
-            }
-        }
-
-        tr.dx-edit-row .dx-texteditor-input {
-            font-weight: 400;
-            border-bottom: none !important;
-        }
-
-        td.dx-command-edit {
-            text-overflow: unset;
-            text-align: right !important;
-
-            a.dx-link {
-                width: 22px;
-                display: inline-block;
-                color: transparent !important;
-
-                &.dx-link-add, &.dx-link-edit, &.dx-link-delete {
-                    display: none;
-                }
-
-                &.dx-link-delete {
-                    background: url('../../../../../assets/common/icons/delete-icon.svg') no-repeat center;
-                }
-
-                &.dx-link-save {
-                    background: url('../../../../../assets/common/icons/check.svg') no-repeat center;
-                }
-
-                &.dx-link-cancel {
-                    background: url('../../../../../assets/common/icons/cancel.svg') no-repeat center;
-                }
-
-                &.dx-link-filter {
-                    background: url('../../../../../assets/common/icons/filter.svg') no-repeat center;
-                }
-            }
-        }
-
+      }
+      .dx-treelist-search-panel {
+        margin: 0px !important;
         input {
-            font-size: 15px;
-            font-weight: 300;
-            line-height: 1.67;
-            letter-spacing: 0.3px;
-            color: #424c56;
+          border: none;
         }
+      }
 
-        tr {
-            &.filtered {
-                background-color: #effafe;
-            }
+      .dx-item.dx-toolbar-item.dx-toolbar-button,
+      .dx-texteditor-input {
+        width: 100%;
+      }
 
-            &.dx-edit-row {
-                .dx-link-filter {
-                    display: none!important;
-                }
-                .dx-link-delete {
-                    display: inline-block!important;
-                }
-            }
-        }
+      .dx-treelist-search-panel.dx-textbox.dx-texteditor.dx-searchbox.dx-show-clear-button.dx-widget {
+        width: 100% !important;
+      }
     }
 
-    .add-new-item-mode {
-        ::ng-deep .dx-widget {
-            .dx-item-content {
-                .dx-searchbox {
-                    width: 260px;
-                }
-            }
+    tr.dx-edit-row .dx-texteditor-input {
+      font-weight: 400;
+      border-bottom: none !important;
+    }
 
-            .dx-toolbar-after {
-                .dx-item.dx-toolbar-item.dx-toolbar-button.dx-toolbar-item-auto-hide.dx-toolbar-text-auto-hide {
-                    float: right !important;
-                }
+    td.dx-command-edit {
+      text-overflow: unset;
+      text-align: right !important;
 
-                .dx-item.dx-toolbar-item.dx-toolbar-button, .dx-texteditor-input {
-                    width: auto;
-                }
+      a.dx-link {
+        width: 22px;
+        display: inline-block;
+        color: transparent !important;
 
-                .dx-treelist-search-panel.dx-textbox.dx-texteditor.dx-searchbox.dx-show-clear-button.dx-widget {
-                    width: 260px !important;
-                }
-            }
+        &.dx-link-add,
+        &.dx-link-edit,
+        &.dx-link-delete {
+          display: none;
         }
+
+        &.dx-link-delete {
+          background: url('../../../../../assets/common/icons/delete-icon.svg') no-repeat center;
+        }
+
+        &.dx-link-save {
+          background: url('../../../../../assets/common/icons/check.svg') no-repeat center;
+        }
+
+        &.dx-link-cancel {
+          background: url('../../../../../assets/common/icons/cancel.svg') no-repeat center;
+        }
+
+        &.dx-link-filter {
+          background: url('../../../../../assets/common/icons/filter.svg') no-repeat center;
+        }
+      }
     }
 
-    .add-button {
-        position: absolute;
-        right: 27px;
-        top: 57px;
-        font-size: 24px;
-        z-index: 1;
-        font-weight: 500;
-        cursor: pointer;
-        color: #00AEEF;
+    input {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.67;
+      letter-spacing: 0.3px;
+      color: var(--text-color);
     }
+
+    tr {
+      &.filtered {
+        background-color: var(--menu-hover-bg);
+      }
+
+      &.dx-edit-row {
+        .dx-link-filter {
+          display: none !important;
+        }
+        .dx-link-delete {
+          display: inline-block !important;
+        }
+      }
+    }
+  }
+
+  .add-new-item-mode {
+    ::ng-deep .dx-widget {
+      .dx-item-content {
+        .dx-searchbox {
+          width: 260px;
+        }
+      }
+
+      .dx-toolbar-after {
+        .dx-item.dx-toolbar-item.dx-toolbar-button.dx-toolbar-item-auto-hide.dx-toolbar-text-auto-hide {
+          float: right !important;
+        }
+
+        .dx-item.dx-toolbar-item.dx-toolbar-button,
+        .dx-texteditor-input {
+          width: auto;
+        }
+
+        .dx-treelist-search-panel.dx-textbox.dx-texteditor.dx-searchbox.dx-show-clear-button.dx-widget {
+          width: 260px !important;
+        }
+      }
+    }
+  }
+
+  .add-button {
+    position: absolute;
+    right: 27px;
+    top: 57px;
+    font-size: 24px;
+    z-index: 1;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--primary-color);
+  }
 }

@@ -14,6 +14,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatMenuModule } from '@angular/material/menu';
+import {MatCardModule} from '@angular/material/card';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatIconModule} from '@angular/material/icon';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
@@ -170,7 +173,8 @@ import { PaymentsInfoService } from '@app/shared/common/payments-info/payments-i
 import { ContactPaymentsInfoService } from './payment-information/payments-info.service';
 import { CurrencySelectorModule } from '../../../shared/common/currency-selector/currency-selector.module';
 import { DeliverableFeatureFieldsComponent } from './subscriptions/add-subscription-dialog/create-product-dialog/deliverable-feature-fields/deliverable-feature-fields.component'
-import { CommunityAccessSelectorComponent } from './subscriptions/add-subscription-dialog/create-product-dialog/community-access/community-access.component'
+import { CommunityAccessSelectorComponent } from './subscriptions/add-subscription-dialog/create-product-dialog/community-access/community-access.component';
+import { TaskInfoComponent } from './task-info/task-info.component'
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -246,7 +250,8 @@ import { ReactiveFormsModule } from '@angular/forms';
         ResellerActivityComponent,
         CreateActivityDialogComponent,
         DeliverableFeatureFieldsComponent,
-        CommunityAccessSelectorComponent
+        CommunityAccessSelectorComponent,
+        TaskInfoComponent
     ],
     imports: [
         FormsModule,
@@ -263,6 +268,9 @@ import { ReactiveFormsModule } from '@angular/forms';
         MatProgressSpinnerModule,
         MatSelectModule,
         MatInputModule,
+        MatIconModule,
+        MatChipsModule,
+        MatCardModule,
         ContactsRoutingModule,
         DxContextMenuModule,
         DxSelectBoxModule,

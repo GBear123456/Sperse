@@ -1,0 +1,23 @@
+<div class="settings-item-container">
+  <div class="settings-item-content">
+    <div class="settings-item-label-container">
+      <div class="settings-item-label-content">
+        <div class="settings-item-label-wrapper">
+          <lucide-angular [img]="icon" [style.color]="color"></lucide-angular>
+          <h3>{{label}}</h3>
+          <button 
+            mat-raised-button
+            [matTooltip]="tooltipDescription"
+            matTooltipPosition="above"
+            class="settings-item-label-info"
+          >
+            <lucide-angular [img]="InfoIcon"></lucide-angular>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-item-main-container">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

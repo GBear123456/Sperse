@@ -1,0 +1,70 @@
+<div class="bg-[#fff] dark:bg-gray-800 rounded-lg h-full">
+  <div class="flex flex-col space-y-1.5 p-4 sm:p-6 pb-2 sm:pb-3">
+    <h3
+      class="text-xl sm:text-2xl font-semibold leading-none tracking-tight flex flex-wrap items-center space-x-2 text-orange-700 dark:text-orange-400"
+    >
+      <lucide-icon
+        name="monitor"
+        class="h-4 w-4 sm:h-5 sm:w-5 text-orange-700 dark:text-orange-400"
+      ></lucide-icon>
+      <span>Top Devices</span>
+      <div
+        class="inline-flex items-center rounded-full border px-2 py-0.5 sm:px-2.5 text-[10px] sm:text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white ml-auto"
+      >
+        13,293 total
+      </div>
+    </h3>
+    <p class="text-xs sm:text-sm text-muted-foreground dark:text-gray-400">
+      Device types used by visitors
+    </p>
+  </div>
+  <div class="p-4 sm:p-6 pt-0 space-y-3 sm:space-y-4">
+    <div
+      *ngFor="let device of devices"
+      class="p-2 sm:p-3 rounded-lg border bg-gray-50 dark:bg-gray-700 dark:border-gray-600 border-gray-200"
+    >
+      <div
+        class="flex items-center justify-between mb-2 flex-col sm:flex-row sm:items-center gap-2 sm:gap-0"
+      >
+        <div class="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto">
+          <ng-container [ngSwitch]="device.icon">
+            <lucide-icon
+              *ngSwitchCase="'monitor'"
+              name="monitor"
+              class="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 dark:text-orange-400"
+            ></lucide-icon>
+            <lucide-icon
+              *ngSwitchCase="'smartphone'"
+              name="smartphone"
+              class="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 dark:text-orange-400"
+            ></lucide-icon>
+            <lucide-icon
+              *ngSwitchCase="'tablet'"
+              name="tablet"
+              class="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 dark:text-orange-400"
+            ></lucide-icon>
+          </ng-container>
+          <span class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
+            {{ device.name }}
+          </span>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <span class="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">{{
+            device.count
+          }}</span>
+          <span class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400"
+            >({{ device.percentage }})</span
+          >
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-1">
+        <div
+          *ngFor="let browser of device.browsers"
+          class="inline-flex items-center rounded-full border px-2 py-0.5 sm:px-2.5 text-[10px] sm:text-xs font-semibold transition-colors text-foreground bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border-gray-200 dark:border-gray-700"
+        >
+          {{ browser }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

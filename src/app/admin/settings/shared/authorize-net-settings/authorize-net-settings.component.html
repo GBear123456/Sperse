@@ -1,0 +1,292 @@
+<div class="header">
+    <img src="assets/common/icons/authorize-net.svg" />
+    <mat-slide-toggle
+        class="header-toggle"
+        [(ngModel)]="isPaymentsEnabled"
+        labelPosition="before"
+    >
+        {{ l('Enable Authorize.Net Payments For Checkout') }}
+    </mat-slide-toggle>
+</div>
+
+<mat-tab-group 
+    animationDuration="10ms" 
+    disableRipple="true" 
+    class="main-tabs"
+>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <lucide-angular [img]="HouseIcon"></lucide-angular>
+            <span>{{l('Introduction')}}</span>
+        </ng-template>
+
+        <div class="introduction-tab">
+            <div class="left-side">
+                <div class="payment-header">
+                    <h2>Accept Authorize.Net Payments</h2>
+                    <p>Connect with a trusted payment gateway that offers advanced fraud protection and secure payment processing</p>
+                </div>
+
+                <div class="content-wrapper">
+                    <div class="content-info">
+                        <div class="content-shield">
+                            <lucide-angular [img]="ShieldIcon"></lucide-angular>
+                        </div>
+                        <h3>Secure payment processing</h3>
+                        <ul>
+                            <li>
+                                <div>•</div>
+                                <span class="title">PCI DSS Level 1 compliant</span>
+                            </li>
+                            <li>
+                                <div>•</div>
+                                <span class="title">Advanced Fraud Detection Suite</span>
+                            </li>
+                            <li>
+                                <div>•</div>
+                                <span class="title">Tokenized payment data for enhanced security</span>
+                            </li>
+                        </ul>
+
+                        <a class="base-link-button" target="_blank" href="https://stripe.com/resources/more/card-payments">
+                            Learn more about secure processing
+                            <lucide-angular [img]="ExternalIcon"></lucide-angular>
+                        </a>
+                    </div>
+                    
+                    <div class="content-invoice">
+                        <h3>Connect Authorize.Net to accept payments worldwide!</h3>
+                        <p>Enable these features once connected:</p>
+                        
+                        <ul>
+                            <li>
+                                <span class="check">✓</span>
+                                <span class="title">Advanced Fraud Detection Suite</span>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <span class="title">Customer Information Manager (CIM)</span>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <span class="title">Accept credit cards and eChecks</span>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <span class="title">Recurring billing</span>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <span class="title">Customer profiles and payment profiles</span>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <span class="title">Mobile point-of-sale solutions</span>
+                            </li>
+                        </ul>
+
+                        <button class="base-button" (click)="createConnectedAccount()">
+                            {{ l('Connect to Authorize.Net') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="faq-side">
+                <div class="faq-block-title">FAQ</div>
+                <cdk-accordion [multi]="true">
+                    <cdk-accordion-item
+                        *ngFor="let item of faqs; let index = index;"
+                        #accordionItem="cdkAccordionItem"
+                        class="accordion-item"
+                        role="button"
+                        tabindex="0"
+                        [attr.id]="'accordion-header-' + index"
+                        [attr.aria-expanded]="accordionItem.expanded"
+                        [attr.aria-controls]="'accordion-body-' + index"
+                    >
+                        <div class="accordion-item-header" (click)="accordionItem.toggle()">
+                            <span>{{ item.title }}</span>
+                            <lucide-angular [img]="ChevronIcon"></lucide-angular>
+                        </div>
+                        <div
+                            class="accordion-item-body"
+                            role="region"
+                            [style.display]="accordionItem.expanded ? '' : 'none'"
+                            [attr.id]="'accordion-body-' + index"
+                            [attr.aria-labelledby]="'accordion-header-' + index"
+                        >
+                            {{ item.content }}
+                        </div>
+                    </cdk-accordion-item>
+                </cdk-accordion>
+            </div>
+        </div>        
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <lucide-angular [img]="SettingsIcon"></lucide-angular>
+            <span>{{l('Api Settings')}}</span>
+        </ng-template>
+        <div class="settings-tab">
+            <div class="api-config">
+                <div class="settings-header">
+                    <h3>API Configuration</h3>
+                    <p>Configure your Authorize.Net API credentials</p>
+                </div>
+
+                <mat-tab-group
+                    animationDuration="10ms" 
+                    disableRipple="true" 
+                    class="child-tabs"
+                >
+                <mat-tab label="Sandbox (Test)">
+                    <div class="form-group">
+                        <label class="base-label">API Login ID</label>
+                        <input class="base-input" />
+                        <p class="base-hint">Found in your Authorize.Net merchant interface under API Credentials & Keys in Sandbox mode</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="base-label">Transaction Key</label>
+                        <input class="base-input" />
+                        <p class="base-hint">Keep this secure - found in your Authorize.Net merchant interface in Sandbox mode</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="base-label">Public Client Key</label>
+                        <input class="base-input" />
+                        <p class="base-hint">Required for Accept.js integration - found under Manage Public Client Key in Sandbox mode</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="base-label">Signature Key (Optional)</label>
+                        <input class="base-input" />
+                        <p class="base-hint">Optional - Used for additional security for webhooks in Sandbox mode</p>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Live (Production)">
+                    <div class="form-group">
+                        <label class="base-label">API Login ID</label>
+                        <input class="base-input" />
+                        <p class="base-hint">Found in your Authorize.Net merchant interface under API Credentials & Keys in Live mode</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="base-label">Transaction Key</label>
+                        <input class="base-input" />
+                        <p class="base-hint">Keep this secure - found in your Authorize.Net merchant interface in Live mode</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="base-label">Public Client Key</label>
+                        <input class="base-input" />
+                        <p class="base-hint">Required for Accept.js integration - found under Manage Public Client Key in Live mode</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="base-label">Signature Key (Optional)</label>
+                        <input class="base-input" />
+                        <p class="base-hint">Optional - Used for additional security for webhooks in Live mode</p>
+                    </div>
+                </mat-tab>
+                </mat-tab-group>
+            </div>
+
+            <div class="advanced-config">
+                <div class="settings-header">
+                    <h3>Advanced Configuration</h3>
+                    <p>Configure additional settings for your integration</p>
+                </div>
+
+                <h4>Payment Features</h4>
+                <div class="feature-wrapper">
+                    <div class="feature-config">
+                        <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                        <div class="feature-content">
+                            <p>Enable Customer Information Manager (CIM)</p>
+                            <span class="base-hint">Store customer payment profiles for faster checkout</span>
+                        </div>
+                    </div>
+                    <div class="feature-config">
+                        <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                        <div class="feature-content">
+                            <p>Enable Recurring Billing</p>
+                            <span class="base-hint">Process automated recurring transactions</span>
+                        </div>
+                    </div>
+                    <div class="feature-config">
+                        <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                        <div class="feature-content">
+                            <p>Enable Advanced Fraud Detection Suite</p>
+                            <span class="base-hint">Use additional security measures to detect fraudulent transactions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <lucide-angular [img]="TestTubeIcon"></lucide-angular>
+            <span>{{l('Test & Verify')}}</span>
+        </ng-template>
+        <div class="verify-tab">
+            <div class="settings-header">
+                <h3>Testing & Verification</h3>
+                <p>Verify your Authorize.Net integration is working correctly</p>
+            </div>
+
+            <div class="test-content">
+                <div class="card">
+                    <h4>Test Transaction</h4>
+                    <p>Run a test payment to ensure your Authorize.Net integration works correctly</p>
+                    <button class="base-button">
+                        <lucide-angular [img]="CreditCardIcon"></lucide-angular>
+                        <span>Test Payment</span>
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h4>Test Credentials</h4>
+                    <p>Use these test cards for sandbox testing:</p>
+                    <div class="transaction-list">
+                        <div class="transaction-card">
+                            <span>Successful Transaction:</span>
+                            <div class="transaction-details">
+                                <span>Card Number: 4111 1111 1111 1111</span>
+                                <span>Expiration: Any future date</span>
+                                <span>CVV: Any 3 digits</span>
+                            </div>
+                        </div>
+
+                        <div class="transaction-card">
+                            <span>Declined Transaction:</span>
+                            <div class="transaction-details">
+                                <span>Card Number: 4111 1111 1111 1102</span>
+                                <span>Expiration: Any future date</span>
+                                <span>CVV: Any 3 digits</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="test-guide">
+                <h4>Test Guide</h4>
+                <div class="test-guide-mode">
+                    <h5>Testing Authorize.Net in Sandbox Mode</h5>
+                    <ol>
+                        <li>Configure your Sandbox API credentials</li>
+                        <li>Use the "Test Payment" button to simulate a payment flow</li>
+                        <li>Check the transaction in your Authorize.Net sandbox account</li>
+                        <li>Test different card numbers to simulate various responses</li>
+                        <li>After successful testing, switch to production mode with your live credentials</li>
+                    </ol>
+                </div>
+
+                <div class="test-guide-alert">
+                    <lucide-angular [img]="InfoIcon"></lucide-angular>
+                    <div class="alert-content">
+                        <p>Important Security Reminder</p>
+                        <p>Never share your Transaction Key with anyone. Regularly rotate your Transaction Key for optimal security. Authorize.Net recommends rotating your key every 90 days.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>

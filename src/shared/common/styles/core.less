@@ -19,15 +19,15 @@
     }
 
     .swal-icon.swal-icon--error {
-        border: 5px solid #E7F9F9;
-        box-shadow: 0 0 20px 20px #F4FCFC;
+        border: 5px solid var(--hover-bg);
+        box-shadow: 0 0 20px 20px var(--card-bg);
 
         .swal-icon--error__x-mark {
             &:before {
                 content: '!';
                 font-family: serif;
                 font-size: 60px;
-                color: #8CD4F5;
+                color: var(--primary-color);
                 position: relative;
                 top: -5px;
             }
@@ -39,15 +39,15 @@
     }
 
     .swal-icon.swal-icon--warning {
-        border: 5px solid #E7F9F9;
-        box-shadow: 0 0 20px 20px #F4FCFC;
+        border: 5px solid var(--hover-bg);
+        box-shadow: 0 0 20px 20px var(--card-bg);
         animation: none !important;
 
         &:before {
             content: '!';
             font-family: serif;
             font-size: 60px;
-            color: #8CD4F5;
+            color: var(--primary-color);
             position: relative;
             top: -5px;
         }
@@ -59,30 +59,30 @@
     }
 
     .swal-title {
-        color: #8CD4F5;
+        color: var(--primary-color);
         font-size: 18px;
         font-weight: normal;
         white-space: pre-line;
     }
 
     .swal-button {
-        background-color: #00aeef;
-        color: #ffffff;
+        background-color: var(--primary-color);
+        color: var(--btn-primary-text);
         border-radius: 21px;
         padding: 10px 35px;
         box-shadow: none;
         transition: .2s;
 
         &:hover {
-            background: lighten(#00aeef, 15%);
+            background: var(--button-hover-bg);
         }
 
         &.swal-button--cancel {
-            color: #555;
-            background-color: #efefef;
+            color: var(--text-color);
+            background-color: var(--disabled-bg);
 
             &:hover {
-                background: #d7d7d7;
+                background: var(--border-color);
             }
         }
     }
@@ -95,7 +95,7 @@
         }
 
         input[type="checkbox"] + label {
-            color: rgba(0, 0, 0, 0.64);
+            color: var(--text-color);
             position: relative;
             padding-left: 26px;
             margin-bottom: 0;
@@ -114,7 +114,7 @@
             content: '';
             width: 20px;
             height: 20px;
-            border: 1px solid #DADEE1;
+            border: 1px solid var(--border-color);
             position: absolute;
             left: 0;
             top: 2px;
@@ -122,12 +122,12 @@
         }
 
         input[type="checkbox"]:hover + label:before {
-            border-color: #00aeef;
+            border-color: var(--primary-color);
         }
 
         input[type="checkbox"]:checked + label:before {
-            border-color: #00aeef;
-            background-color: #00aeef;
+            border-color: var(--primary-color);
+            background-color: var(--primary-color);
         }
 
         input[type="checkbox"]:disabled + label:before {
@@ -135,7 +135,7 @@
         }
 
         input[type="checkbox"]:checked + label:after {
-            border: 2px solid #fff;
+            border: 2px solid var(--btn-primary-text);
             left: 5px;
             top: 7px;
             width: 10px;
@@ -181,7 +181,7 @@
                 }
             }
             &:nth-child(2) span {
-                border-bottom: 1px solid #ddd;
+                border-bottom: 1px solid var(--border-color);
                 padding-bottom: 5px;
             }
             &:last-child span {
@@ -205,7 +205,7 @@
 
     &.light {
         margin-top: 20px;
-        border: 1px solid #dfdfdf;
+        border: 1px solid var(--border-color);
 
         > .portlet-title .inputs.inputs-full-width {
             display: block;
@@ -247,7 +247,7 @@
 }
 
 .form-group.form-md-line-input.has-error .form-control {
-    border-bottom-color: red;
+    border-bottom-color: var(--danger-color);
 }
 
 .form-group.form-md-line-input.has-error .help-block-info {
@@ -300,11 +300,11 @@
 /* Material Design form input angular validation colors */
 
 .form-group.form-md-line-input .form-control.ng-touched.ng-invalid {
-    border-bottom-color: red;
+    border-bottom-color: var(--danger-color);
 }
 
 .form-group.form-md-line-input .form-control.ng-touched.ng-invalid.edited:not([readonly]) ~ label:after {
-    background-color: red;
+    background-color: var(--danger-color);
 }
 
 .page-footer-inner {
@@ -380,16 +380,16 @@ dx-data-grid[accessKey="detailGrid"] {
 
     .modal-header {
         padding: 15px 25px;
-        background: #f3f7fa;
-        border-bottom: 1px solid #eaeef0;
+        background: var(--input-bg);
+        border-bottom: 1px solid var(--border-color);
         .control-buttons {
             float: right;
             margin-top: 0;
             margin-right: 20px;
             a,
             button {
-                background: #fff;
-                border: 1px solid #eaeef0;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
                 padding: 4px 5px 6px;
                 min-width: 55px;
                 text-align: center;
@@ -412,7 +412,7 @@ dx-data-grid[accessKey="detailGrid"] {
             line-height: 1.85;
             font-family: var(--app-font-family);
             flex: 1 auto;
-            color: #424c56;
+            color: var(--text-color);
         }
     }
 
@@ -427,7 +427,7 @@ dx-data-grid[accessKey="detailGrid"] {
             font-family: var(--app-font-family);
             font-weight: normal;
             font-size: 16px;
-            color: #424c56;
+            color: var(--text-color);
             margin-bottom: 5px;
             text-transform: uppercase;
             &.margin-bottom {
@@ -438,7 +438,7 @@ dx-data-grid[accessKey="detailGrid"] {
             margin-bottom: 16px;
         }
         strong {
-            color: #424c56;
+            color: var(--text-color);
         }
         hr {
             margin: 25px 0;
@@ -566,7 +566,7 @@ dx-data-grid[accessKey="detailGrid"] {
 .mat-tab-group.mat-primary .mat-tab-link:focus,
 .mat-tab-nav-bar.mat-primary .mat-tab-label:focus,
 .mat-tab-nav-bar.mat-primary .mat-tab-link:focus {
-    background: #fff;
+    background: var(--card-bg);
 }
 
 #cfo-intro,
@@ -597,7 +597,7 @@ dx-data-grid[accessKey="detailGrid"] {
 }
 
 .blockUI.blockOverlay {
-    background: #fff !important;
+    background: var(--card-bg) !important;
     z-index: 2!important;
 }
 
@@ -615,44 +615,44 @@ body > .blockUI.blockOverlay{
     -webkit-mask-size: 25px;
 }
 
-.star-growth {    
+.star-growth {
     background: url(../../../assets/common/icons/circles/growth.svg) no-repeat center;
     background-size: contain;
     -webkit-mask-image: none;
 }
 
-.star-challenge {    
+.star-challenge {
     background: url(../../../assets/common/icons/circles/challenge.svg) no-repeat center;
     background-size: contain;
     -webkit-mask-image: none;
 }
 
-.star-express {    
+.star-express {
     background: url(../../../assets/common/icons/circles/express.svg) no-repeat center;
     background-size: contain;
     -webkit-mask-image: none;
 }
 
-.star-mastery {    
+.star-mastery {
     background: url(../../../assets/common/icons/circles/mastery.svg) no-repeat center;
     background-size: contain;
     -webkit-mask-image: none;
 }
 
-.star-pinnacle {    
+.star-pinnacle {
     background: url(../../../assets/common/icons/circles/pinnacle.svg) no-repeat center;
     background-size: contain;
     -webkit-mask-image: none;
 }
 
-.star-managers {    
+.star-managers {
     background: url(../../../assets/common/icons/circles/managers.svg) no-repeat center;
     background-size: contain;
     -webkit-mask-image: none;
 }
 
-.star-default {    
-    background: #686F76;
+.star-default {
+    background: var(--muted-color);
 }
 
 .star-green {
@@ -746,9 +746,9 @@ body > .blockUI.blockOverlay{
 }
 
 .star-unknown {
-    background-color: #fff;
-    color: #333333;
-    border: 1px solid #333333!important;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--text-color)!important;
     &::before {
         content: '?'
     }
@@ -774,7 +774,7 @@ body > .blockUI.blockOverlay{
 
 ::ng-deep [accessKey="global-search-tooltip"] {
     .group {
-        border-bottom: 1px solid #e5e9ec;
+        border-bottom: 1px solid var(--border-color);
         header {
             display: flex;
             justify-content: space-between;
@@ -782,7 +782,7 @@ body > .blockUI.blockOverlay{
             h4 {
                 font-size: 12px;
                 letter-spacing: 0.6px;
-                color: #424c56;
+                color: var(--text-color);
                 margin-bottom: 0;
                 text-transform: uppercase;
             }
@@ -790,7 +790,7 @@ body > .blockUI.blockOverlay{
                 font-weight: 300;
                 line-height: 2.92;
                 letter-spacing: 0.26px;
-                color: #00aeef;
+                color: var(--primary-color);
                 &:after {
                     content: url('../../../assets/common/icons/arrow-right-trend-by.svg');
                     display: inline-block;
@@ -816,14 +816,14 @@ body > .blockUI.blockOverlay{
                     h5 {
                         font-size: 15px;
                         letter-spacing: 0.3px;
-                        color: #424c56;
+                        color: var(--text-color);
                         margin-bottom: 0;
                     }
                     p {
                         font-size: 13px;
                         font-weight: 300;
                         letter-spacing: 0.26px;
-                        color: #424c56;
+                        color: var(--text-color);
                         margin-bottom: 0;
                     }
                 }

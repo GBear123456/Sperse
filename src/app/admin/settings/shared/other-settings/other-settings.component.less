@@ -1,0 +1,80 @@
+:host {
+    display: block;
+    padding: 1rem;
+
+    @media (min-width: 640px) {
+        padding: 1.5rem;
+    }
+    
+    .form-group {
+        margin-bottom: 21px;
+        line-height: 16px;
+        label {
+            font-size: 14px;
+            letter-spacing: 0.2px;
+            color: #677380;
+            min-width: 180px;
+            border-bottom: 1px solid #dfdfdf;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        input {
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: #424c56;
+        }
+    }
+
+    ::ng-deep h5 {
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: 0.36px;
+        color: #212c36;
+        margin-bottom: 16px;
+    }
+    ::ng-deep dx-check-box {
+        .dx-checkbox-icon {
+            width: 18px;
+            height: 18px;
+            margin-right: 9px;
+        }
+
+        .dx-checkbox-text {
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: #424c56;
+            white-space: normal;
+        }
+    }
+    .m-form__help {
+        font-size: 11px;
+        letter-spacing: 0.16px;
+        color: #677380;
+        margin-left: 32px;
+        padding-top: 5px;
+    }
+    
+    .form-group {
+        display: flex;
+
+        label {
+            width: 55%;
+            margin-right: 10px;
+        }
+
+        ::ng-deep dx-number-box {
+            width: 17%;
+
+            .dx-placeholder, input {
+                font-size: 15px;
+                font-family: var(--app-font-family);
+                font-weight: 500;
+                letter-spacing: 0.3px;
+                color: #424c56;
+            }
+        }
+    }
+}

@@ -1,13 +1,26 @@
 :host {
     display: block;
+    background-color: var(--background-color);
+    min-height: 100%;
 
     .google-button-container {
         margin-bottom: 20px;
 
         .google-button {
-            background-color: white;
-            color: black;
-            border: 1px solid #dfdfdf;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            font-family: var(--app-font-family);
+            transition: all 0.2s ease-in-out;
+
+            &:hover {
+                background-color: var(--hover-bg);
+                border-color: var(--border-color-hover);
+            }
+
+            &:focus {
+                border-color: var(--primary-color);
+            }
 
             img {
                 width: 20px;
@@ -17,12 +30,19 @@
 
         .disconnect {
             margin-left: 10px;
-            color: red;
+            color: var(--danger-color);
             cursor: pointer;
+            font-family: var(--app-font-family);
+            transition: color 0.2s ease-in-out;
+
+            &:hover {
+                color: var(--danger-color-light);
+            }
         }
     }
 
     .row {
         width: 100%;
+        background-color: var(--background-color);
     }
 }

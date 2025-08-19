@@ -1,0 +1,83 @@
+.item-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+  height: 43px;
+  width: 100%;
+  color: var(--menu-text-color);
+  background-color: transparent;
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0px;
+
+    span {
+      white-space: nowrap;
+    }
+  }
+
+  ::ng-deep lucide-angular {
+    display: flex;
+  }
+
+  ::ng-deep lucide-angular svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 1.5;
+  }
+
+  .arrow-icon {
+    flex-shrink: 0;
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+    margin-left: 8px;
+  }
+}
+
+.item-container.active {
+  background-color: var(--menu-active-bg);
+  color: var(--text-color);
+}
+
+.item-container.inactive {
+  color: var(--muted-color);
+}
+
+.item-container.inactive:hover {
+  background-color: var(--menu-hover-bg);
+  color: var(--text-color);
+}
+
+.item-container.active:hover {
+  background-color: var(--menu-active-bg);
+  color: var(--text-color);
+}
+
+.item-container.dark-active-mode {
+  background-color: rgb(44 48 59);
+}
+.item-container.white-active-mode {
+  background-color: rgb(226 230 237);
+}
+.item-container.white-inactive-mode {
+  &:hover {
+    background-color: rgb(226 230 237);
+  }
+}
+.item-container.dark-inactive-mode {
+  &:hover {
+    background-color: rgb(44 48 59);
+  }
+}

@@ -3,7 +3,7 @@
     [ngClass]="{ withContactInfo: appService.showContactInfoPanel$ | async }">
 </app-header>
 
-<left-bar *ngIf="layoutService.showLeftBar" 
+<left-bar *ngIf="layoutService.showLeftBar && !layoutService.isWideView" 
     [ngClass]="{
         fullscreen: isFullscreenMode
     }">
@@ -17,7 +17,7 @@
 </search-tooltip>
 
 <div class="clearfix"></div>
-<div class="page-container" [ngClass]="{'show-top-bar': layoutService.showTopBar, 'show-left-bar': layoutService.showLeftBar, 'expanded': layoutService.expandedLeftBarSubject.value}">
+<div class="page-container" [ngClass]="{'show-top-bar': layoutService.showTopBar, 'show-left-bar': layoutService.showLeftBar && !layoutService.isWideView, 'expanded': layoutService.expandedLeftBarSubject.value}">
     <div class="page-sidebar-wrapper" [ngClass]="{'show-sidebar-wrapper': filtersService.enabled}">
         <side-bar [ngClass]="{
             fullscreen: isFullscreenMode,

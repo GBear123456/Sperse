@@ -1,0 +1,48 @@
+<div
+  class="bg-[#fff] p-6 rounded-xl border border-gray-200 dark:bg-gray-800 dark:border-gray-700 w-full"
+>
+  <!-- Header -->
+  <div class="mb-4">
+    <h2
+      class="text-xl font-semibold text-purple-700 dark:text-purple-400 flex items-center space-x-2"
+    >
+      <lucide-icon
+        name="monitor"
+        class="w-5 h-5 text-purple-700 dark:text-purple-400"
+      ></lucide-icon>
+      <span>Device & Session</span>
+    </h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+      Hardware, software, and session information
+    </p>
+  </div>
+
+  <!-- Grid layout -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div
+      *ngFor="let field of fields"
+      class="flex items-center justify-between flex-col sm:flex-row bg-gray-50 dark:bg-gray-700 p-4 rounded-md group"
+    >
+      <div class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300 font-medium">
+        <lucide-icon
+          [name]="field.icon"
+          class="w-4 h-4 text-blue-500 dark:text-blue-400"
+        ></lucide-icon>
+        <span class="text-sm font-medium flex-shrink-0 text-gray-900 dark:text-white">{{
+          field.label
+        }}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span
+          class="text-sm text-right text-blue-700 dark:text-blue-400 font-semibold whitespace-nowrap"
+        >
+          {{ field.value }}
+        </span>
+        <lucide-icon
+          name="copy"
+          class="w-4 h-4 text-gray-700 dark:text-gray-300 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+        ></lucide-icon>
+      </div>
+    </div>
+  </div>
+</div>

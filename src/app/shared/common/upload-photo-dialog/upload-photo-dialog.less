@@ -1,169 +1,174 @@
 :host {
-    position: relative;
-    display: block;
-    padding-top: 5px;
+  position: relative;
+  display: block;
+  padding-top: 5px;
 
-    @media all and (min-width: 768px) {
-        header {
-            width: 621px;
-        }
+  @media all and (min-width: 768px) {
+    header {
+      width: 621px;
+    }
+  }
+
+  .mat-dialog-title {
+    font-family: var(--app-font-family);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    color: var(--text-color);
+    @media (max-width: 767px) {
+      margin-bottom: 0;
+      text-align: center;
+    }
+  }
+  h3 {
+    font-size: 12px;
+    padding-bottom: 15px;
+  }
+
+  ::ng-deep .mat-tab-header {
+    border-bottom: none;
+    .mat-ink-bar {
+      height: 2px;
+      background-color: var(--primary-color);
+    }
+    @media (min-width: 768px) {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
+
+  ::ng-deep .mat-dialog-content {
+    overflow-y: hidden;
+
+    .mat-tab-labels {
+      justify-content: center;
+      .mat-tab-label {
+        padding: 0 15px;
+        min-width: 0;
+      }
     }
 
-    .mat-dialog-title {
+    ngx-file-drop .ngx-file-drop__drop-zone {
+      height: 200px;
+      border: none;
+      @media (min-width: 768px) {
+        height: 300px;
+      }
+      .ngx-file-drop__content {
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+        ::ng-deep .cropper-canvas {
+          border: 1px solid var(--border-color);
+          @media (max-width: 767px) {
+            height: 200px !important;
+          }
+        }
+      }
+    }
+
+    .file-loading {
+      height: 59px;
+      background-color: var(--card-bg);
+      display: flex;
+      align-items: center;
+      padding-left: 19px;
+      padding-right: 12px;
+      margin-bottom: 20px;
+      margin-top: 7px;
+
+      span {
         font-family: var(--app-font-family);
-        font-size: 22px;
+        font-size: 15px;
         font-weight: 500;
-        letter-spacing: 0.4px;
-        color: #212c36;
-        @media (max-width: 767px) {
-            margin-bottom: 0;
-            text-align: center;
+        letter-spacing: 0.3px;
+        color: var(--text-color);
+        margin-right: 12px;
+      }
+      button {
+        border-radius: 14px;
+        background-color: var(--primary-color);
+        font-family: var(--app-font-family);
+        font-size: 13px;
+        line-height: 1.85;
+        letter-spacing: 0.3px;
+        color: #ffffff;
+        width: 92px;
+        height: 28px;
+        outline: none;
+        span {
+          font-size: 13px;
+          letter-spacing: 0.3px;
+          color: #ffffff;
+          margin-right: 0;
         }
-    }
-    h3 {
-        font-size: 12px;
-        padding-bottom: 15px;
-    }
+      }
 
-    ::ng-deep .mat-tab-header {
-        border-bottom: none;
-        .mat-ink-bar {
-            height: 2px;
-            background-color: #00aeef;
-        }
-        @media (min-width: 768px) {
-            position: absolute;
-            right: 0;
-            top: 0;
-        }
-    }
+      input[type='file'] {
+        display: none;
+      }
 
-    ::ng-deep .mat-dialog-content {
-        overflow-y: hidden;
-
-        .mat-tab-labels {
-            justify-content: center;
-            .mat-tab-label {
-                padding: 0 15px;
-                min-width: 0;
-            }
-        }
-
-        ngx-file-drop .ngx-file-drop__drop-zone {
-            height: 200px;
-            border: none;
-            @media (min-width: 768px) {
-                height: 300px;
-            }
-            .ngx-file-drop__content {
-                height: 100%;
-                overflow: hidden;
-                position: relative;
-                ::ng-deep .cropper-canvas {
-                    border: 1px solid #ddd;
-                    @media (max-width: 767px) {
-                        height: 200px !important;
-                    }
-                }
-            }
-        }
-
-        .file-loading {
-            height: 59px;
-            background-color: rgb(243, 247, 250);
-            display: flex;
-            align-items: center;
-            padding-left: 19px;
-            padding-right: 12px;
-            margin-bottom: 20px;
-            margin-top: 7px;
-
-            span {
-                font-family: var(--app-font-family);
-                font-size: 15px;
-                font-weight: 500;
-                letter-spacing: 0.3px;
-                color: #424c56;
-                margin-right: 12px;
-            }
-            button {
-                border-radius: 14px;
-                background-color: #00aeef;
-                font-family: var(--app-font-family);
-                font-size: 13px;
-                line-height: 1.85;
-                letter-spacing: 0.3px;
-                color: #ffffff;
-                width: 92px;
-                height: 28px;
-                outline: none;
-                span {
-                    font-size: 13px;
-                    letter-spacing: 0.3px;
-                    color: #ffffff;
-                    margin-right: 0
-                }
-            }
-
-            input[type="file"] {
-                display: none;
-            }
-
-            &.link-loading {
-                justify-content: space-between;
-                .mat-form-field,
-                .mat-form-field-wrapper,
-                .mat-form-field-flex,
-                .mat-form-field-infix {
-                    width: 100%;
-                }
-                button {
-                    margin-left: 23px;
-                }
-                .mat-form-field-label {
-                    font-size: 15px;
-                    font-weight: 500;
-                    letter-spacing: 0.3px;
-                    color: #424c56;
-                }
-                .mat-form-field-underline {
-                    background-color: #dadee1;
-                }
-            }
-        }
-    }
-
-    .mat-dialog-actions {
+      &.link-loading {
         justify-content: space-between;
-        margin-bottom: 0;
-        .mat-button {
-            width: 132px;
-            border-radius: 18px;
-            &.button-default {
-                border: solid 1px #dadee1;
-                @media (min-width: 768px) {
-                    margin-right: 8px;
-                }
-            }
-            &[disabled] {
-                &, &:hover {
-                    background-color: #f6f6f6;
-                    border: solid 1px #f6f6f6
-                }
-            }
-            &.clear {
-                @media (min-width: 768px) {
-                    margin-right: auto;
-                }
-            }
-            @media (max-width: 575px) {
-                width: 100%;
-                margin-left: 0 ;
-                margin-right: 0;
-                &:not(:last-child) {
-                    margin-bottom: 10px;
-                }
-            }
+        .mat-form-field,
+        .mat-form-field-wrapper,
+        .mat-form-field-flex,
+        .mat-form-field-infix {
+          width: 100%;
         }
+        button {
+          margin-left: 23px;
+        }
+        .mat-form-field-label {
+          font-size: 15px;
+          font-weight: 500;
+          letter-spacing: 0.3px;
+          color: var(--text-color);
+        }
+        .mat-form-field-underline {
+          background-color: var(--border-color);
+        }
+      }
     }
+
+    .ngx-ic-source-image {
+      margin: auto !important;
+    }
+  }
+
+  .mat-dialog-actions {
+    justify-content: space-between;
+    margin-bottom: 0;
+    .mat-button {
+      width: 132px;
+      border-radius: 18px;
+      &.button-default {
+        border: solid 1px var(--border-color);
+        @media (min-width: 768px) {
+          margin-right: 8px;
+        }
+      }
+      &[disabled] {
+        &,
+        &:hover {
+          background-color: var(--card-bg);
+          border: solid 1px var(--card-bg);
+        }
+      }
+      &.clear {
+        @media (min-width: 768px) {
+          margin-right: auto;
+        }
+      }
+      @media (max-width: 575px) {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        &:not(:last-child) {
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
 }

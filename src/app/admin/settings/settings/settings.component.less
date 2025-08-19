@@ -19,18 +19,30 @@
         height: 100%;
         flex: 0 0 200px;
         width: 220px;
-        border-right: 1px solid #dfdfdf;
+        border-right: 1px solid var(--border-color);
         text-align: center;
         padding: 10px;
+        background-color: var(--card-bg);
 
         ::ng-deep dx-list {
             .dx-list-item {
                 border-top: none;
                 text-align: left;
+                color: var(--text-color);
+                background-color: var(--card-bg);
+
+                &:hover {
+                    background-color: var(--hover-bg);
+                }
 
                 &.dx-state-focused {
-                    background-color: rgba(0,0,0,.1);
-                    color: #333;
+                    background-color: var(--hover-bg);
+                    color: var(--text-color);
+                }
+
+                &.dx-state-selected {
+                    background-color: var(--primary-color);
+                    color: var(--primary-color-contrast);
                 }
             }
         }
@@ -39,14 +51,25 @@
     .content {
         padding: 10px 20px;
         width: calc(100vw - 220px);
+        background-color: var(--background-color);
 
         ::ng-deep .dx-scrollable-scrollbar.dx-scrollbar-vertical.dx-scrollbar-hoverable {
             z-index: 2;
+
+            .dx-scrollable-scroll {
+                background-color: var(--border-color);
+            }
+
+            .dx-scrollable-scrollbar {
+                background-color: var(--card-bg);
+                border: 1px solid var(--border-color);
+            }
         }
 
         ::ng-deep mat-vertical-stepper {
             height: 100%;
             overflow: auto;
+            background-color: var(--background-color);
 
             .mat-step {
                 mat-step-header {
@@ -56,6 +79,7 @@
                 .mat-vertical-content-container {
                     height: 100%;
                     margin-left: 0;
+                    background-color: var(--background-color);
 
                     &:before {
                         display: none;
@@ -64,6 +88,7 @@
                     .mat-vertical-stepper-content {
                         height: 100%;
                         overflow: initial;
+                        background-color: var(--background-color);
 
                         .mat-vertical-content {
                             padding: 0;
@@ -78,45 +103,64 @@
         width: 100%;
 
         input, .dx-placeholder {
-            font-family: sans-serif,Arial;
+            font-family: var(--app-font-family);
             font-size: 1rem;
             font-weight: 400;
             line-height: 1.25;
+            color: var(--text-color);
         }
 
         input {
-            background-color: #fff;
-            border: 1px solid #ebedf2;
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
             padding: .65rem 1rem;
             border-radius: .25rem;
+
+            &:hover {
+                border-color: var(--border-color-hover);
+            }
+
+            &:focus {
+                border-color: var(--primary-color);
+            }
         }
 
         &.bold-text {
             input {
                 font-size: 18px;
                 font-weight: 600;
-                color: #171c1d;
+                color: var(--text-color);
             }
         }
     }
 
     ::ng-deep h2 {
         margin-bottom: 15px;
+        color: var(--text-color);
+        font-family: var(--app-font-family);
+        font-weight: 600;
     }
 
     .split-border {
-        border-bottom: 2px solid lightgray;
+        border-bottom: 2px solid var(--border-color);
         margin-bottom: 30px;
         padding-bottom: 30px;
     }
 
     .copy-url {
         position: relative;
+        color: var(--text-color);
 
         .copy {
             visibility: hidden;
             position: absolute;
             top: 0px;
+            color: var(--primary-color);
+            cursor: pointer;
+
+            &:hover {
+                color: var(--primary-color-light);
+            }
         }
 
         &:hover .copy {

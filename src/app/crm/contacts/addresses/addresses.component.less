@@ -1,126 +1,202 @@
 .addresses {
-    h3 {
-        margin-bottom: 22px;
-        font-size: 12px;
-        line-height: 1.67;
-        letter-spacing: 0.7px;
-        text-align: left;
-        color: #677380;
-        font-weight: 400;
-    }
+  display: flex;
+  align-items: flex-start;
 
-    .add-address {
+  h3 {
+    margin-bottom: 22px;
+    font-size: 12px;
+    line-height: 1.67;
+    letter-spacing: 0.7px;
+    text-align: left;
+    color: #677380;
+    font-weight: 400;
+  }
+
+  .add-address {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-right: 10px;
+    font-size: 14px;
+    font-weight: 300;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.79;
+    letter-spacing: 0.3px;
+    // color: #00aeef;
+    cursor: pointer;
+    // padding-left: 35px;
+  }
+
+  .address-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+    cursor: pointer;
+
+    .actions {
+      opacity: 0;
+      visibility: hidden;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      position: absolute;
+      right: 0;
+      transform: translateX(-50%);
+      transition: all 0.4s ease-in-out;
+      display: flex !important;
+      top: 40%;
+      .send-icon {
+        transition: background 0.15s;
+        border-radius: 4px;
+      }
+
+      // i:hover, .send-icon:hover {
+      //     background: #f3f7fa;
+      // }
+
+      .send-icon {
+        display: flex;
+        align-items: center;
+        background-color: #ecf3fa;
+        padding: 8px;
+        border-radius: 8px;
         font-size: 14px;
-        font-weight: 300;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: 1.79;
-        letter-spacing: 0.3px;
+        gap: 5px;
+        line-height: 1;
+        font-weight: 500;
+        cursor: pointer;
+
+        img {
+          width: 14px;
+          aspect-ratio: 1 / 1;
+        }
+      }
+
+      i {
+        font-size: 18px;
+        padding: 7px 5px;
+        cursor: pointer;
+      }
+
+      // i.edit {
+      //     color: #00aeef;
+      // }
+
+      // i.delete {
+      //     color: #f44336;
+      // }
+
+      i.edit-info {
+        background: url(../../../../assets/common/icons/c-info.svg) no-repeat center;
+        background-size: 20px;
+        display: inline-block;
+        width: 25px;
+        height: 23px;
+      }
+    }
+
+    &:hover {
+      .actions {
+        opacity: 1;
+        visibility: visible;
+        background: #ffffff;
+        transform: translateX(0);
+      }
+    }
+
+    .edit {
+      background: url(../../../../assets/common/icons/edit-2.svg) no-repeat center;
+      height: 18px;
+      width: 18px;
+    }
+
+    .delete {
+      background: url(../../../../assets/common/icons/cross.svg) no-repeat center;
+      height: 18px;
+      width: 18px;
+    }
+
+    .trash {
+      background: url(../../../../assets/common/icons/trash.svg) no-repeat center;
+      height: 18px;
+      width: 18px;
+    }
+
+    .address-icons {
+      top: 8px;
+    }
+
+    .address h4 {
+      height: 35px;
+      padding: 0 5px 5px 5px;
+      margin-bottom: 0px;
+      margin-right: 45px;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 35px;
+      letter-spacing: 0.3px;
+      text-align: left;
+      color: #202b35;
+    }
+
+    &:hover {
+      .address h4 {
+        background-color: #f7fafa;
+      }
+
+      .actions {
+        display: block;
+      }
+    }
+  }
+
+  .address {
+    width: 90%;
+    // padding-left: 35px;
+
+    input {
+      max-width: 80%;
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.67;
+      letter-spacing: 0.3px;
+      font-family: var(--app-font-family);
+    }
+
+    dx-button {
+      border: none;
+      position: relative;
+
+      ::ng-deep &.update i {
         color: #00aeef;
-        cursor: pointer;
-        padding-left: 35px;
+      }
+
+      ::ng-deep &.exit i {
+        color: #f44336;
+      }
     }
 
-    .address-wrapper {
-        position: relative;
-        margin-bottom: 20px;
-        cursor: pointer;
+    p {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.67;
+      letter-spacing: 0.3px;
+      text-align: left;
+      color: var(--content-text);
+      overflow: hidden;
+      margin-right: 30px;
+      text-overflow: ellipsis;
 
-        .address-icons {
-            top: 8px;
-        }
-
-        .actions {
-            top: 2px;
-            display: none;
-            position: absolute;
-            right: calc(~"10% + 45px");
-
-            i {
-                font-size: 18px;
-                padding: 7px;
-            }
-
-            i.edit {
-                color: #00aeef;
-            }
-
-            i.delete {
-                color: #f44336;
-            }
-        }
-
-        .address h4 {
-            height: 35px;
-            padding: 0 5px 5px 5px;
-            margin-bottom: 0px;
-            margin-right: 45px;
-            font-size: 15px;
-            font-weight: 500;
-            line-height: 35px;
-            letter-spacing: 0.3px;
-            text-align: left;
-            color: #202b35;
-        }
-
-        &:hover {
-            .address h4 {
-                background-color: #F7FAFA;
-            }
-
-            .actions {
-                display: block;
-            }
-        }
+      i {
+        display: block;
+        font-style: normal;
+      }
     }
+  }
 
-    .address {
-        width: 90%;
-        padding-left: 35px;
-
-        input {
-            max-width: 80%;
-            font-size: 15px;
-            font-weight: 300;
-            line-height: 1.67;
-            letter-spacing: 0.3px;
-            font-family: var(--app-font-family);
-        }
-
-        dx-button {
-            border: none;
-            position: relative;
-
-            ::ng-deep &.update i {
-                color: #00aeef;
-            }
-
-            ::ng-deep &.exit i {
-                color: #f44336;
-            }
-        }
-
-        p {
-            margin: 15px 0;
-            font-size: 15px;
-            font-weight: 300;
-            line-height: 1.67;
-            letter-spacing: 0.3px;
-            text-align: left;
-            color: #424c56;
-            overflow: hidden;
-            margin-right: 30px;
-            text-overflow: ellipsis;
-            i {
-                display: block;
-                font-style: normal;
-            }
-        }
-    }
-
-    .other-info {
-        text-transform: uppercase;
-        color: #c1c5ca;
-        cursor: pointer;
-    }
+  .other-info {
+    text-transform: uppercase;
+    color: #c1c5ca;
+    cursor: pointer;
+  }
 }

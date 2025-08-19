@@ -52,7 +52,7 @@
                 font-stretch: normal;
                 line-height: 1.33;
                 letter-spacing: 0.3px;
-                color: #202b35;
+                color: var(--headline-title-color);
 
                 a {
                     float: right;
@@ -66,7 +66,7 @@
                 font-stretch: normal;
                 line-height: 1.57;
                 letter-spacing: 0.28px;
-                color: #424c56;
+                color: var(--text-color);
             }
 
             ::ng-deep dx-check-box {
@@ -79,7 +79,7 @@
                     font-stretch: normal;
                     line-height: 1.57;
                     letter-spacing: 0.28px;
-                    color: #424c56;
+                    color: var(--text-color);
                 }
 
                 .dx-checkbox-icon {
@@ -139,20 +139,20 @@
 
                     .empty {
                         font-style: italic;
-                        color: #aaa;
+                        color: var(--muted-color);
                     }
 
                     .edit {
                         font-size: 18px;
                         padding: 7px;
                         cursor: pointer;
-                        color: #00aeef;
+                        color: var(--info-color);
                     }
 
                     .remove {
                         font-weight: 100;
                         font-size: 20px;
-                        color: red;
+                        color: var(--danger-color);
                     }
                 }
             }
@@ -160,7 +160,7 @@
 
         .left-side {
             padding-right: 15px;
-            border-right: 1px solid #dedede;
+            border-right: 1px solid var(--border-color);
         }
 
         .right-side {
@@ -173,13 +173,13 @@
                 font-stretch: normal;
                 line-height: 1.79;
                 letter-spacing: 0.28px;
-                color: #58a3dc;
+                color: var(--primary-color);
                 float: right;
                 margin: 10px 0;
 
                 &.disabled {
                     pointer-events: none;
-                    color: #dfdfdf;
+                    color: var(--disabled-bg);
                 }
             }
 
@@ -200,4 +200,6 @@
             top: -17px;
         }
     }
+
+    color: var(--text-color);
 }

@@ -1,0 +1,78 @@
+<div class="user-card-container">
+  <button
+    class="icon-btn nav-btn left"
+    [disabled]="!contactIds || contactIds.indexOf(currentContactId) <= 0"
+    (click)="goToPrevClient()"
+  >
+    <lucide-angular name="chevron-left" class="w-5 h-5 mb-0 dark:text-white"></lucide-angular>
+  </button>
+  <div class="user-card-content" #dropdownBtn>
+    <dx-text-box
+      height="32px"
+      width="100%"
+      class="search-bar"
+      *ngIf="isSearchMode"
+      #searchInput
+      [value]="searchValue"
+      (onInput)="onInputSearch($event)"
+      (onEnterKey)="search($event)"
+      (onValueChanged)="onSearchValueChanged($event)"
+    ></dx-text-box>
+    <div *ngIf="!isSearchMode" class="flex">
+      <div class="icon-building"></div>
+      <span class="name-role">
+        <span class="name">{{ contacts[contactIds?.indexOf(currentContactId)]?.Name }}</span>
+      </span>
+      <button class="dropdown-btn" (click)="toggleDropdown(); $event.stopPropagation()">
+        <img src="assets/common/icons/arrow-down-grey.svg" alt="Select Role" />
+      </button>
+    </div>
+    <ng-container>
+      <img
+        src="assets/common/icons/search-icon.svg"
+        class="icon-search"
+        alt="Search"
+        (click)="toggleSearch()"
+        *ngIf="!searchValue"
+      />
+      <span class="dx-icon dx-icon-clear" (click)="clearSearch()" *ngIf="searchValue"></span>
+    </ng-container>
+  </div>
+  <button
+    class="icon-btn nav-btn right"
+    [disabled]="!contactIds || contactIds.indexOf(currentContactId) === contactIds.length - 1"
+    (click)="goToNextClient()"
+  >
+    <lucide-angular name="chevron-right" class="w-5 h-5 mb-0 dark:text-white"></lucide-angular>
+  </button>
+</div>
+<dx-tooltip
+  [target]="dropdownBtn"
+  [visible]="isDropdownVisible"
+  [position]="{ my: 'top center', at: 'bottom center' }"
+  [closeOnOutsideClick]="true"
+  (onHiding)="isDropdownVisible = false"
+>
+  <dx-scroll-view #scrollViewRef [height]="450">
+    <div class="dropdown-list">
+      <div
+        *ngFor="let contact of contacts"
+        class="dropdown-item"
+        (click)="navigateToContact(contact[clientFields.Id])"
+        [class.selectedItem]="contact[clientFields.Id] === currentContactId"
+        #contactItem
+      >
+        <img *ngIf="getPhotoSrc(contact) as photoSrc" [src]="photoSrc" />
+        <div class="role-name">
+          <div class="name">{{ contact[clientFields.Name] }}</div>
+          <div class="role" *ngIf="contact[clientFields.CompanyName] as companyName">
+            {{ companyName }}
+          </div>
+          <div class="role" *ngIf="contact[clientFields.Email] as email">
+            {{ email }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </dx-scroll-view>
+</dx-tooltip>

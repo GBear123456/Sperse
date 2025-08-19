@@ -1,123 +1,426 @@
 :host {
-
-    .cb-visible-section {
-        top: 4px;
-        cursor: pointer;
-        position: absolute;
-        margin-right: 10px;
+  &.modern {
+    ::ng-deep mat-sidenav {
+      padding-bottom: 0;
     }
 
-    .short-contact {
-        width: 85%;
-        margin: 0 auto;
-        min-height: 50px;
-        position: relative;
-        border-bottom: 1px solid #e5e9ec;
-        display: flex;
-        align-items: center;
+    ::ng-deep operations-widget {
+      .operations-widget {
+        width: 100%;
+        margin-right: 0;
+        margin-top: 15px;
+      }
 
-        .related-contacts {
-            .similar-contacts-count {
-                margin: 0 10px;
-            }
+      .dx-toolbar {
+        border-bottom: none;
 
-            .add-new-contact {
-                font-size: 14px;
-                font-weight: 400;
-                line-height: 1.57;
-                letter-spacing: 0.3px;
-                text-align: left;
-                color: rgb(0, 174, 239);
-                margin-left: 10px;
-                text-decoration: none;
+        .dx-button {
+          border-bottom: none;
+          border-top: none;
+          border-left: none;
+          border-right: none;
 
-                &:hover {
-                    color: lighten(rgb(0, 174, 239), 5%);
-                }
+          &:not([accesskey='login'])::before {
+            background: url(../../../assets/common/icons/arrow-down-icon.svg);
+          }
+
+          &[aria-label='Stage'],
+          &[aria-label='Groups'],
+          &[aria-label='Rating'] {
+            img {
+              visibility: hidden;
             }
-            .sub-contacts-info {
-                display: flex;
-                align-items: flex-start;
-                & > div {
-                    margin: 0 10px;
-                    & > a {
-                        margin-left: 0;
-                    }
-                }
+            .dx-button-content::before {
+              content: ' ';
+              display: block;
+              background: url(../../../assets/common/icons/flag.svg);
+              background-repeat: no-repeat;
+              position: absolute;
+              width: 19px;
+              height: 19px;
+              top: 7px;
             }
+          }
+
+          &[aria-label='Assign To'] {
+            img {
+              visibility: hidden;
+            }
+            .dx-button-content::before {
+              content: ' ';
+              display: block;
+              background: url(../../../assets/common/icons/user-assign.svg);
+              background-repeat: no-repeat;
+              position: absolute;
+              width: 18px;
+              height: 18px;
+              top: 7px;
+            }
+          }
+
+          &[aria-label='Lists'] {
+            img {
+              visibility: hidden;
+            }
+            .dx-button-content::before {
+              content: ' ';
+              display: block;
+              background: url(../../../assets/common/icons/task.svg);
+              background-repeat: no-repeat;
+              position: absolute;
+              width: 17px;
+              height: 17px;
+              top: 7px;
+            }
+          }
+
+          &[aria-label='Tags'] {
+            img {
+              visibility: hidden;
+            }
+            .dx-button-content::before {
+              content: ' ';
+              display: block;
+              background: url(../../../assets/common/icons/tags.svg);
+              background-repeat: no-repeat;
+              position: absolute;
+              width: 15px;
+              height: 15px;
+              top: 10px;
+            }
+          }
+
+          &[aria-label='Delete'] {
+            img {
+              visibility: hidden;
+            }
+            .dx-button-content::before {
+              content: ' ';
+              display: block;
+              background: url(../../../assets/common/icons/trash.svg);
+              background-repeat: no-repeat;
+              position: absolute;
+              width: 18px;
+              height: 18px;
+              top: 8px;
+            }
+          }
+
+          &[aria-label='star-icon'] {
+            img {
+              visibility: hidden;
+            }
+            .dx-button-content::before {
+              content: ' ';
+              display: block;
+              -webkit-mask-image: url(../../../assets/common/icons/stars.svg);
+              background-repeat: no-repeat;
+              position: absolute;
+              width: 18px;
+              height: 18px;
+              top: 8px;
+            }
+          }
+          &.star-empty {
+            .dx-button-content::before {
+              background-color: gray;
+            }
+          }
+          &.star-yellow {
+            .dx-button-content::before {
+              background-color: #e6e600;
+            }
+          }
+          &.star-blue {
+            .dx-button-content::before {
+              background-color: blue;
+            }
+          }
+          &.star-green {
+            .dx-button-content::before {
+              background-color: green;
+            }
+          }
+          &.star-purple {
+            .dx-button-content::before {
+              background-color: purple;
+            }
+          }
+          &.star-red {
+            .dx-button-content::before {
+              background-color: red;
+            }
+          }
+
+          &[accesskey='login'] {
+            width: 91px;
+            margin-right: 0;
+            background: url('../../../assets/common/icons/enter.svg'), rgba(236, 243, 250, 1);
+            background-position: 11px center;
+            background-repeat: no-repeat;
+            border-radius: 10px;
+            &::before {
+              margin-left: 20px;
+              color: rgba(8, 41, 91, 1);
+
+              .dark-theme & {
+                color: rgba(255, 255, 255, 1);
+              }
+            }
+          }
+
+          .dx-button-text {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(108, 120, 136, 1);
+          }
+
+          &[group-item-position='inside'] {
+            border-right: none;
+            border-left: none;
+          }
+          &[group-item-position='single'] {
+            border-right: none;
+            border-left: none;
+            &::after {
+              display: none;
+            }
+          }
+          &[group-item-position='first'] {
+            border-right: none;
+            border-left: none;
+            &::after {
+              display: none;
+            }
+          }
+          &[group-item-position='last'] {
+            border-right: none;
+            border-left: none;
+          }
         }
+      }
+    }
+  }
+
+  .short-contact {
+    width: 85%;
+    margin: 0 auto;
+    min-height: 50px;
+    position: relative;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+
+    .related-contacts {
+      .similar-contacts-count {
+        margin: 0 10px;
+        color: var(--primary-color);
+      }
+
+      .related-contacts {
+        .similar-contacts-count {
+          margin: 0 10px;
+        }
+
+        .add-new-contact {
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 1.57;
+          letter-spacing: 0.3px;
+          text-align: left;
+          color: rgb(0, 174, 239);
+          margin-left: 10px;
+          text-decoration: none;
+
+          &:hover {
+            color: lighten(rgb(0, 174, 239), 5%);
+          }
+        }
+        .sub-contacts-info {
+          display: flex !important;
+          align-items: baseline;
+          & > div {
+            margin: 0 10px;
+            & > a {
+              margin-left: 0;
+            }
+          }
+        }
+      }
     }
 
     .general-links {
-        float: left;
-        width: 289px;
-        height: 63px;
-        text-align: right;
-        background: #FFF;
-        padding-right: 30px;
-        border-right: 1px solid #e5e9ec;
+      float: left;
+      width: 289px;
+      height: 63px;
+      text-align: right;
+      background: #fff;
+      padding-right: 30px;
+      border-right: 1px solid #e5e9ec;
 
-        .disabled {
-            opacity: 0.5;
-            cursor: default;
-            pointer-events: none;
-        }
+      .disabled {
+        opacity: 0.5;
+        cursor: default;
+        pointer-events: none;
+      }
 
-        i {
-            color: #686f76;
-            width: 20px;
-            height: 20px;
-            margin: 10px 0 0 20px;
-            display: inline-block;
-            cursor: pointer;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
+      i {
+        color: #686f76;
+        width: 20px;
+        height: 20px;
+        margin: 10px 0 0 20px;
+        display: inline-block;
+        cursor: pointer;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
 
-        a.general-active-link i {
-            border-bottom: 2px solid #58a3dc;
-        }
+      a.general-active-link i {
+        border-bottom: 2px solid #58a3dc;
+      }
 
-        i.sms-icon:before {
-            bottom: 5px;
-            position: relative;
-            color: #686F76;
-            opacity: 0.6;
-        }
-        i.note-icon {
-            background-image: url(../../../assets/common/icons/sms.svg);
-            background-position: 4px 4px;
-        }
-        i.phone-icon {
-            background-image: url(../../../assets/common/icons/phone2.svg);
-        }
-        i.inbox-icon {
-            background-image: url(../../../assets/common/icons/inbox.svg);
-        }
+      i.sms-icon:before {
+        bottom: 5px;
+        position: relative;
+        color: #686f76;
+        opacity: 0.6;
+      }
+      i.note-icon {
+        background-image: url(../../../assets/common/icons/sms.svg);
+        background-position: 4px 4px;
+      }
+      i.phone-icon {
+        background-image: url(../../../assets/common/icons/phone2.svg);
+      }
+      i.inbox-icon {
+        background-image: url(../../../assets/common/icons/inbox.svg);
+      }
     }
 
     .created_owner {
-        padding-left: 20px;
-        position: absolute;
-        bottom: 10px;
-        width: 100%;
+      padding-left: 20px;
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
     }
 
     .created > *,
     .lead_owner > * {
-        display: inline;
+      display: inline;
     }
 
     .lead_owner > img {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
     }
 
     .created_owner h4 {
-        color: #b1b5bb;
-        width: 50%;
-        display: inline-block;
-        font-size: 14px;
+      color: #b1b5bb;
+      width: 50%;
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.57;
+      letter-spacing: 0.3px;
+      text-align: left;
+      color: var(--primary-color);
+      margin-left: 10px;
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+
+      &:hover {
+        opacity: 0.8;
+      }
     }
+    .sub-contacts-info {
+      display: flex;
+      align-items: baseline;
+      & > div {
+        margin: 0 10px;
+        & > a {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+}
+
+.general-links {
+  float: left;
+  width: 289px;
+  height: 63px;
+  text-align: right;
+  background: var(--card-bg);
+  padding-right: 30px;
+  border-right: 1px solid var(--border-color);
+
+  .disabled {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  i {
+    color: var(--muted-color);
+    width: 20px;
+    height: 20px;
+    margin: 10px 0 0 20px;
+    display: inline-block;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  a.general-active-link i {
+    border-bottom: 2px solid var(--primary-color);
+  }
+
+  i.sms-icon:before {
+    bottom: 5px;
+    position: relative;
+    color: var(--muted-color);
+    opacity: 0.6;
+  }
+  i.note-icon {
+    background-image: url(../../../assets/common/icons/sms.svg);
+    background-position: 4px 4px;
+  }
+  i.phone-icon {
+    background-image: url(../../../assets/common/icons/phone2.svg);
+  }
+  i.inbox-icon {
+    background-image: url(../../../assets/common/icons/inbox.svg);
+  }
+}
+
+.created_owner {
+  padding-left: 20px;
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+}
+
+.created > *,
+.lead_owner > * {
+  display: inline;
+}
+
+.lead_owner > img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.created_owner h4 {
+  color: var(--muted-color);
+  width: 50%;
+  display: inline-block;
+  font-size: 14px;
+}
+
+::ng-deep .contact-persons-info,
+.sub-contacts-info {
+  display: flex !important;
+  align-items: baseline !important;
 }

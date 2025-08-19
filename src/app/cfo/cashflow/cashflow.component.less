@@ -2,7 +2,7 @@
 
 /** general */
 @grandTotalBackgroundColor: #00aff4;
-@grandTotalTextColor: rgba(255, 255, 255, .75);
+@grandTotalTextColor: rgba(255, 255, 255, 0.75);
 @expendedLineColor: #b3b7ba;
 @tableBorderColor: #ddd;
 @generalColor: #212c36;
@@ -31,1868 +31,1932 @@
 @reconciliationDataCellBackgroundColor: #ecf7fc;
 @totalDataCellBackgroundColor: #ecf7fc;
 @reconciliationDataCellTextColor: #a9b2ba;
-@currentPeriodCellBackgroundColor: rgba(249,175,7, 0.08);
+@currentPeriodCellBackgroundColor: rgba(249, 175, 7, 0.08);
 @currentDayCellBackgroundColor: #fffaec;
 @totalsTextColor: #686f76;
 @middleGrayColor: #686f76;
 @dataCellColorForZeroValues: rgba(104, 111, 118, 0.52);
 
 :host {
-    display: block;
-    position: relative;
-    height: calc(~"100% - 75px");
-
-    &.show-left-bar {
-        height: 100vh;
-        .cashflow {
-            .cashflow-scroll {
-                height: calc(~'100vh - 140px')!important;
-            }
-            .dx-resizable {
-                left: 80px;
-                width: calc(100% - 80px);
-            }
-            .cashflow-wrap {
-                height: calc(100% - 74px);
-            }
-        }
-    }
-
-    .sidebar-calculator-widget {
-        position: absolute;
-        top: 0;
-        right: 0;
-        border: 1px solid #e5e9ec;
-        height: calc(~"100vh - 148px");
-        background-color: #fff;
-        z-index: 5;
-        display: flex;
-        flex-direction: column;
-
-        .calculator-title {
-            padding: 25px 30px 25px 10px;
-            font-size: 15px;
-            line-height: 1.6;
-            letter-spacing: 0.3px;
-            color: #212c36;
-            width: 100%;
-            font-weight: 500;
-            margin: 0;
-            display: inline-block;
-
-            h3 {
-                float: left;
-                margin-bottom: 0;
-                font-size: 20px;
-                letter-spacing: 0.4px;
-                font-weight: 500;
-                font-style: normal;
-                font-stretch: normal;
-                text-align: left;
-                color: rgb(32, 43, 53);
-            }
-
-            img {
-                margin-right: 10px;
-                position: relative;
-                top: -3px;
-            }
-
-            .close {
-                top: 2px;
-                right: -20px;
-                width: 20px;
-                height: 20px;
-                float: right;
-                cursor: pointer;
-                position: relative;
-
-                &:after, &:before {
-                    position: absolute;
-                    top: 0;
-                    left: 8px;
-                    content: '';
-                    height: 17px;
-                    width: 2px;
-                    background-color: #1b1b1b;
-                }
-
-                &:before {
-                    transform: rotate(45deg);
-                }
-
-                &:after {
-                    transform: rotate(-45deg);
-                }
-            }
-        }
-
-        calculator-widget {
-            // display: block;
-            height: calc(~"100% - 72px");
-        }
-
-        &.calculatorHidden {
-            display: none;
-        }
-    }
-
-    ::ng-deep .function-button {
-        border: 0;
-        display: table-row-group;
-        background: #fff;
-        position: absolute;
-        z-index: 5;
-        margin-top: 9px;
-        margin-left: 3px;
-
-        .dx-button-content {
-            padding: 0;
-        }
-    }
-
-    ::ng-deep .save-forecast-button {
-        border: 0;
-        background: transparent;
-        .dx-button-content {
-            padding-left: 0;
-            width: 21px;
-            padding-right: 0;
-        }
-    }
-
-    ::ng-deep .calculator-number-box {
-        // padding: 0 !important;
-        .dx-numberbox {
-            float: left;
-        }
-
-        input {
-            text-align: right;
-        }
-    }
-
-    td {
-        position: relative;
-    }
-
-    ::ng-deep .filter-text {
-        color: #fff;
-        background-color: #337ab7;
-    }
-
-    ::ng-deep .cashflow .dx-pivotgrid {
-        overflow: visible;
-
-        .dx-filter-header {
-            border: 0;
-        }
-
-        .dx-pivotgrid-container table.dx-pivotgrid-border {
-            .dx-pivotgrid-horizontal-headers {
-                .dateField {
-                    &.dx-pivotgrid-expanded {
-                        padding: 5px 10px;
-
-                        .head-cell-expand {
-                            position: relative;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-
-                            &:after {
-                                content: '';
-                                display: block;
-                                background: url('../../../assets/common/icons/cfo-down.png') 100%;
-                                transform: rotate(180deg);
-                                position: absolute;
-                                visibility: visible;
-                                left: -7px;
-                                top: 2px;
-                                width: 12px;
-                                height: 7px;
-                            }
-
-                            .main-head-cell:hover {
-                                .totals {
-                                    text-decoration: underline;
-                                }
-                            }
-
-                            &.closed {
-                                visibility: hidden;
-
-                                .main-head-cell {
-                                    display: none;
-                                }
-
-                                .closed-head-cell {
-                                    display: block;
-                                }
-
-                                &:after {
-                                    transform: rotate(0deg);
-                                }
-                            }
-                        }
-                    }
-
-                    .closed-head-cell {
-                        top: -2px;
-                        line-height: 10px;
-                        visibility: visible;
-                        font-size: 10px;
-                        color: @historicalTextColor;
-                        font-weight: 400;
-                        margin: 0 auto;
-                        display: none;
-                        padding: 0 16px;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-
-                        &:hover {
-                            text-decoration: underline;
-                        }
-                    }
-                }
-            }
-            /** general */
-            .dx-grandtotal {
-                background: @grandTotalBackgroundColor;
-                color: @grandTotalTextColor;
-            }
-
-            .dx-pivotgrid-area td {
-                &.hideZeroActivity {
-                    border: 0.1px solid #ccc !important;
-                    padding: 0 !important;
-                }
-
-                &.selectedCell {
-                    border: 1px double #f9b83a !important;
-                    background-color: #fbf3e4 !important;
-                    color: #333 !important;
-                    -webkit-user-select: none;
-                    -moz-user-select: none;
-                    -ms-user-select: none;
-
-                    span {
-                        color: #333 !important;
-                    }
-                }
-
-                &.dx-total,
-                &.dx-data-header,
-                &.dx-column-header {
-                    background: @totalDataCellBackgroundColor;
-                }
-            }
-
-            .dx-texteditor {
-                border: none;
-            }
-
-            .cfoThemeLightDarkTheme {
-                &.dx-area-row-cell,
-                &.dx-area-column-cell,
-                &.dx-area-data-cell {
-                    tr {
-                        &.totalRow,
-                        &.yearRow {
-                            td {
-                                background: rgba(221, 221, 221, .32) !important;
-                                color: rgb(51, 51, 51) !important;
-                            }
-                        }
-
-                        &.tRow {
-                            td, td span:not(.dx-expand) {
-                                color: @totalsTextColor !important;
-                            }
-                        }
-
-                        &.reportingSectionTotal {
-                            td {
-                                background: rgba(196, 190, 190, 0.32)!important;
-                            }
-                        }
-                    }
-                }
-            }
-
-            & > tr:nth-child(3) {
-                position: fixed;
-                z-index: 3;
-                border-top: 1px solid @tableBorderColor;
-                margin-top: -1px;
-                background: #fff;
-                /** upper left column */
-                .dx-area-description-cell {
-                    height: 65px;
-                    vertical-align: top;
-                    background-color: #fff;
-                    min-width: @left-column-width;
-
-                    .sort-options {
-                        padding-left: 10px;
-                        position: absolute;
-                        bottom: 10px;
-                        .dx-toolbar-center {
-                            margin: 0;
-                        }
-                        .dx-toolbar .dx-button[group-item-position="last"] {
-                            margin-right: 0;
-                        }
-                    }
-
-                    #findInputBlock {
-                        display: inline-flex;
-                        height: 39px;
-                        position: absolute;
-                        z-index: 2;
-                        left: 11px;
-                        bottom: 13px;
-                        margin: auto;
-
-                        .dx-texteditor-container {
-                            border: 1px solid #dadee1;
-                            border-radius: 3px;
-                        }
-
-                        .dx-searchbox .dx-texteditor-input {
-                            padding-left: 44px;
-                            border-bottom: none;
-                            color: #677380;
-                            font-weight: 300;
-                            line-height: 1.71;
-                            letter-spacing: 0.3px;
-                            text-align: left;
-                            font-size: 14px;
-                            height: 39px;
-                            outline: none;
-                            width: 312px;
-                        }
-                    }
-                }
-                /** upper right column (historical row and dates rows) */
-                .dx-area-column-cell {
-                    background: #fff;
-
-                    tr {
-                        height: auto !important;
-
-                        td {
-                            font-size: 10px;
-                            position: relative;
-                            background-clip: padding-box;
-                            background-color: @historicalDataCellBackgroundColor;
-
-                            &.cashflow {
-                                color: #00aeef;
-                            }
-
-                            .totals {
-                                font-size: 10px;
-                            }
-
-                            &.dx-pivotgrid-expanded,
-                            &.dx-pivotgrid-collapsed {
-                                text-align: center;
-                            }
-
-                            .dx-expand-icon-container {
-                                display: none;
-                            }
-
-                            &.year {
-                                color: @yearTextColor;
-                                background-color: @incomeVerticalHeaderBackgroundColor;
-                                font-weight: 600;
-                                font-size: 20px;
-                            }
-
-                            &[class*="next"] {
-                                background-color: @forecastDataCellBackgroundColor;
-                            }
-
-                            &.lowestOpenedCurrent {
-                                border-left: 1px solid @currentTextColor;
-                            }
-
-                            &.lowestOpenedCurrent,
-                            &.currentProjected {
-                                position: relative;
-                                background-color: @currentPeriodCellBackgroundColor;
-
-                                &:before,
-                                &:after {
-                                    content: '';
-                                    position: absolute;
-                                    height: calc(~'100% + 1px');
-                                    top: -1px;
-                                }
-
-                                &:before {
-                                    left: -1px;
-                                    width: calc(~'100% + 1px');
-                                    border-top: 4px solid @currentTextColor;
-                                    border-left: 1px solid @currentTextColor;
-                                }
-
-                                &:after {
-                                    right: -1px;
-                                    width: 1px;
-                                    border-right: 1px solid @currentTextColor
-                                }
-
-                                &.currentDay:before {
-                                    border-top: none;
-                                }
-                            }
-
-                            &.currentDay.topBorder {
-                                border-top: 4px solid @currentTextColor;
-                            }
-
-                            &.month,
-                            &.quarter,
-                            &.day {
-                                color: @generalColor;
-                                font-weight: 600;
-                                font-size: 18px;
-                            }
-
-                            &.historicalField {
-                                cursor: default;
-                                font-size: 10px;
-                                letter-spacing: 0.6px;
-
-                                &.prevHistorical {
-                                    color: @historicalTextColor;
-                                    background-color: #f7f9ff;
-                                }
-
-                                &.currentHistorical {
-                                    background: @currentTextColor;
-                                    border: 1px double @currentTextColor;
-                                    color: #fff;
-                                }
-
-                                &.nextHistorical {
-                                    color: @forecastTextColor
-                                }
-                            }
-
-                            span {
-                                &.dayEnding {
-                                    font-size: 10px;
-                                    position: absolute;
-                                }
-
-                                &.dayName {
-                                    font-size: 9px;
-                                    color: #8d9297;
-                                    position: absolute;
-                                    right: 7px;
-                                    bottom: 7px;
-                                    font-weight: 400;
-                                }
-                            }
-
-                            &[data-is-weekend='true'] {
-                                background-image: url('../../../assets/common/images/weekend-background.png') !important;
-                            }
-
-                            &.projectedField {
-
-                                &.PastTotal, &.FutureTotal {
-                                    cursor: default;
-                                }
-
-                                &.projectedHidden {
-                                    border: none;
-                                    cursor: default;
-                                    padding: 0;
-                                }
-                            }
-                        }
-
-                        &.projectedRow.hidden {
-                            display: none;
-                        }
-                    }
-                }
-            }
-
-            tr.dx-bottom-row {
-                & > td {
-                    padding-top: 84px;
-                }
-                /** bottom left column (labels cells) */
-                .dx-area-row-cell {
-                    min-width: @left-column-width !important;
-
-                    table {
-                        tr {
-                            position: relative;
-
-                            &:first-child td.dx-white-space-column {
-                                border-top: 0;
-                            }
-
-                            td {
-                                text-align: left;
-                                color: inherit;
-                                width: 23px;
-                                line-height: 23px;
-                                min-width: 23px;
-
-                                span.truncated {
-                                    display: inline-flex;
-
-                                    span {
-                                        text-overflow: ellipsis;
-                                        overflow: hidden;
-                                    }
-                                }
-
-                                .accountNumber {
-                                    font-family: Lato;
-                                    float: right;
-                                    padding-left: 3px;
-                                }
-
-                                &.dx-white-space-column {
-                                    background: #fff;
-                                    border-right: none;
-                                    border-top: 1px solid @tableBorderColor;
-                                    position: relative;
-                                    cursor: pointer;
-
-                                    span:before {
-                                        content: '-';
-                                        position: absolute;
-                                        top: 0;
-                                        bottom: 0;
-                                        margin: auto;
-                                        z-index: 1;
-                                        text-align: center;
-                                        line-height: 11px;
-                                        width: 100%;
-                                        height: 100%;
-                                    }
-
-                                    &:after {
-                                        content: '';
-                                        position: absolute;
-                                        top: 23px;
-                                        left: 23px;
-                                        display: block;
-                                        border-right: 2px solid @expendedLineColor;
-                                        height: calc(~"100%" - 7px);
-                                        z-index: 1;
-                                    }
-
-                                    &.startedBalanceWhiteSpace {
-                                        border-top: none
-                                    }
-                                }
-
-                                &.emptyChildren {
-                                    cursor: default;
-                                    padding-left: 43px !important;
-                                }
-
-                                &.netChange {
-                                    text-align: left;
-                                }
-
-                                &.dx-last-cell {
-                                    width: 200px;
-                                    padding-left: 22px;
-                                }
-
-                                &.descriptor {
-                                    font-style: italic;
-                                }
-
-                                .dx-expand-icon-container {
-                                    font: inherit;
-                                    margin-right: 10px;
-                                    float: left;
-
-                                    .dx-expand::before {
-                                        top: auto;
-                                        left: auto;
-                                        position: relative;
-                                        width: auto;
-                                        margin: auto;
-                                    }
-
-                                    &:before {
-                                        display: none;
-                                    }
-                                }
-
-                                .dx-expand-icon-container > span, &.dx-white-space-column > span {
-                                    border: 1px solid @expendedLineColor;
-                                    border-radius: 3px;
-                                    width: 15px;
-                                    height: 15px;
-                                    top: 1px;
-                                    position: relative;
-                                    display: block;
-                                    font-size: 17px;
-                                    font-family: var(--app-font-family);
-                                    font-weight: 500;
-                                    color: #000;
-                                    background: #fff;
-                                    z-index: 2 !important;
-                                }
-
-                                &.dx-white-space-column > span {
-                                    display: inline-block;
-                                    left: 16px;
-                                    top: 8px;
-                                    z-index: 1;
-                                }
-
-                                &.dx-pivotgrid-collapsed .dx-expand:before {
-                                    content: '+';
-                                    height: 100%;
-                                    width: 100%;
-                                    line-height: 13px;
-                                }
-
-                                &.dx-pivotgrid-expanded {
-                                    position: relative;
-                                    .dx-expand {
-                                        border: none;
-                                        background: transparent;
-                                        left: 0;
-                                        &:before {
-                                            content: '';
-                                            width: 7px;
-                                            border-bottom: 2px solid @expendedLineColor;
-                                            margin-left: 7px;
-                                            top: 7px;
-                                        }
-                                    }
-
-                                    .dx-expand-icon-container {
-                                        position: relative;
-
-                                        &:after {
-                                            content: '';
-                                            top: 6px;
-                                            position: absolute;
-                                            left: 12px;
-                                            width: 6px;
-                                            height: 6px;
-                                            border-radius: 50%;
-                                            background: @expendedLineColor;
-                                        }
-                                    }
-                                }
-                            }
-
-                            &.iRow, &.incomeChildRow, &.eRow, &.expensesChildRow {
-                                .dx-pivotgrid-collapsed .dx-expand-icon-container span {
-                                    content: '';
-                                    display: inline-block;
-                                    transform: rotate(-90deg);
-
-                                    &:before {
-                                        content: '';
-                                        display: block;
-                                        position: absolute;
-                                        top: 1px;
-                                        bottom: 0;
-                                        right: 0;
-                                        left: 0;
-                                        margin: auto;
-                                        width: 9px;
-                                        height: 4px;
-                                        line-height: 0;
-                                    }
-                                }
-                            }
-
-                            &.incomeChildRow, &.expensesChildRow {
-                                .dx-white-space-column {
-                                    &:before {
-                                        content: '';
-                                        border: none;
-                                    }
-                                    span {
-                                        &:before {
-                                            content: '';
-                                            display: block;
-                                            position: absolute;
-                                            top: 0;
-                                            bottom: 0;
-                                            right: 0;
-                                            left: 0;
-                                            margin: auto;
-                                            width: 9px;
-                                            height: 4px;
-                                        }
-                                    }
-                                }
-
-                                &:before {
-                                    display: none;
-                                }
-                            }
-
-                            &.iRow td {
-                                background: @incomeVerticalHeaderBackgroundColor;
-                            }
-
-                            &.iRow, &.incomeChildRow {
-                                .dx-pivotgrid-expanded .dx-expand-icon-container {
-                                    span:before {
-                                        border-bottom: 2px solid #61c670 !important;
-                                    }
-
-                                    &:after {
-                                        background: #61c670 !important;
-                                    }
-                                }
-
-                                .dx-pivotgrid-collapsed .dx-expand-icon-container span:before {
-                                    background-image: url('../../../assets/common/icons/arrow-down-green.svg');
-                                }
-                            }
-
-                            &.incomeChildRow {
-                                .dx-white-space-column {
-                                    &:after {
-                                        border-right: 2px solid #61c670 !important;
-                                    }
-
-                                    span:before {
-                                        background: url('../../../assets/common/icons/arrow-down-green.svg') no-repeat center;
-                                    }
-                                }
-                            }
-
-                            &.eRow td {
-                                background: @expensesVerticalHeaderBackgroundColor;
-                            }
-
-                            &.eRow, &.expensesChildRow {
-                                .dx-pivotgrid-expanded .dx-expand-icon-container {
-                                    span:before {
-                                        border-bottom: 2px solid #e7326a !important;
-                                    }
-
-                                    &:after {
-                                        background: #e7326a !important;
-                                    }
-                                }
-
-                                .dx-pivotgrid-collapsed .dx-expand-icon-container span:before {
-                                    background: url('../../../assets/common/icons/arrow-down-red.svg');
-                                }
-                            }
-
-                            &.expensesChildRow {
-                                .dx-white-space-column {
-                                    &:after {
-                                        border-right: 2px solid #e7326a !important;
-                                    }
-
-                                    span:before {
-                                        background: url('../../../assets/common/icons/arrow-down-red.svg') no-repeat center;
-                                    }
-                                }
-                            }
-
-                            &.totalRow:not([class*="ChildRow"]) td {
-                                letter-spacing: 0.8px;
-                                font-weight: 600;
-                                text-align: left;
-                                text-transform: uppercase;
-                            }
-
-                            &.bRow td {
-                                background: @startedBalanceBackgroundColor;
-                            }
-
-                            &.ncRow td {
-                                background: transparent;
-                            }
-
-                            &.tRow td {
-                                background: #00aff0;
-                                color: #fff;
-                                padding-left: 22px;
-                            }
-
-                            &.dRow td {
-                                letter-spacing: 0.2px;
-                                padding-left: 22px;
-                                font-weight: 600;
-                                background: @reconciliationVerticalHeaderBackgroundColor;
-                            }
-                        }
-                    }
-                }
-                /** bottom right column (data cells) */
-                .dx-area-data-cell {
-
-                    &.fontNameLato tr td {
-                        &, span, input {
-                            font-family: Lato !important;
-                        }
-                    }
-
-                    &.fontNameOpenSans tr td {
-                        &, span, input {
-                            font-family: "Open Sans" !important;
-                        }
-                    }
-
-                    &.fontNameKameron tr td {
-                        &, span, input {
-                            font-family: Kameron !important;
-                        }
-                    }
-
-                    &.fontNameWorkSans tr td {
-                        &, span, input {
-                            font-family: Work Sans !important;
-                        }
-                    }
-
-                    tr {
-                        td {
-                            background: @historicalDataCellBackgroundColor;
-                            color: @middleGrayColor;
-                            font-family: Lato !important;
-                            letter-spacing: 0.2px;
-                            line-height: 23px;
-                            padding-left: 26px;
-                            background-clip: padding-box !important;
-                            position: relative;
-
-                            &[class*="next"] {
-                                background: @forecastDataCellBackgroundColor;
-                            }
-
-                            &[data-is-weekend='true'] {
-                                background-image: url('../../../assets/common/images/weekend-background.png');
-                            }
-
-                            &.dx-row-total {
-                                background-color: @totalDataCellBackgroundColor;
-                            }
-
-                            &.red {
-                                &, & span {
-                                    color: red !important;
-                                }
-                            }
-
-                            &.zeroValue {
-                                &,
-                                & span {
-                                    color: @dataCellColorForZeroValues;
-                                    font-weight: 300;
-                                }
-                            }
-
-                            &[droppable='true'] {
-                                background: #fffbf4 !important;
-                            }
-
-                            &.currentDroppable {
-                                &, & > span {
-                                    background: #CBEEFF !important;
-                                    cursor: pointer;
-                                }
-                            }
-
-                            span {
-                                font-family: Lato !important;
-                                color: @middleGrayColor;
-                            }
-
-                            &.lowestOpenedCurrent {
-                                background-color: @currentPeriodCellBackgroundColor;
-                                border-left: 1px double @currentTextColor;
-                                border-right: 1px double @currentTextColor;
-                            }
-
-                            &.currentDay {
-                                background-color: @currentDayCellBackgroundColor;
-                            }
-
-                            .dx-texteditor-input {
-                                text-align: right;
-                            }
-
-                            &.selectedCell a.dx-link {
-                                display: inline-block;
-                            }
-
-                            a.dx-link {
-                                width: 18px;
-                                display: none;
-                                color: transparent !important;
-                                position: absolute;
-                                left: 3px;
-
-                                &.dx-link-discard {
-                                    background: url('../../../assets/common/icons/delete-icon.svg') no-repeat center;
-                                }
-
-                                &.dx-link-info {
-                                    background: url('../../../assets/common/icons/info-icon.svg') no-repeat center;
-                                    display: inline-block;
-                                    cursor: default;
-                                }
-                            }
-
-                            .budget-info {
-                                width: 6px;
-                                height: 6px;
-                                border-radius: 50%;
-                                position: absolute;
-                                top: 3px;
-                                left: 3px;
-                                cursor: pointer;
-                                &.within-budget {
-                                    background-color: #61C670;
-                                }
-                                &.out-of-budget {
-                                    background-color: #E7326A;
-                                }
-                            }
-                        }
-
-                        &.iRow td {
-                            background: @incomeDataCellBackgroundColor;
-
-                            &.lowestOpenedCurrent {
-                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@incomeDataCellBackgroundColor, @incomeDataCellBackgroundColor);
-                            }
-                        }
-
-                        &.eRow td {
-                            background: @expensesDataCellBackgroundColor;
-
-                            &.lowestOpenedCurrent {
-                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@expensesDataCellBackgroundColor, @expensesDataCellBackgroundColor);
-                            }
-                        }
-
-                        &.totalRow td {
-                            &,
-                            & span {
-                                color: @totalsTextColor;
-                                font-weight: 600;
-                            }
-
-                            &.zeroValue {
-                                &,
-                                & span {
-                                    color: @dataCellColorForZeroValues;
-                                    font-weight: 300;
-                                }
-                            }
-                        }
-
-                        &.bRow {
-                            td {
-                                &.dx-total {
-                                    background: @startedBalanceDataCellColor;
-                                }
-
-                                &.lowestOpenedCurrent:not(.selectedCell) {
-                                    background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
-                                }
-                            }
-
-                            &:first-child {
-                                td {
-                                    background: @startedBalanceDataCellColor;
-
-                                    &.lowestOpenedCurrent:not(.selectedCell) {
-                                        background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
-                                    }
-                                }
-                            }
-                        }
-
-                        &.tRow td {
-                            background: @grandTotalBackgroundColor;
-
-                            &.lowestOpenedCurrent:not(.lowestOpenedCurrent) {
-                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
-                            }
-
-                            span {
-                                color: @grandTotalTextColor;
-                            }
-                        }
-
-                        &.ncRow td:not(.lowestOpenedCurrent) {
-                            background: transparent;
-                        }
-
-                        &.dRow td {
-                            background: @reconciliationDataCellBackgroundColor;
-                            color: @reconciliationDataCellTextColor;
-
-                            &.lowestOpenedCurrent {
-                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@reconciliationDataCellBackgroundColor, @reconciliationDataCellBackgroundColor);
-                            }
-                        }
-
-                        &:last-child td.lowestOpenedCurrent {
-                            border-bottom: 1px double @currentTextColor !important;
-                        }
-                    }
-
-                    .dx-scrollable-scrollbar {
-                        bottom: -11px;
-                        height: 13px;
-
-                        &.fixedScrollbar {
-                            position: fixed;
-                            bottom: 5px;
-                            left: @left-column-width;
-                        }
-
-                        &.dx-state-hover,
-                        &.dx-scrollable-scrollbar-hoverable,
-                        &.dx-scrollable-scrollbar-active {
-                            height: 13px;
-                        }
-
-                        .dx-scrollable-scroll {
-                            height: 15px;
-
-                            .dx-scrollable-scroll-content {
-                                background-color: rgb(191,191,191)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    ::ng-deep .dx-dropdowneditor[accesskey="cashflowGroupby"] {
-
-        &.dx-dropdowneditor-field-clickable {
-            max-width: none;
-
-            input {
-                border-bottom: none;
-            }
-
-            .dx-placeholder {
-                display: none !important;
-            }
-        }
-
-        .dx-texteditor-container {
-            width: auto;
-            display: flex;
-            align-items: baseline;
-            justify-content: left;
-
-            input.dx-texteditor-input {
-                padding: 8px 0 8px 8px;
-                font-size: 15px;
-                display: block;
-                float: left;
-                max-width: inherit;
-                min-width: 0;
-                width: auto;
-                color: @generalColor;
-            }
-
-            .dx-texteditor-buttons-container {
-                position: static;
-
-                .dx-dropdowneditor-button {
-                    width: 10px;
-                    padding: 0;
-                    position: static;
-
-                    .dx-dropdowneditor-icon {
-                        font: 14px/1 DXIcons !important;
-
-                        &:before {
-                            content: url('../../../assets/common/icons/down-icon.svg');
-                            top: 9px;
-                            right: 0;
-                            left: auto;
-                            margin: auto;
-                            color: @generalColor;
-                        }
-                    }
-                }
-            }
-        }
-
-        .dx-dropdowneditor-button-visible .dx-texteditor-input {
-            padding-right: 10px;
-            width: auto;
-        }
-
-        &.dx-state-hover .dx-dropdowneditor-icon,
-        &.dx-dropdowneditor.dx-state-active .dx-dropdowneditor-icon,
-        &.dx-dropdowneditor-active .dx-dropdowneditor-icon {
-            background: none !important;
-        }
-    }
-
-    ::ng-deep [class*='chart'] {
-        width: 64px;
-        height: 18px;
-        float: right;
-    }
-    // fix float fo ff
-    ::ng-deep .dx-pivotgrid-vertical-headers {
-        table {
-            width: 100% !important;
-        }
-
-        tr {
-            td {
-                white-space: normal;
-            }
-        }
-    }
-
-    .main-wrapper {
-        height: 100%;
-        &.grid-is-empty {
-            height: calc(~'100vh - 210px');
-            ::ng-deep .dx-bottom-row > td{
-                padding-top: 0 !important;
-            }
-            ::ng-deep .cashflow .dx-pivotgrid .dx-pivotgrid-container table.dx-pivotgrid-border > tr:nth-child(3) .dx-area-column-cell tr td {
-                background: transparent;
-            }
-            app-no-data {
-                height: calc(~'100% - 78px');
-            }
-        }
-    }
-
+  display: block;
+  position: relative;
+  height: calc(~'100% - 75px');
+
+  &.show-left-bar {
+    height: 100vh;
     .cashflow {
-        background-color: #fff;
-        position: relative;
-
-        .groupBy {
-            padding-left: 22px;
-            display: flex;
-            color: @generalColor;
-            align-items: center;
-
-            span {
-                margin-right: 10px;
-            }
-        }
-
-        .cashflow-wrap {
-            height: calc(100% - 149px);
-            max-height: 100%;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-            right: 0;
-            border-top: 1px solid @tableBorderColor;
-            border-left: 1px solid @tableBorderColor;
-            padding: 0 15px 0 24px;
-            background: #fff;
-            z-index: 4;
-            transform: translate(0, 0) !important;
-
-            .resize-buttons {
-                z-index: 1;
-                text-align: center;
-                font-size: 22px;
-                position: absolute;
-                width: 100%;
-                left: 0;
-                line-height: 0.5;
-                font-weight: bold;
-                letter-spacing: 3px;
-                color: #cecece;
-            }
-
-            .configBlock {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-
-                ::ng-deep .dx-tabs {
-                    border: none;
-                    .dx-tab {
-                        border: none;
-                        background: transparent;
-                        &.dx-tab-selected:after {
-                            border: none;
-                            border-bottom: 3px solid #00aeef;
-                        }
-                    }
-                }
-
-                .detailsButtons {
-                    margin-left: auto;
-                    .dx-button {
-                        border: 0;
-                        padding: 0;
-                        ::ng-deep .dx-button-text {
-                            text-decoration: underline;
-                        }
-                    }
-
-                }
-            }
-            .close-btn {
-                border: 0;
-                padding: 0;
-                position: absolute;
-                right: 0;
-                z-index: 1;
-                top: 70px;
-                &:hover {
-                    background: transparent !important;
-                }
-            }
-
-            .close-btn-portal {
-                top: 37px;
-            }
-        }
-
-        ::ng-deep #cashflowGridContainer {
-            height: calc(~'100% - 43px');
-            ::ng-deep.dx-highlight-outline {
-                padding: 0;
-            }
-            .dx-datagrid-headers {
-                .dx-datagrid-content {
-                    .dx-header-row {
-                        &:hover {
-                            td:not(:first-child):not(:last-child) {
-                                border-right: 1px solid #f5f5f5;
-                            }
-                        }
-
-                        td {
-                            padding: 20px;
-                            text-transform: uppercase;
-                            font-size: 13px;
-                            font-weight: 700;
-                            line-height: 24px;
-                            color: #686f76;
-                            vertical-align: middle;
-
-                            &[aria-sort='none'] {
-                                color: @middleGrayColor;
-                            }
-
-                            .firstLine {
-                                text-transform: capitalize;
-                                line-height: 1em;
-                                font-weight: 500;
-                                margin-bottom: 7px;
-
-                                & + div {
-                                    line-height: 1em;
-                                    color: @generalColor;
-                                }
-                            }
-
-                            &.dx-command-select {
-                                padding: 20px 0;
-                                text-align: left !important;
-                            }
-
-                            &:hover,
-                            &:not([aria-sort="none"]) {
-                                .dx-column-indicators {
-                                    display: block;
-                                }
-                            }
-
-                            .dx-column-indicators {
-                                display: none;
-
-                                .dx-sort {
-                                    color: rgba(103, 115, 128, .5);
-                                    font-weight: bold;
-                                    font-size: 16px;
-                                    position: relative;
-                                    top: 1px;
-                                }
-
-                                .dx-header-filter {
-                                    color: rgba(103, 115, 128, .5);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            .dx-datagrid-rowsview {
-                border-top: 0;
-            }
-
-            .dx-datagrid-table {
-                .dx-data-row {
-                    td {
-                        color: #424c56;
-                        font-size: 14px;
-                        font-weight: 500;
-                        line-height: 1.7;
-                        letter-spacing: 0.3px;
-                        padding: 6px 20px;
-                        vertical-align: middle;
-
-                        &.selectedCell:not(.dx-command-select),
-                        &.dx-focused {
-                            border: 1px double #f9b83a !important;
-                            background-color: #fbf3e4 !important;
-                            color: #333 !important;
-                            -webkit-user-select: none;
-                            -moz-user-select: none;
-                            -ms-user-select: none;
-
-                            span {
-                                color: #333 !important;
-                            }
-                        }
-
-                        &.fontNameLato {
-                            &, div, input {
-                                font-family: Lato !important;
-                            }
-                        }
-
-                        &.fontNameOpenSans {
-                            &, div, input {
-                                font-family: "Open Sans" !important;
-                            }
-                        }
-
-                        &.fontNameKameron {
-                            &, div, input {
-                                font-family: Kameron !important;
-                            }
-                        }
-
-                        &.fontNameWorkSans {
-                            &, div, input {
-                                font-family: Work Sans !important;
-                            }
-                        }
-
-                        .dx-dropdowneditor-icon::before {
-                            font-family: DXIcons !important;
-                        }
-
-                        .dx-datagrid-revert-tooltip {
-                            display: none;
-                        }
-
-                        .dx-invalid-message * div {
-                            font-family: var(--app-font-family) !important;
-                        }
-
-                        &.editable {
-                            cursor: cell;
-                        }
-
-                        &.dx-editor-cell {
-                            padding: 0 !important;
-                            line-height: initial;
-                            text-align: left !important;
-
-                            input {
-                                height: 36px;
-                                display: inline-block;
-                                position: relative;
-                                background-color: initial;
-                                border: solid 1px #e5e9ec;
-                            }
-
-                            .dx-checkbox-container {
-                                height: 20px;
-                            }
-                        }
-
-                        &.statusField {
-                            position: relative;
-
-                            &:before {
-                                content: '';
-                                position: absolute;
-                                width: 7px;
-                                border-radius: 50%;
-                                height: 7px;
-                                top: 0;
-                                left: 5px;
-                                bottom: 0;
-                                margin: auto;
-                            }
-
-                            &.projected,
-                            &.historical {
-                                color: #fe871a;
-
-                                &:before {
-                                    background-color: #fe871a;
-                                }
-                            }
-
-                            &.completed {
-                                color: #a6d7a9;
-
-                                &:before {
-                                    background-color: #a6d7a9;
-                                }
-                            }
-                        }
-
-                        &.inflows div {
-                            color: #61c670;
-                            background-color: rgba(97, 198, 112, 0.1);
-                        }
-
-                        &.outflows div {
-                            color: #e7326a;
-                            background-color: rgba(231, 50, 106, 0.1);
-                        }
-
-                        &.inflows,
-                        &.outflows {
-                            div {
-                                border-radius: 11px;
-                                max-width: 89px;
-                                text-align: center;
-                            }
-                        }
-
-                        &.dx-command-edit {
-                            padding: 0;
-
-                            .dx-link {
-                                display: inline-block;
-                                font: normal normal normal 14px/1 FontAwesome !important;
-                                text-rendering: auto;
-                                -webkit-font-smoothing: antialiased;
-                                -moz-osx-font-smoothing: grayscale;
-
-                                &.dx-link-save {
-                                    margin-right: 5px;
-
-                                    &::before {
-                                        font-size: 20px;
-                                        color: green;
-                                        content: "\f0c7";
-                                    }
-                                }
-
-                                &.dx-link-cancel::before {
-                                    font-size: 20px;
-                                    color: gray;
-                                    content: "\f0e2";
-                                }
-                            }
-                        }
-
-                        .calculated {
-                            color: #c3c3c3;
-                        }
-                    }
-
-                    &.dx-selection {
-                        td {
-                            background-color: rgba(0, 174, 239, 0.05);
-                        }
-                    }
-
-                    &.adjustmentRow {
-                        td.dx-command-select {
-                            pointer-events: none;
-
-                            .dx-select-checkbox {
-                                display: none;
-                            }
-                        }
-
-                        &.dx-selection td {
-                            background-color: initial;
-                            border: none;
-                        }
-
-                        &.dx-selection.dx-row-alt td {
-                            background-color: #f3f7fa;
-                            border: none;
-                        }
-                    }
-
-                    &.forecastRow,
-                    &.adjustmentRow {
-                        &.projected {
-                            td.forecastDate {
-                                align-items: center;
-                                padding-left: 3px;
-                                position: relative;
-                                & > div {
-                                    margin-left: 10px;
-                                }
-                                &:before {
-                                    content: '!';
-                                    color: #f89800;
-                                    font-weight: 800;
-                                    font-size: 18px;
-                                    position: absolute;
-                                    left: 3px;
-                                    height: 15px;
-                                    line-height: 15px;
-                                    top: 0;
-                                    bottom: 0;
-                                    margin: auto;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                .dx-data-row td {
-                    &.category {
-                        padding-left: 27px;
-                        position: relative;
-                    }
-                    .uncategorized {
-                        &:before {
-                            content: "";
-                            background: #f8a126;
-                            width: 8px;
-                            height: 8px;
-                            border-radius: 50%;
-                            display: block;
-                            position: absolute;
-                            left: 10px;
-                            top: 50%;
-                            transform: translateY(-50%);
-                        }
-                    }
-                }
-            }
-
-            .dx-datagrid {
-                .dx-row-alt > td {
-                    background: #f3f7fa;
-                }
-
-                .dx-column-lines > td {
-                    border-right: 0;
-                    border-left: 0;
-                }
-
-                .dx-datagrid-focus-overlay {
-                    border: none;
-                }
-
-                .dx-link {
-                    color: transparent;
-                }
-            }
-
-            .uncategorized {
-                td {
-                    background-color: #FFFBF5;
-                    color: #757B7F;
-                }
-            }
-            .dx-texteditor-buttons-container {
-                position: static;
-                height: initial;
-            }
-        }
-
-        ::ng-deep .headline-title .header-names {
-            @media (max-width: 1400px) {
-                max-width: 400px;
-            }
-        }
-
-        .cashflow-scroll {
-            height: calc(~'100vh - 210px');
-
-            &.withCashflowFooterToolbar {
-                padding-bottom: 42px;
-            }
-
-            ::ng-deep .dx-scrollable-content {
-                transform: none !important;
-            }
-        }
+      .cashflow-scroll {
+        height: calc(~'100vh - 140px') !important;
+      }
+      .dx-resizable {
+        left: 80px;
+        width: calc(100% - 80px);
+      }
+      .cashflow-wrap {
+        height: calc(100% - 74px);
+      }
     }
+  }
 
-    .grid-is-empty .cashflow .cashflow-scroll {
-        height: auto !important;
-    }
-
-    &.fullscreen {
-        top: 0 !important;
-
-        .cashflow-scroll {
-            height: calc(100vh - 63px) !important;
-        }
-    }
-
-    &.toolbar-is-shown {
-        ::ng-deep .spinner {
-            top: 30px !important;
-        }
-    }
-
-    .cashflowFooterToolbar {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        z-index: 1;
-
-        ::ng-deep dx-toolbar {
-            padding: 11px 0 9px 0;
-
-            .dx-toolbar-items-container {
-                height: 22px;
-            }
-
-            .dx-tabs {
-                border: none;
-
-                .dx-tab {
-                    padding: 0 11px 0 11px;
-                    color: #677380;
-                    margin-right: 23px;
-                    background-color: initial;
-
-                    &.dx-tab-selected {
-                        border-radius: 12px;
-                        color: #212c36;
-                        background-color: #f3f7fa;
-
-                        &:after {
-                            display: none;
-                        }
-                    }
-
-                    .editModel {
-                        position: absolute;
-                        z-index: 1;
-                        top: 0;
-
-                        input {
-                            width: 100%;
-                        }
-                    }
-                }
-            }
-
-            .dx-toolbar-item {
-                max-width: initial !important;
-                font-size: 13px;
-                font-weight: 600;
-                letter-spacing: 0.3px;
-                color: #212c36;
-
-                .dx-button {
-                    border: none;
-                    .dx-button-content {
-                        margin-bottom: -3px;
-                        display: inline-block;
-                        height: 17px;
-                        min-width: 0;
-                    }
-                    .addModel {
-                        display: inline-block;
-                    }
-                }
-            }
-
-            .dx-toolbar-before .dx-toolbar-item {
-                &:not(:first-child) {
-                    padding-left: 13px;
-                }
-
-                &:not(:nth-child(3)) {
-                    border-right: 1px solid #e5e9ec;
-                }
-
-                &:not(:last-child) {
-                    padding-right: 20px;
-                }
-
-                .dx-button[group-item-position="last"] {
-                    margin-right: 0;
-                }
-
-                &:last-child {
-                    padding-right: 9px;
-                }
-            }
-
-            .dx-toolbar-after {
-                .dx-toolbar-item {
-                    color: #677380;
-                    padding-left: 38px;
-                    font-weight: 500;
-
-                    .value {
-                        color: #424c56;
-                        font-weight: 600;
-                    }
-
-                    &:last-child {
-                        position: relative;
-
-                        &::before {
-                            content: '';
-                            border-right: 1px solid #e5e9ec;
-                            position: absolute;
-                            left: 24px;
-                            width: 1px;
-                            height: 200%;
-                            top: -50%;
-                        }
-
-                        .dx-button {
-                            margin: 0;
-                        }
-
-                        img {
-                            margin-top: 0;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    ::ng-deep .modifying-box {
-        max-width: 170px;
-        background: transparent;
-        float: left;
-        height: initial !important;
-        input.dx-texteditor-input {
-            background: transparent;
-            font-size: inherit;
-            font-weight: inherit;
-            padding: 0;
-            margin-top: 2px;
-        }
-    }
-
-    .positive-values,
-    .positive-values * {
-        color: #61c670 !important;
-    }
-    .negative-values,
-    .negative-values * {
-        color: #e7326a !important;
-    }
-
-    .transaction-target {
-        max-width: 100%;
-        width: 330px;
-        display: block;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-}
-
-::ng-deep .dx-overlay-content {
-    min-width: 100px;
-}
-
-.title {
-    background-color: #f3f7fa;
-    padding: 16px 10px;
+  .sidebar-calculator-widget {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 1px solid #e5e9ec;
+    height: calc(~'100vh - 148px');
+    background-color: #fff;
+    z-index: 5;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: @generalColor;
-    font-size: 24px;
-    border-bottom: 1px solid #e5e9ec;
+    flex-direction: column;
 
-    h1 {
-        font-size: 24px;
-        line-height: 19px;
+    .calculator-title {
+      padding: 25px 30px 25px 10px;
+      font-size: 15px;
+      line-height: 1.6;
+      letter-spacing: 0.3px;
+      color: #212c36;
+      width: 100%;
+      font-weight: 500;
+      margin: 0;
+      display: inline-block;
+
+      h3 {
+        float: left;
+        margin-bottom: 0;
+        font-size: 20px;
+        letter-spacing: 0.4px;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
         text-align: left;
-        color: @generalColor;
-        margin: 0;
-        font-weight: 400;
-    }
+        color: rgb(32, 43, 53);
+      }
 
-    .synch-progress{
-        margin-top: -7px;
-        margin-left: 10px;
-    }
-
-    .add-new {
-        width: 192px;
-        height: 42px;
-        border-radius: 21px;
-        background-color: #00aeef;
-        border: none;
-        color: #fff;
-        font-size: 15px;
-        line-height: 1.6;
-        letter-spacing: 0.3px;
-        float: right;
+      img {
+        margin-right: 10px;
         position: relative;
-    }
-}
+        top: -3px;
+      }
 
-.invisible {
-    opacity: 0;
-}
+      .close {
+        top: 2px;
+        right: -20px;
+        width: 20px;
+        height: 20px;
+        float: right;
+        cursor: pointer;
+        position: relative;
 
-::ng-deep .toolbar-hidden {
-    .cashflow .cashflow-scroll,
-    .main-wrapper .grid-is-empty {
-        height: calc(~'100vh - 150px') !important;
-    }
-}
-
-::ng-deep .dx-gallery.dx-widget[accesskey='cashflowForecastSwitcher'] {
-    border: 1px solid #ddd;
-    vertical-align: middle;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    color: #677380;
-    font-size: 13px;
-    line-height: 2.9;
-    letter-spacing: 0.3px;
-    display: inline-block;
-    font-weight: 400;
-
-    .dx-widget {
+        &:after,
         &:before {
-            margin: 0 auto;
-            font-size: 29px;
-            width: 8px;
-            height: 15px;
+          position: absolute;
+          top: 0;
+          left: 8px;
+          content: '';
+          height: 17px;
+          width: 2px;
+          background-color: #1b1b1b;
+        }
+
+        &:before {
+          transform: rotate(45deg);
         }
 
         &:after {
-            background: none;
+          transform: rotate(-45deg);
         }
+      }
     }
+
+    calculator-widget {
+      // display: block;
+      height: calc(~'100% - 72px');
+    }
+
+    &.calculatorHidden {
+      display: none;
+    }
+  }
+
+  ::ng-deep .function-button {
+    border: 0;
+    display: table-row-group;
+    background: #fff;
+    position: absolute;
+    z-index: 5;
+    margin-top: 9px;
+    margin-left: 3px;
+
+    .dx-button-content {
+      padding: 0;
+    }
+  }
+
+  ::ng-deep .save-forecast-button {
+    border: 0;
+    background: transparent;
+    .dx-button-content {
+      padding-left: 0;
+      width: 21px;
+      padding-right: 0;
+    }
+  }
+
+  ::ng-deep .calculator-number-box {
+    // padding: 0 !important;
+    .dx-numberbox {
+      float: left;
+    }
+
+    input {
+      text-align: right;
+    }
+  }
+
+  td {
+    position: relative;
+  }
+
+  ::ng-deep .filter-text {
+    color: #fff;
+    background-color: #337ab7;
+  }
+
+  ::ng-deep .cashflow .dx-pivotgrid {
+    overflow: visible;
+
+    .dx-filter-header {
+      border: 0;
+    }
+
+    .dx-pivotgrid-container table.dx-pivotgrid-border {
+      .dx-pivotgrid-horizontal-headers {
+        .dateField {
+          &.dx-pivotgrid-expanded {
+            padding: 5px 10px;
+
+            .head-cell-expand {
+              position: relative;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+
+              &:after {
+                content: '';
+                display: block;
+                background: url('../../../assets/common/icons/cfo-down.png') 100%;
+                transform: rotate(180deg);
+                position: absolute;
+                visibility: visible;
+                left: -7px;
+                top: 2px;
+                width: 12px;
+                height: 7px;
+              }
+
+              .main-head-cell:hover {
+                .totals {
+                  text-decoration: underline;
+                }
+              }
+
+              &.closed {
+                visibility: hidden;
+
+                .main-head-cell {
+                  display: none;
+                }
+
+                .closed-head-cell {
+                  display: block;
+                }
+
+                &:after {
+                  transform: rotate(0deg);
+                }
+              }
+            }
+          }
+
+          .closed-head-cell {
+            top: -2px;
+            line-height: 10px;
+            visibility: visible;
+            font-size: 10px;
+            color: @historicalTextColor;
+            font-weight: 400;
+            margin: 0 auto;
+            display: none;
+            padding: 0 16px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+      /** general */
+      .dx-grandtotal {
+        background: @grandTotalBackgroundColor;
+        color: @grandTotalTextColor;
+      }
+
+      .dx-pivotgrid-area td {
+        &.hideZeroActivity {
+          border: 0.1px solid #ccc !important;
+          padding: 0 !important;
+        }
+
+        &.selectedCell {
+          border: 1px double #f9b83a !important;
+          background-color: #fbf3e4 !important;
+          color: #333 !important;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+
+          span {
+            color: #333 !important;
+          }
+        }
+
+        &.dx-total,
+        &.dx-data-header,
+        &.dx-column-header {
+          background: @totalDataCellBackgroundColor;
+        }
+      }
+
+      .dx-texteditor {
+        border: none;
+      }
+
+      .cfoThemeLightDarkTheme {
+        &.dx-area-row-cell,
+        &.dx-area-column-cell,
+        &.dx-area-data-cell {
+          tr {
+            &.totalRow,
+            &.yearRow {
+              td {
+                background: rgba(221, 221, 221, 0.32) !important;
+                color: rgb(51, 51, 51) !important;
+              }
+            }
+
+            &.tRow {
+              td,
+              td span:not(.dx-expand) {
+                color: @totalsTextColor !important;
+              }
+            }
+
+            &.reportingSectionTotal {
+              td {
+                background: rgba(196, 190, 190, 0.32) !important;
+              }
+            }
+          }
+        }
+      }
+
+      & > tr:nth-child(3) {
+        position: fixed;
+        z-index: 3;
+        border-top: 1px solid @tableBorderColor;
+        margin-top: -1px;
+        background: #fff;
+        /** upper left column */
+        .dx-area-description-cell {
+          height: 65px;
+          vertical-align: top;
+          background-color: #fff;
+          min-width: @left-column-width;
+
+          .sort-options {
+            padding-left: 10px;
+            position: absolute;
+            bottom: 10px;
+            .dx-toolbar-center {
+              margin: 0;
+            }
+            .dx-toolbar .dx-button[group-item-position='last'] {
+              margin-right: 0;
+            }
+          }
+
+          #findInputBlock {
+            display: inline-flex;
+            height: 39px;
+            position: absolute;
+            z-index: 2;
+            left: 11px;
+            bottom: 13px;
+            margin: auto;
+
+            .dx-texteditor-container {
+              border: 1px solid #dadee1;
+              border-radius: 3px;
+            }
+
+            .dx-searchbox .dx-texteditor-input {
+              padding-left: 44px;
+              border-bottom: none;
+              color: #677380;
+              font-weight: 300;
+              line-height: 1.71;
+              letter-spacing: 0.3px;
+              text-align: left;
+              font-size: 14px;
+              height: 39px;
+              outline: none;
+              width: 312px;
+            }
+          }
+        }
+        /** upper right column (historical row and dates rows) */
+        .dx-area-column-cell {
+          background: #fff;
+
+          tr {
+            height: auto !important;
+
+            td {
+              font-size: 10px;
+              position: relative;
+              background-clip: padding-box;
+              background-color: @historicalDataCellBackgroundColor;
+
+              &.cashflow {
+                color: #00aeef;
+              }
+
+              .totals {
+                font-size: 10px;
+              }
+
+              &.dx-pivotgrid-expanded,
+              &.dx-pivotgrid-collapsed {
+                text-align: center;
+              }
+
+              .dx-expand-icon-container {
+                display: none;
+              }
+
+              &.year {
+                color: @yearTextColor;
+                background-color: @incomeVerticalHeaderBackgroundColor;
+                font-weight: 600;
+                font-size: 20px;
+              }
+
+              &[class*='next'] {
+                background-color: @forecastDataCellBackgroundColor;
+              }
+
+              &.lowestOpenedCurrent {
+                border-left: 1px solid @currentTextColor;
+              }
+
+              &.lowestOpenedCurrent,
+              &.currentProjected {
+                position: relative;
+                background-color: @currentPeriodCellBackgroundColor;
+
+                &:before,
+                &:after {
+                  content: '';
+                  position: absolute;
+                  height: calc(~'100% + 1px');
+                  top: -1px;
+                }
+
+                &:before {
+                  left: -1px;
+                  width: calc(~'100% + 1px');
+                  border-top: 4px solid @currentTextColor;
+                  border-left: 1px solid @currentTextColor;
+                }
+
+                &:after {
+                  right: -1px;
+                  width: 1px;
+                  border-right: 1px solid @currentTextColor;
+                }
+
+                &.currentDay:before {
+                  border-top: none;
+                }
+              }
+
+              &.currentDay.topBorder {
+                border-top: 4px solid @currentTextColor;
+              }
+
+              &.month,
+              &.quarter,
+              &.day {
+                color: @generalColor;
+                font-weight: 600;
+                font-size: 18px;
+              }
+
+              &.historicalField {
+                cursor: default;
+                font-size: 10px;
+                letter-spacing: 0.6px;
+
+                &.prevHistorical {
+                  color: @historicalTextColor;
+                  background-color: #f7f9ff;
+                }
+
+                &.currentHistorical {
+                  background: @currentTextColor;
+                  border: 1px double @currentTextColor;
+                  color: #fff;
+                }
+
+                &.nextHistorical {
+                  color: @forecastTextColor;
+                }
+              }
+
+              span {
+                &.dayEnding {
+                  font-size: 10px;
+                  position: absolute;
+                }
+
+                &.dayName {
+                  font-size: 9px;
+                  color: #8d9297;
+                  position: absolute;
+                  right: 7px;
+                  bottom: 7px;
+                  font-weight: 400;
+                }
+              }
+
+              &[data-is-weekend='true'] {
+                background-image: url('../../../assets/common/images/weekend-background.png') !important;
+              }
+
+              &.projectedField {
+                &.PastTotal,
+                &.FutureTotal {
+                  cursor: default;
+                }
+
+                &.projectedHidden {
+                  border: none;
+                  cursor: default;
+                  padding: 0;
+                }
+              }
+            }
+
+            &.projectedRow.hidden {
+              display: none;
+            }
+          }
+        }
+      }
+
+      tr.dx-bottom-row {
+        & > td {
+          padding-top: 84px;
+        }
+        /** bottom left column (labels cells) */
+        .dx-area-row-cell {
+          min-width: @left-column-width !important;
+
+          table {
+            tr {
+              position: relative;
+
+              &:first-child td.dx-white-space-column {
+                border-top: 0;
+              }
+
+              td {
+                text-align: left;
+                color: inherit;
+                width: 23px;
+                line-height: 23px;
+                min-width: 23px;
+
+                span.truncated {
+                  display: inline-flex;
+
+                  span {
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                  }
+                }
+
+                .accountNumber {
+                  font-family: Lato;
+                  float: right;
+                  padding-left: 3px;
+                }
+
+                &.dx-white-space-column {
+                  background: #fff;
+                  border-right: none;
+                  border-top: 1px solid @tableBorderColor;
+                  position: relative;
+                  cursor: pointer;
+
+                  span:before {
+                    content: '-';
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    margin: auto;
+                    z-index: 1;
+                    text-align: center;
+                    line-height: 11px;
+                    width: 100%;
+                    height: 100%;
+                  }
+
+                  &:after {
+                    content: '';
+                    position: absolute;
+                    top: 23px;
+                    left: 23px;
+                    display: block;
+                    border-right: 2px solid @expendedLineColor;
+                    height: calc(~'100%' - 7px);
+                    z-index: 1;
+                  }
+
+                  &.startedBalanceWhiteSpace {
+                    border-top: none;
+                  }
+                }
+
+                &.emptyChildren {
+                  cursor: default;
+                  padding-left: 43px !important;
+                }
+
+                &.netChange {
+                  text-align: left;
+                }
+
+                &.dx-last-cell {
+                  width: 200px;
+                  padding-left: 22px;
+                }
+
+                &.descriptor {
+                  font-style: italic;
+                }
+
+                .dx-expand-icon-container {
+                  font: inherit;
+                  margin-right: 10px;
+                  float: left;
+
+                  .dx-expand::before {
+                    top: auto;
+                    left: auto;
+                    position: relative;
+                    width: auto;
+                    margin: auto;
+                  }
+
+                  &:before {
+                    display: none;
+                  }
+                }
+
+                .dx-expand-icon-container > span,
+                &.dx-white-space-column > span {
+                  border: 1px solid @expendedLineColor;
+                  border-radius: 3px;
+                  width: 15px;
+                  height: 15px;
+                  top: 1px;
+                  position: relative;
+                  display: block;
+                  font-size: 17px;
+                  font-family: var(--app-font-family);
+                  font-weight: 500;
+                  color: #000;
+                  background: #fff;
+                  z-index: 2 !important;
+                }
+
+                &.dx-white-space-column > span {
+                  display: inline-block;
+                  left: 16px;
+                  top: 8px;
+                  z-index: 1;
+                }
+
+                &.dx-pivotgrid-collapsed .dx-expand:before {
+                  content: '+';
+                  height: 100%;
+                  width: 100%;
+                  line-height: 13px;
+                }
+
+                &.dx-pivotgrid-expanded {
+                  position: relative;
+                  .dx-expand {
+                    border: none;
+                    background: transparent;
+                    left: 0;
+                    &:before {
+                      content: '';
+                      width: 7px;
+                      border-bottom: 2px solid @expendedLineColor;
+                      margin-left: 7px;
+                      top: 7px;
+                    }
+                  }
+
+                  .dx-expand-icon-container {
+                    position: relative;
+
+                    &:after {
+                      content: '';
+                      top: 6px;
+                      position: absolute;
+                      left: 12px;
+                      width: 6px;
+                      height: 6px;
+                      border-radius: 50%;
+                      background: @expendedLineColor;
+                    }
+                  }
+                }
+              }
+
+              &.iRow,
+              &.incomeChildRow,
+              &.eRow,
+              &.expensesChildRow {
+                .dx-pivotgrid-collapsed .dx-expand-icon-container span {
+                  content: '';
+                  display: inline-block;
+                  transform: rotate(-90deg);
+
+                  &:before {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    top: 1px;
+                    bottom: 0;
+                    right: 0;
+                    left: 0;
+                    margin: auto;
+                    width: 9px;
+                    height: 4px;
+                    line-height: 0;
+                  }
+                }
+              }
+
+              &.incomeChildRow,
+              &.expensesChildRow {
+                .dx-white-space-column {
+                  &:before {
+                    content: '';
+                    border: none;
+                  }
+                  span {
+                    &:before {
+                      content: '';
+                      display: block;
+                      position: absolute;
+                      top: 0;
+                      bottom: 0;
+                      right: 0;
+                      left: 0;
+                      margin: auto;
+                      width: 9px;
+                      height: 4px;
+                    }
+                  }
+                }
+
+                &:before {
+                  display: none;
+                }
+              }
+
+              &.iRow td {
+                background: @incomeVerticalHeaderBackgroundColor;
+              }
+
+              &.iRow,
+              &.incomeChildRow {
+                .dx-pivotgrid-expanded .dx-expand-icon-container {
+                  span:before {
+                    border-bottom: 2px solid #61c670 !important;
+                  }
+
+                  &:after {
+                    background: #61c670 !important;
+                  }
+                }
+
+                .dx-pivotgrid-collapsed .dx-expand-icon-container span:before {
+                  background-image: url('../../../assets/common/icons/arrow-down-green.svg');
+                }
+              }
+
+              &.incomeChildRow {
+                .dx-white-space-column {
+                  &:after {
+                    border-right: 2px solid #61c670 !important;
+                  }
+
+                  span:before {
+                    background: url('../../../assets/common/icons/arrow-down-green.svg') no-repeat
+                      center;
+                  }
+                }
+              }
+
+              &.eRow td {
+                background: @expensesVerticalHeaderBackgroundColor;
+              }
+
+              &.eRow,
+              &.expensesChildRow {
+                .dx-pivotgrid-expanded .dx-expand-icon-container {
+                  span:before {
+                    border-bottom: 2px solid #e7326a !important;
+                  }
+
+                  &:after {
+                    background: #e7326a !important;
+                  }
+                }
+
+                .dx-pivotgrid-collapsed .dx-expand-icon-container span:before {
+                  background: url('../../../assets/common/icons/arrow-down-red.svg');
+                }
+              }
+
+              &.expensesChildRow {
+                .dx-white-space-column {
+                  &:after {
+                    border-right: 2px solid #e7326a !important;
+                  }
+
+                  span:before {
+                    background: url('../../../assets/common/icons/arrow-down-red.svg') no-repeat
+                      center;
+                  }
+                }
+              }
+
+              &.totalRow:not([class*='ChildRow']) td {
+                letter-spacing: 0.8px;
+                font-weight: 600;
+                text-align: left;
+                text-transform: uppercase;
+              }
+
+              &.bRow td {
+                background: @startedBalanceBackgroundColor;
+              }
+
+              &.ncRow td {
+                background: transparent;
+              }
+
+              &.tRow td {
+                background: #00aff0;
+                color: #fff;
+                padding-left: 22px;
+              }
+
+              &.dRow td {
+                letter-spacing: 0.2px;
+                padding-left: 22px;
+                font-weight: 600;
+                background: @reconciliationVerticalHeaderBackgroundColor;
+              }
+            }
+          }
+        }
+        /** bottom right column (data cells) */
+        .dx-area-data-cell {
+          &.fontNameLato tr td {
+            &,
+            span,
+            input {
+              font-family: Lato !important;
+            }
+          }
+
+          &.fontNameOpenSans tr td {
+            &,
+            span,
+            input {
+              font-family: 'Open Sans' !important;
+            }
+          }
+
+          &.fontNameKameron tr td {
+            &,
+            span,
+            input {
+              font-family: Kameron !important;
+            }
+          }
+
+          &.fontNameWorkSans tr td {
+            &,
+            span,
+            input {
+              font-family: Work Sans !important;
+            }
+          }
+
+          tr {
+            td {
+              background: @historicalDataCellBackgroundColor;
+              color: @middleGrayColor;
+              font-family: Lato !important;
+              letter-spacing: 0.2px;
+              line-height: 23px;
+              padding-left: 26px;
+              background-clip: padding-box !important;
+              position: relative;
+
+              &[class*='next'] {
+                background: @forecastDataCellBackgroundColor;
+              }
+
+              &[data-is-weekend='true'] {
+                background-image: url('../../../assets/common/images/weekend-background.png');
+              }
+
+              &.dx-row-total {
+                background-color: @totalDataCellBackgroundColor;
+              }
+
+              &.red {
+                &,
+                & span {
+                  color: red !important;
+                }
+              }
+
+              &.zeroValue {
+                &,
+                & span {
+                  color: @dataCellColorForZeroValues;
+                  font-weight: 300;
+                }
+              }
+
+              &[droppable='true'] {
+                background: #fffbf4 !important;
+              }
+
+              &.currentDroppable {
+                &,
+                & > span {
+                  background: #cbeeff !important;
+                  cursor: pointer;
+                }
+              }
+
+              span {
+                font-family: Lato !important;
+                color: @middleGrayColor;
+              }
+
+              &.lowestOpenedCurrent {
+                background-color: @currentPeriodCellBackgroundColor;
+                border-left: 1px double @currentTextColor;
+                border-right: 1px double @currentTextColor;
+              }
+
+              &.currentDay {
+                background-color: @currentDayCellBackgroundColor;
+              }
+
+              .dx-texteditor-input {
+                text-align: right;
+              }
+
+              &.selectedCell a.dx-link {
+                display: inline-block;
+              }
+
+              a.dx-link {
+                width: 18px;
+                display: none;
+                color: transparent !important;
+                position: absolute;
+                left: 3px;
+
+                &.dx-link-discard {
+                  background: url('../../../assets/common/icons/delete-icon.svg') no-repeat center;
+                }
+
+                &.dx-link-info {
+                  background: url('../../../assets/common/icons/info-icon.svg') no-repeat center;
+                  display: inline-block;
+                  cursor: default;
+                }
+              }
+
+              .budget-info {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                position: absolute;
+                top: 3px;
+                left: 3px;
+                cursor: pointer;
+                &.within-budget {
+                  background-color: #61c670;
+                }
+                &.out-of-budget {
+                  background-color: #e7326a;
+                }
+              }
+            }
+
+            &.iRow td {
+              background: @incomeDataCellBackgroundColor;
+
+              &.lowestOpenedCurrent {
+                background: linear-gradient(
+                    @currentPeriodCellBackgroundColor,
+                    @currentPeriodCellBackgroundColor
+                  ),
+                  linear-gradient(@incomeDataCellBackgroundColor, @incomeDataCellBackgroundColor);
+              }
+            }
+
+            &.eRow td {
+              background: @expensesDataCellBackgroundColor;
+
+              &.lowestOpenedCurrent {
+                background: linear-gradient(
+                    @currentPeriodCellBackgroundColor,
+                    @currentPeriodCellBackgroundColor
+                  ),
+                  linear-gradient(
+                    @expensesDataCellBackgroundColor,
+                    @expensesDataCellBackgroundColor
+                  );
+              }
+            }
+
+            &.totalRow td {
+              &,
+              & span {
+                color: @totalsTextColor;
+                font-weight: 600;
+              }
+
+              &.zeroValue {
+                &,
+                & span {
+                  color: @dataCellColorForZeroValues;
+                  font-weight: 300;
+                }
+              }
+            }
+
+            &.bRow {
+              td {
+                &.dx-total {
+                  background: @startedBalanceDataCellColor;
+                }
+
+                &.lowestOpenedCurrent:not(.selectedCell) {
+                  background: linear-gradient(
+                      @currentPeriodCellBackgroundColor,
+                      @currentPeriodCellBackgroundColor
+                    ),
+                    linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
+                }
+              }
+
+              &:first-child {
+                td {
+                  background: @startedBalanceDataCellColor;
+
+                  &.lowestOpenedCurrent:not(.selectedCell) {
+                    background: linear-gradient(
+                        @currentPeriodCellBackgroundColor,
+                        @currentPeriodCellBackgroundColor
+                      ),
+                      linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
+                  }
+                }
+              }
+            }
+
+            &.tRow td {
+              background: @grandTotalBackgroundColor;
+
+              &.lowestOpenedCurrent:not(.lowestOpenedCurrent) {
+                background: linear-gradient(
+                    @currentPeriodCellBackgroundColor,
+                    @currentPeriodCellBackgroundColor
+                  ),
+                  linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
+              }
+
+              span {
+                color: @grandTotalTextColor;
+              }
+            }
+
+            &.ncRow td:not(.lowestOpenedCurrent) {
+              background: transparent;
+            }
+
+            &.dRow td {
+              background: @reconciliationDataCellBackgroundColor;
+              color: @reconciliationDataCellTextColor;
+
+              &.lowestOpenedCurrent {
+                background: linear-gradient(
+                    @currentPeriodCellBackgroundColor,
+                    @currentPeriodCellBackgroundColor
+                  ),
+                  linear-gradient(
+                    @reconciliationDataCellBackgroundColor,
+                    @reconciliationDataCellBackgroundColor
+                  );
+              }
+            }
+
+            &:last-child td.lowestOpenedCurrent {
+              border-bottom: 1px double @currentTextColor !important;
+            }
+          }
+
+          .dx-scrollable-scrollbar {
+            bottom: -11px;
+            height: 13px;
+
+            &.fixedScrollbar {
+              position: fixed;
+              bottom: 5px;
+              left: @left-column-width;
+            }
+
+            &.dx-state-hover,
+            &.dx-scrollable-scrollbar-hoverable,
+            &.dx-scrollable-scrollbar-active {
+              height: 13px;
+            }
+
+            .dx-scrollable-scroll {
+              height: 15px;
+
+              .dx-scrollable-scroll-content {
+                background-color: rgb(191, 191, 191);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  ::ng-deep .dx-dropdowneditor[accesskey='cashflowGroupby'] {
+    &.dx-dropdowneditor-field-clickable {
+      max-width: none;
+
+      input {
+        border-bottom: none;
+      }
+
+      .dx-placeholder {
+        display: none !important;
+      }
+    }
+
+    .dx-texteditor-container {
+      width: auto;
+      display: flex;
+      align-items: baseline;
+      justify-content: left;
+
+      input.dx-texteditor-input {
+        padding: 8px 0 8px 8px;
+        font-size: 15px;
+        display: block;
+        float: left;
+        max-width: inherit;
+        min-width: 0;
+        width: auto;
+        color: @generalColor;
+      }
+
+      .dx-texteditor-buttons-container {
+        position: static;
+
+        .dx-dropdowneditor-button {
+          width: 10px;
+          padding: 0;
+          position: static;
+
+          .dx-dropdowneditor-icon {
+            font: 14px/1 DXIcons !important;
+
+            &:before {
+              content: url('../../../assets/common/icons/down-icon.svg');
+              top: 9px;
+              right: 0;
+              left: auto;
+              margin: auto;
+              color: @generalColor;
+            }
+          }
+        }
+      }
+    }
+
+    .dx-dropdowneditor-button-visible .dx-texteditor-input {
+      padding-right: 10px;
+      width: auto;
+    }
+
+    &.dx-state-hover .dx-dropdowneditor-icon,
+    &.dx-dropdowneditor.dx-state-active .dx-dropdowneditor-icon,
+    &.dx-dropdowneditor-active .dx-dropdowneditor-icon {
+      background: none !important;
+    }
+  }
+
+  ::ng-deep [class*='chart'] {
+    width: 64px;
+    height: 18px;
+    float: right;
+  }
+  // fix float fo ff
+  ::ng-deep .dx-pivotgrid-vertical-headers {
+    table {
+      width: 100% !important;
+    }
+
+    tr {
+      td {
+        white-space: normal;
+      }
+    }
+  }
+
+  .main-wrapper {
+    height: 100%;
+    &.grid-is-empty {
+      height: calc(~'100vh - 210px');
+      ::ng-deep .dx-bottom-row > td {
+        padding-top: 0 !important;
+      }
+      ::ng-deep
+        .cashflow
+        .dx-pivotgrid
+        .dx-pivotgrid-container
+        table.dx-pivotgrid-border
+        > tr:nth-child(3)
+        .dx-area-column-cell
+        tr
+        td {
+        background: transparent;
+      }
+      app-no-data {
+        height: calc(~'100% - 78px');
+      }
+    }
+  }
+
+  .cashflow {
+    background-color: #fff;
+    position: relative;
+
+    .groupBy {
+      padding-left: 22px;
+      display: flex;
+      color: @generalColor;
+      align-items: center;
+
+      span {
+        margin-right: 10px;
+      }
+    }
+
+    .cashflow-wrap {
+      height: calc(100% - 149px);
+      max-height: 100%;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+      right: 0;
+      border-top: 1px solid @tableBorderColor;
+      border-left: 1px solid @tableBorderColor;
+      padding: 0 15px 0 24px;
+      background: #fff;
+      z-index: 4;
+      transform: translate(0, 0) !important;
+
+      .resize-buttons {
+        z-index: 1;
+        text-align: center;
+        font-size: 22px;
+        position: absolute;
+        width: 100%;
+        left: 0;
+        line-height: 0.5;
+        font-weight: bold;
+        letter-spacing: 3px;
+        color: #cecece;
+      }
+
+      .configBlock {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        ::ng-deep .dx-tabs {
+          border: none;
+          .dx-tab {
+            border: none;
+            background: transparent;
+            &.dx-tab-selected:after {
+              border: none;
+              border-bottom: 3px solid #00aeef;
+            }
+          }
+        }
+
+        .detailsButtons {
+          margin-left: auto;
+          .dx-button {
+            border: 0;
+            padding: 0;
+            ::ng-deep .dx-button-text {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+      .close-btn {
+        border: 0;
+        padding: 0;
+        position: absolute;
+        right: 0;
+        z-index: 1;
+        top: 70px;
+        &:hover {
+          background: transparent !important;
+        }
+      }
+
+      .close-btn-portal {
+        top: 37px;
+      }
+    }
+
+    ::ng-deep #cashflowGridContainer {
+      height: calc(~'100% - 43px');
+      ::ng-deep.dx-highlight-outline {
+        padding: 0;
+      }
+      .dx-datagrid-headers {
+        .dx-datagrid-content {
+          .dx-header-row {
+            &:hover {
+              td:not(:first-child):not(:last-child) {
+                border-right: 1px solid #f5f5f5;
+              }
+            }
+
+            td {
+              padding: 20px;
+              text-transform: uppercase;
+              font-size: 13px;
+              font-weight: 700;
+              line-height: 24px;
+              color: #686f76;
+              vertical-align: middle;
+
+              &[aria-sort='none'] {
+                color: @middleGrayColor;
+              }
+
+              .firstLine {
+                text-transform: capitalize;
+                line-height: 1em;
+                font-weight: 500;
+                margin-bottom: 7px;
+
+                & + div {
+                  line-height: 1em;
+                  color: @generalColor;
+                }
+              }
+
+              &.dx-command-select {
+                padding: 20px 0;
+                text-align: left !important;
+              }
+
+              &:hover,
+              &:not([aria-sort='none']) {
+                .dx-column-indicators {
+                  display: block;
+                }
+              }
+
+              .dx-column-indicators {
+                display: none;
+
+                .dx-sort {
+                  color: rgba(103, 115, 128, 0.5);
+                  font-weight: bold;
+                  font-size: 16px;
+                  position: relative;
+                  top: 1px;
+                }
+
+                .dx-header-filter {
+                  color: rgba(103, 115, 128, 0.5);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .dx-datagrid-rowsview {
+        border-top: 0;
+      }
+
+      .dx-datagrid-table {
+        .dx-data-row {
+          td {
+            color: #424c56;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.7;
+            letter-spacing: 0.3px;
+            padding: 6px 20px;
+            vertical-align: middle;
+
+            &.selectedCell:not(.dx-command-select),
+            &.dx-focused {
+              border: 1px double #f9b83a !important;
+              background-color: #fbf3e4 !important;
+              color: #333 !important;
+              -webkit-user-select: none;
+              -moz-user-select: none;
+              -ms-user-select: none;
+
+              span {
+                color: #333 !important;
+              }
+            }
+
+            &.fontNameLato {
+              &,
+              div,
+              input {
+                font-family: Lato !important;
+              }
+            }
+
+            &.fontNameOpenSans {
+              &,
+              div,
+              input {
+                font-family: 'Open Sans' !important;
+              }
+            }
+
+            &.fontNameKameron {
+              &,
+              div,
+              input {
+                font-family: Kameron !important;
+              }
+            }
+
+            &.fontNameWorkSans {
+              &,
+              div,
+              input {
+                font-family: Work Sans !important;
+              }
+            }
+
+            .dx-dropdowneditor-icon::before {
+              font-family: DXIcons !important;
+            }
+
+            .dx-datagrid-revert-tooltip {
+              display: none;
+            }
+
+            .dx-invalid-message * div {
+              font-family: var(--app-font-family) !important;
+            }
+
+            &.editable {
+              cursor: cell;
+            }
+
+            &.dx-editor-cell {
+              padding: 0 !important;
+              line-height: initial;
+              text-align: left !important;
+
+              input {
+                height: 36px;
+                display: inline-block;
+                position: relative;
+                background-color: initial;
+                border: solid 1px #e5e9ec;
+              }
+
+              .dx-checkbox-container {
+                height: 20px;
+              }
+            }
+
+            &.statusField {
+              position: relative;
+
+              &:before {
+                content: '';
+                position: absolute;
+                width: 7px;
+                border-radius: 50%;
+                height: 7px;
+                top: 0;
+                left: 5px;
+                bottom: 0;
+                margin: auto;
+              }
+
+              &.projected,
+              &.historical {
+                color: #fe871a;
+
+                &:before {
+                  background-color: #fe871a;
+                }
+              }
+
+              &.completed {
+                color: #a6d7a9;
+
+                &:before {
+                  background-color: #a6d7a9;
+                }
+              }
+            }
+
+            &.inflows div {
+              color: #61c670;
+              background-color: rgba(97, 198, 112, 0.1);
+            }
+
+            &.outflows div {
+              color: #e7326a;
+              background-color: rgba(231, 50, 106, 0.1);
+            }
+
+            &.inflows,
+            &.outflows {
+              div {
+                border-radius: 11px;
+                max-width: 89px;
+                text-align: center;
+              }
+            }
+
+            &.dx-command-edit {
+              padding: 0;
+
+              .dx-link {
+                display: inline-block;
+                font: normal normal normal 14px/1 FontAwesome !important;
+                text-rendering: auto;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+
+                &.dx-link-save {
+                  margin-right: 5px;
+
+                  &::before {
+                    font-size: 20px;
+                    color: green;
+                    content: '\f0c7';
+                  }
+                }
+
+                &.dx-link-cancel::before {
+                  font-size: 20px;
+                  color: gray;
+                  content: '\f0e2';
+                }
+              }
+            }
+
+            .calculated {
+              color: #c3c3c3;
+            }
+          }
+
+          &.dx-selection {
+            td {
+              background-color: rgba(0, 174, 239, 0.05);
+            }
+          }
+
+          &.adjustmentRow {
+            td.dx-command-select {
+              pointer-events: none;
+
+              .dx-select-checkbox {
+                display: none;
+              }
+            }
+
+            &.dx-selection td {
+              background-color: initial;
+              border: none;
+            }
+
+            &.dx-selection.dx-row-alt td {
+              background-color: var(--background-color);
+              border: none;
+            }
+          }
+
+          &.forecastRow,
+          &.adjustmentRow {
+            &.projected {
+              td.forecastDate {
+                align-items: center;
+                padding-left: 3px;
+                position: relative;
+                & > div {
+                  margin-left: 10px;
+                }
+                &:before {
+                  content: '!';
+                  color: #f89800;
+                  font-weight: 800;
+                  font-size: 18px;
+                  position: absolute;
+                  left: 3px;
+                  height: 15px;
+                  line-height: 15px;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                }
+              }
+            }
+          }
+        }
+
+        .dx-data-row td {
+          &.category {
+            padding-left: 27px;
+            position: relative;
+          }
+          .uncategorized {
+            &:before {
+              content: '';
+              background: #f8a126;
+              width: 8px;
+              height: 8px;
+              border-radius: 50%;
+              display: block;
+              position: absolute;
+              left: 10px;
+              top: 50%;
+              transform: translateY(-50%);
+            }
+          }
+        }
+      }
+
+      .dx-datagrid {
+        .dx-row-alt > td {
+          background: #f3f7fa;
+        }
+
+        .dx-column-lines > td {
+          border-right: 0;
+          border-left: 0;
+        }
+
+        .dx-datagrid-focus-overlay {
+          border: none;
+        }
+
+        .dx-link {
+          color: transparent;
+        }
+      }
+
+      .uncategorized {
+        td {
+          background-color: #fffbf5;
+          color: #757b7f;
+        }
+      }
+      .dx-texteditor-buttons-container {
+        position: static;
+        height: initial;
+      }
+    }
+
+    ::ng-deep .headline-title .header-names {
+      @media (max-width: 1400px) {
+        max-width: 400px;
+      }
+    }
+
+    .cashflow-scroll {
+      height: calc(~'100vh - 210px');
+
+      &.withCashflowFooterToolbar {
+        padding-bottom: 42px;
+      }
+
+      ::ng-deep .dx-scrollable-content {
+        transform: none !important;
+      }
+    }
+  }
+
+  .grid-is-empty .cashflow .cashflow-scroll {
+    height: auto !important;
+  }
+
+  &.fullscreen {
+    top: 0 !important;
+
+    .cashflow-scroll {
+      height: calc(100vh - 63px) !important;
+    }
+  }
+
+  &.toolbar-is-shown {
+    ::ng-deep .spinner {
+      top: 30px !important;
+    }
+  }
+
+  .cashflowFooterToolbar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1;
+
+    ::ng-deep dx-toolbar {
+      padding: 11px 0 9px 0;
+
+      .dx-toolbar-items-container {
+        height: 22px;
+      }
+
+      .dx-tabs {
+        border: none;
+
+        .dx-tab {
+          padding: 0 11px 0 11px;
+          color: #677380;
+          margin-right: 23px;
+          background-color: initial;
+
+          &.dx-tab-selected {
+            border-radius: 12px;
+            color: #212c36;
+            background-color: var(--background-color);
+
+            &:after {
+              display: none;
+            }
+          }
+
+          .editModel {
+            position: absolute;
+            z-index: 1;
+            top: 0;
+
+            input {
+              width: 100%;
+            }
+          }
+        }
+      }
+
+      .dx-toolbar-item {
+        max-width: initial !important;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        color: #212c36;
+
+        .dx-button {
+          border: none;
+          .dx-button-content {
+            margin-bottom: -3px;
+            display: inline-block;
+            height: 17px;
+            min-width: 0;
+          }
+          .addModel {
+            display: inline-block;
+          }
+        }
+      }
+
+      .dx-toolbar-before .dx-toolbar-item {
+        &:not(:first-child) {
+          padding-left: 13px;
+        }
+
+        &:not(:nth-child(3)) {
+          border-right: 1px solid #e5e9ec;
+        }
+
+        &:not(:last-child) {
+          padding-right: 20px;
+        }
+
+        .dx-button[group-item-position='last'] {
+          margin-right: 0;
+        }
+
+        &:last-child {
+          padding-right: 9px;
+        }
+      }
+
+      .dx-toolbar-after {
+        .dx-toolbar-item {
+          color: #677380;
+          padding-left: 38px;
+          font-weight: 500;
+
+          .value {
+            color: #424c56;
+            font-weight: 600;
+          }
+
+          &:last-child {
+            position: relative;
+
+            &::before {
+              content: '';
+              border-right: 1px solid #e5e9ec;
+              position: absolute;
+              left: 24px;
+              width: 1px;
+              height: 200%;
+              top: -50%;
+            }
+
+            .dx-button {
+              margin: 0;
+            }
+
+            img {
+              margin-top: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  ::ng-deep .modifying-box {
+    max-width: 170px;
+    background: transparent;
+    float: left;
+    height: initial !important;
+    input.dx-texteditor-input {
+      background: transparent;
+      font-size: inherit;
+      font-weight: inherit;
+      padding: 0;
+      margin-top: 2px;
+    }
+  }
+
+  .positive-values,
+  .positive-values * {
+    color: #61c670 !important;
+  }
+  .negative-values,
+  .negative-values * {
+    color: #e7326a !important;
+  }
+
+  .transaction-target {
+    max-width: 100%;
+    width: 330px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+::ng-deep .dx-overlay-content {
+  min-width: 100px;
+}
+
+.title {
+  background-color: var(--background-color);
+  padding: 16px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: @generalColor;
+  font-size: 24px;
+  border-bottom: 1px solid #e5e9ec;
+
+  h1 {
+    font-size: 24px;
+    line-height: 19px;
+    text-align: left;
+    color: @generalColor;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  .synch-progress {
+    margin-top: -7px;
+    margin-left: 10px;
+  }
+
+  .add-new {
+    width: 192px;
+    height: 42px;
+    border-radius: 21px;
+    background-color: #00aeef;
+    border: none;
+    color: #fff;
+    font-size: 15px;
+    line-height: 1.6;
+    letter-spacing: 0.3px;
+    float: right;
+    position: relative;
+  }
+}
+
+.invisible {
+  opacity: 0;
+}
+
+::ng-deep .toolbar-hidden {
+  .cashflow .cashflow-scroll,
+  .main-wrapper .grid-is-empty {
+    height: calc(~'100vh - 150px') !important;
+  }
+}
+
+::ng-deep .dx-gallery.dx-widget[accesskey='cashflowForecastSwitcher'] {
+  border: 1px solid #ddd;
+  vertical-align: middle;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  color: #677380;
+  font-size: 13px;
+  line-height: 2.9;
+  letter-spacing: 0.3px;
+  display: inline-block;
+  font-weight: 400;
+
+  .dx-widget {
+    &:before {
+      margin: 0 auto;
+      font-size: 29px;
+      width: 8px;
+      height: 15px;
+    }
+
+    &:after {
+      background: none;
+    }
+  }
 }

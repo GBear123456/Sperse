@@ -27,7 +27,8 @@
                             </ng-container>
                         </div>
                     </div>
-                    <div *ngIf="field.visible" class="chart-line" [ngStyle]="{ 'background-color': '#F1F5F6' }">
+                    <!-- <div *ngIf="field.visible" class="chart-line" [ngStyle]="{ 'background-color': '#F1F5F6' }"> -->
+                    <div *ngIf="field.visible" class="chart-line">
                         <div [ngStyle]="{ width: field.percent, 'background-color': field.color }"></div>
                     </div>
                 </ng-container>

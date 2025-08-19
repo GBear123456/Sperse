@@ -18,6 +18,7 @@ import { ContactTagsServiceProxy, ContactTagInfoDto, ContactTagInput, UntagConta
 import { MessageService, NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { ToolbarService } from '../../toolbar/toolbar.service';
 
 @Component({
   selector: 'tags-list',
@@ -33,6 +34,7 @@ export class TagsListComponent implements OnInit {
     @Input() hideButtons = false;
     @Input() managePermission = AppPermissions.CRMCustomersManage;
     @Input() showSelection = false;
+    @Input() staticListId: string;
     @Input() set selectedItems(value) {
         this.selectedTags = value && value.slice();
     }
@@ -53,7 +55,7 @@ export class TagsListComponent implements OnInit {
     addNewTimeout: any;
     listComponent: any;
     tooltipVisible = false;
-
+    
     isUpdateDeleteAllowed = this.permissionChecker.isGranted(AppPermissions.CRMManageListsAndTags);
 
     constructor(
@@ -65,7 +67,8 @@ export class TagsListComponent implements OnInit {
         private notifyService: NotifyService,
         private permissionChecker: AppPermissionService,
         public dialog: MatDialog,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        private toolbarService: ToolbarService
     ) {}
 
     toggle() {
@@ -78,6 +81,7 @@ export class TagsListComponent implements OnInit {
             this.highlightSelectedFilters();
         }
     }
+
 
     apply(isRemove: boolean = false, selectedKeys?) {
         if (this.listComponent) {
@@ -151,6 +155,11 @@ export class TagsListComponent implements OnInit {
 
     ngOnInit() {
         this.refresh();
+        this.toolbarService.tooltipTarget$.subscribe((id) => {
+            if(id === this.staticListId) {
+                this.toggle();
+            }
+        });
     }
 
     refresh() {

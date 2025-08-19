@@ -1,0 +1,20 @@
+<div class="settings-header-container">
+  <div class="title-container">
+    <button
+      aria-label="Back to previous page"
+      [class]="isDarkMode ? 'dark-mode' : 'white-mode'"
+      (click)="goBack()"
+      class="back-btn"
+    >
+      <lucide-angular [img]="LeftIcon"></lucide-angular>
+    </button>
+    <h1>{{ title }}</h1>
+  </div>
+  <ng-content></ng-content>
+  <!-- <button
+      class="save-button"
+    >
+        <lucide-angular [img]="SaveIcon"></lucide-angular>
+        <span>Save Settings</span>
+    </button> -->
+</div>

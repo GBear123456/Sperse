@@ -4,6 +4,7 @@ import { Component, ChangeDetectionStrategy, Injector } from '@angular/core';
 /** Third party imports */
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { Link2, AlertCircle, Check, ExternalLink, Phone, MessageSquare, Key } from 'lucide-angular';
 
 /** Application imports */
 import {
@@ -16,11 +17,19 @@ import { SettingsComponentBase } from './../settings-base.component';
 @Component({
     selector: 'ytel-settings',
     templateUrl: './ytel-settings.component.html',
-    styleUrls: ['./ytel-settings.component.less', './../settings-base.less'],
+    styleUrls: ['./../settings-base.less', './ytel-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantSettingsServiceProxy]
 })
 export class YTelSettingsComponent extends SettingsComponentBase {
+    readonly AlertIcon = AlertCircle
+    readonly LinkIcon = Link2;
+    readonly ExternalLinkIcon = ExternalLink;
+    readonly CheckIcon = Check;
+    readonly PhoneIcon = Phone;
+    readonly MessageSquareIcon = MessageSquare;
+    readonly KeyIcon = Key;
+
     isInboundOutboundSMSEnabled: boolean = abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
     yTelSettings: YTelSettingsEditDto = new YTelSettingsEditDto();
 

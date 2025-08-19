@@ -5,7 +5,7 @@
         padding-top: 10px;
         .alert-info {
             width: 100%;
-            color: #000;
+            color: var(--text-color);
             border-color: rgba(55, 215, 73, 0.1);
             &.zero {
                 border-color: rgba(209, 172, 0, 0.2);
@@ -14,9 +14,9 @@
                 }
             }
             &.undefined {
-                border-color: #dadee1;
+                border-color: var(--disabled-bg);
                 #code-color {
-                    background: #dadee1;
+                    background: var(--disabled-bg);
                 }
             }
             #code-color {
@@ -61,7 +61,7 @@
                 width: 100px;
             }
             &.login-attempt-date {
-                min-width: 280px;                
+                min-width: 280px;
             }
         }
     }

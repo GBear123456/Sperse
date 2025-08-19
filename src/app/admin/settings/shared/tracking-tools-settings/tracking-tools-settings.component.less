@@ -1,14 +1,45 @@
 :host {
-    display: block;
+  display: block;
+  background-color: var(--background-color);
+  min-height: 100%;
+  padding: 1rem 0 1rem 1rem;
 
-    .container {
-        max-width: 1200px;
-        margin: 5px auto;
+  @media (min-width: 640px) {
+    padding: 1.5rem 0 1.5rem 1.5rem;
+  }
 
-        .tracking-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.0rem;
-        }
+  .tracking-container {
+    margin: 5px auto;
+    padding: 1rem;
+    background-color: var(--background-color);
+    padding-right: 1rem;
+
+    @media (min-width: 640px) {
+      padding-right: 2rem;
     }
+
+    .tracking-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      background-color: var(--background-color);
+    }
+
+    ::ng-deep dx-scroll-view {
+      background-color: var(--background-color);
+
+      .dx-scrollable-scrollbar.dx-scrollbar-vertical.dx-scrollbar-hoverable {
+        z-index: 2;
+
+        .dx-scrollable-scroll {
+          background-color: var(--border-color);
+        }
+
+        .dx-scrollable-scrollbar {
+          background-color: var(--card-bg);
+          border: 1px solid var(--border-color);
+        }
+      }
+    }
+  }
 }

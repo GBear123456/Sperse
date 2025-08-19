@@ -1,0 +1,137 @@
+<div class="header">
+    <img src="assets/common/icons/razorpay.svg" />
+    <mat-slide-toggle
+        class="header-toggle"
+        [(ngModel)]="isEnabled"
+        labelPosition="before"
+    >
+        {{ l('Enable RazorPay Payments For Checkout') }}
+    </mat-slide-toggle>
+</div>
+
+<div class="settings-container">
+    <div class="content">
+        <div class="content-header">
+            <h2>Accept RazorPay Payments</h2>
+            <p>RazorPay is India's leading payment gateway that allows you to accept payments from your customers via multiple payment methods including credit/debit cards, UPI, and more.</p>
+        </div>
+        <div class="api-config">
+            <h3>API Configuration</h3>
+            <p>Enter your RazorPay API credentials below. You can find these in your RazorPay Dashboard under Settings > API Keys.</p>
+            <div class="form-group">
+                <label class="base-label">Key ID <span>*</span></label>
+                <div class="form-control">
+                    <input class="base-input" placeholder="Enter Key ID" required [(ngModel)]="apiKeySettings.id">
+                    <div class="btn-group">
+                        <button class="base-icon-button" (click)="copyToClipboard(apiKeySettings.id)">
+                            <lucide-angular [img]="CopyIcon"></lucide-angular>
+                            <span class="sr-only">Copy Key ID</span>
+                        </button>
+                    </div>
+                </div>
+                <p class="base-hint">Your RazorPay API Key ID</p>
+            </div>
+            <div class="form-group">
+                <label class="base-label">Key Secret <span>*</span></label>
+                <div class="form-control">
+                    <input class="base-input includes-2icons" placeholder="Enter Key Secret" required [(ngModel)]="apiKeySettings.secret" [type]="showSecret ? 'text' : 'password'">
+                    <div class="btn-group">
+                        <button class="base-icon-button" (click)="copyToClipboard(apiKeySettings.secret)">
+                            <lucide-angular [img]="CopyIcon"></lucide-angular>
+                            <span class="sr-only">Copy Key Secret</span>
+                        </button>
+                        <button class="base-icon-button" (click)="setShowSecret(!showSecret)">
+                            <lucide-angular [img]="showSecret ? EyeIcon : EyeOffIcon"></lucide-angular>
+                            <span class="sr-only">Show Key Secret</span>
+                        </button>
+                    </div>
+                </div>
+                <p class="base-hint">Your RazorPay API Key Secret (keep this secure)</p>
+            </div>
+
+            <div class="webhook-config">
+                <lucide-angular [img]="AlertIcon"></lucide-angular>
+                <div class="webhook-content">
+                    <p>Webhook Configuration</p>
+                    <p>To receive webhooks from RazorPay, please add this endpoint to your RazorPay dashboard:</p>
+                    <code>https://beta.sperse.com/api/razorpay/webhook?tenantId=<i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></code>
+                </div>
+            </div>
+
+            <div class="btn-wrapper">
+                <button class="base-button">Cancel</button>
+                <button class="base-button">Save</button>
+            </div>
+        </div>
+        <div class="info">
+            <h3>Connect RazorPay to accept payments from customers in India!</h3>
+            <p>RazorPay offers a variety of payment methods for your customers:</p>
+            <ul>
+                <li>
+                    <span class="check">✓</span>
+                    <span class="title">Accept Credit and Debit Cards</span>
+                </li>
+                <li>
+                    <span class="check">✓</span>
+                    <span class="title">UPI / QR Payments</span>
+                </li>
+                <li>
+                    <span class="check">✓</span>
+                    <span class="title">Net Banking</span>
+                </li>
+                <li>
+                    <span class="check">✓</span>
+                    <span class="title">EMI Options</span>
+                </li>
+                <li>
+                    <span class="check">✓</span>
+                    <span class="title">Wallet Payments</span>
+                </li>
+                <li>
+                    <span class="check">✓</span>
+                    <span class="title">International Payments</span>
+                </li>
+                <li>
+                    <span class="check">✓</span>
+                    <span class="title">Custom Payment Pages</span>
+                </li>
+            </ul>
+            <button class="base-button">
+                Connect to RazorPay
+            </button>
+        </div>
+    </div>
+    <div class="faq">
+        <h3>FAQ</h3>
+        <cdk-accordion [multi]="true">
+            <cdk-accordion-item
+                *ngFor="let item of faqs; let index = index;"
+                #accordionItem="cdkAccordionItem"
+                class="accordion-item"
+                role="button"
+                tabindex="0"
+                [attr.id]="'accordion-header-' + index"
+                [attr.aria-expanded]="accordionItem.expanded"
+                [attr.aria-controls]="'accordion-body-' + index"
+            >
+                <div class="accordion-item-header" (click)="accordionItem.toggle()">
+                    <span>{{ item.title }}</span>
+                    <lucide-angular [img]="ChevronIcon"></lucide-angular>
+                </div>
+                <div
+                    class="accordion-item-body"
+                    role="region"
+                    [style.display]="accordionItem.expanded ? '' : 'none'"
+                    [attr.id]="'accordion-body-' + index"
+                    [attr.aria-labelledby]="'accordion-header-' + index"
+                >
+                    {{ item.content }}
+                </div>
+            </cdk-accordion-item>
+        </cdk-accordion>
+        <a class="base-link-button">
+            Visit RazorPay Documentation
+            <lucide-angular [img]="ExternalIcon"></lucide-angular>
+        </a>
+    </div>
+</div>

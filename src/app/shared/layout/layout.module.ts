@@ -1,8 +1,10 @@
+import { LeftbarNotificationsComponent } from './notifications/leftbar-notifications/leftbar-notifications.component';
 /** Core imports */
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 /** Third party modules */
 import { MatTabsModule } from '@angular/material/tabs';
@@ -17,6 +19,7 @@ import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxNavBarModule } from 'devextreme-angular/ui/nav-bar';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxAccordionModule } from 'devextreme-angular/ui/accordion';
+import { DxPopupModule } from 'devextreme-angular/ui/popup';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
@@ -25,6 +28,7 @@ import { FileUploadModule as PrimeNgFileUploadModule } from 'primeng/fileupload'
 import { TableModule } from 'primeng/table';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { PaginatorModule } from 'primeng/paginator';
+import { SharedModule } from '../shared.module';
 
 /** Application imports */
 import { LayoutCommonModule } from './layout-common.module';
@@ -46,57 +50,60 @@ import 'assets/metronic/src/js/framework/components/general/dropdown.js';
 import 'assets/metronic/src/js/framework/components/general/offcanvas.js';
 import { ContactInfoPanelComponent } from '@app/shared/common/contact-info-panel/contact-info-panel.component';
 import { GlobalSearchComponent } from '@app/shared/layout/top-bar/global-search/global-search.component';
+import { ClientsNavigationComponent } from '@app/shared/layout/top-bar/clients-navigation/clients-navigation.component';
+import { LucideAngularModule, BellDot, ChevronLeft, ChevronRight } from 'lucide-angular';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 
 let COMPONENTS = [
-    PlatformSelectComponent,
-    HeaderComponent,
-    TopBarComponent,
-    SideBarComponent,
-    LeftBarComponent,
-    ContactInfoPanelComponent,
-    GlobalSearchComponent
+  PlatformSelectComponent,
+  HeaderComponent,
+  TopBarComponent,
+  SideBarComponent,
+  LeftBarComponent,
+  ContactInfoPanelComponent,
+  GlobalSearchComponent,
+  ClientsNavigationComponent,
+  LeftbarNotificationsComponent,
 ];
 
 @NgModule({
-    imports: [
-        ngCommon.CommonModule,
-        FormsModule,
-        RouterModule,
-        ModalModule.forRoot(),
-        TooltipModule.forRoot(),
-        TabsModule.forRoot(),
-        PopoverModule.forRoot(),
-        UtilsModule,
-        FiltersModule,
-        LayoutCommonModule,
-        InplaceEditModule,
+  imports: [
+    ngCommon.CommonModule,
+    FormsModule,
+    TooltipModule.forRoot(),
+    PopoverModule.forRoot(),
+    UtilsModule,
+    FiltersModule,
+    LayoutCommonModule,
+    InplaceEditModule,
 
-        DxListModule,
-        DxMenuModule,
-        DxScrollViewModule,
-        DxButtonModule,
-        DxTooltipModule,
-        DxNavBarModule,
-        DxDropDownBoxModule,
-        DxTextBoxModule,
-        DxSelectBoxModule,
-        DxAccordionModule,
+    DxListModule,
+    DxMenuModule,
+    DxScrollViewModule,
+    DxButtonModule,
+    DxTooltipModule,
+    DxNavBarModule,
+    DxDropDownBoxModule,
+    DxTextBoxModule,
+    DxSelectBoxModule,
+    DxAccordionModule,
+    DxPopupModule,
 
-        MatTabsModule,
-        MatDialogModule,
+    MatTabsModule,
+    MatDialogModule,
 
-        PrimeNgFileUploadModule,
-        ProgressBarModule,
-        TableModule,
-        PaginatorModule,
-        UserManagementModule,
-        NoDataModule
-    ],
-    declarations: COMPONENTS,
-    exports: COMPONENTS,
-    providers: [
-        LayoutService
-    ]
+    PrimeNgFileUploadModule,
+    ProgressBarModule,
+    TableModule,
+    PaginatorModule,
+    UserManagementModule,
+    NoDataModule,
+    CommonModule,
+    SharedModule,
+    LucideAngularModule.pick({ BellDot, ChevronLeft, ChevronRight }),
+  ],
+  declarations: COMPONENTS,
+  exports: COMPONENTS,
+  providers: [LayoutService],
 })
 export class LayoutModule {}

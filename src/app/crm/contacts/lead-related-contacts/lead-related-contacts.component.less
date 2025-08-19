@@ -1,6 +1,50 @@
 :host {
-    & > div {
-        height: 100%;
-        overflow: hidden;
+  & > div {
+    height: 100%;
+    overflow: hidden;
+  }
+  .wrapper {
+    display: flex;
+    // margin: 0 23px;
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+
+    .grid-view {
+      width: auto;
+      max-width: 100%;
+      height: 100%;
+
+      ::ng-deep dx-data-grid {
+        .dx-toolbar-after {
+          margin: 0px !important;
+        }
+        .dx-datagrid-search-panel input {
+          border-bottom: 0px;
+        }
+        .dx-datagrid-header-panel {
+          height: 48px;
+        }
+        .dx-data-row {
+          cursor: pointer;
+        }
+
+        .campaign-name {
+          font-weight: 600 !important;
+        }
+
+        .campaign-type {
+          padding-left: 15px !important;
+          padding-right: 15px !important;
+        }
+      }
     }
+  }
+  .grid-view {
+    padding-top: 70px;
+  }
+}
+
+::ng-deep .mat-tab-header {
+  z-index: 1000;
 }

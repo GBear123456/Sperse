@@ -1,506 +1,513 @@
 :host {
-    categorization {
-        display: block;
-    }
+  categorization {
+    display: block;
+  }
 }
 
 ::ng-deep .dx-selectbox-popup-wrapper {
-    .dx-popup-content {
-        margin-top: 10px;
+  .dx-popup-content {
+    margin-top: 10px;
+  }
+
+  .dx-item {
+    &.dx-state-focused,
+    &.dx-state-active {
+      background-color: transparent !important;
+      color: var(--text-color) !important;
     }
 
-    .dx-item {
-        &.dx-state-focused, &.dx-state-active {
-            background-color: transparent !important;
-            color: #333 !important;
-        }
-
-        &:first-child .attribute-name {
-            margin-top: 50px;
-        }
-
-        .descriptor-select-box-header {
-            position: relative;
-            font-size: 12px;
-            font-weight: 300;
-            color: #dcdcdc;
-            top: -6px;
-            letter-spacing: 0.1px;
-        }
-
-        .attribute-value {
-            margin-left: 30px;
-
-            &:hover {
-                background-color: #dddddd;
-            }
-        }
-
-        .attribute-value-wrapper {
-            float: right;
-            width: 270px;
-        }
+    &:first-child .attribute-name {
+      margin-top: 50px;
     }
+
+    .descriptor-select-box-header {
+      position: relative;
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--muted-text);
+      top: -6px;
+      letter-spacing: 0.1px;
+    }
+
+    .attribute-value {
+      margin-left: 30px;
+
+      &:hover {
+        background-color: var(--hover-bg, #dddddd);
+      }
+    }
+
+    .attribute-value-wrapper {
+      float: right;
+      width: 270px;
+    }
+  }
 }
 
 :host {
-    h2 {
-        font-size: 20px;
-        font-weight: 600;
-        line-height: 1;
-        letter-spacing: 0.4px;
-        color: #202b35;
-        margin-top: 28px;
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.4px;
+    color: var(--main-text);
+    margin-top: 28px;
+  }
+
+  h3 {
+    font-size: 16px;
+    line-height: 1.38;
+    letter-spacing: 0.3px;
+    font-weight: 500;
+  }
+
+  .transactions-container {
+    width: 1110px;
+    max-width: 1111px;
+    min-width: 720px;
+
+    div.close-transactions {
+      position: absolute;
+      right: 10px;
+      width: 55px;
+      height: 45px;
+      z-index: 1;
+      cursor: pointer;
+      top: 10px;
+
+      &:before,
+      &:after {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        content: ' ';
+        height: 20px;
+        width: 2px;
+        background-color: var(--main-text);
+      }
+
+      &:before {
+        transform: rotate(45deg);
+      }
+
+      &:after {
+        transform: rotate(-45deg);
+      }
     }
 
-    h3 {
-        font-size: 16px;
-        line-height: 1.38;
-        letter-spacing: 0.3px;
-        font-weight: 500;
-    }
+    ::ng-deep dx-data-grid {
+      .dx-datagrid-headers {
+        ::ng-deep * {
+          font-size: 13px;
+          color: var(--muted-text);
+          font-weight: 500;
+        }
 
-    .transactions-container {
-        width: 1110px;
-        max-width: 1111px;
-        min-width: 720px;
+        td {
+          height: 45px;
+          border: 0;
+          vertical-align: middle;
+          text-align: left;
+          line-height: 1.85;
+          letter-spacing: 0.5px;
+          text-transform: uppercase;
 
-        div.close-transactions {
-            position: absolute;
-            right: 10px;
-            width: 55px;
+          .dx-sort-indicator {
+            color: var(--text-color);
+          }
+        }
+      }
+
+      .dx-datagrid-rowsview {
+        tr {
+          &:nth-child(even) {
+            background-color: var(--background-color);
+          }
+
+          td {
             height: 45px;
-            z-index: 1;
-            cursor: pointer;
-            top: 10px;
+            border-left: 0;
+            border-right: 0;
+            vertical-align: middle;
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--main-text);
+            font-weight: 400;
+          }
 
-            &:before, &:after {
-                position: absolute;
-                top: 10px;
-                left: 20px;
-                content: ' ';
-                height: 20px;
-                width: 2px;
-                background-color: #1b1b1b;
+          &.dx-freespace-row td {
+            border-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .rule-container {
+    width: 1110px;
+    max-width: 1111px;
+    min-width: 720px;
+
+    .warning-box {
+      width: 100%;
+      height: 68px;
+      padding-left: 57px;
+      display: flex;
+      background-color: var(--warning-bg, #fdeff3);
+      border-top: 1px solid var(--warning-border, #f9b6cb);
+      border-bottom: 1px solid var(--warning-border, #f9b6cb);
+      background-image: url('../../../../assets/common/icons/exclamation-mark.svg');
+      background-repeat: no-repeat;
+      background-position: 24px 20px;
+
+      h3 {
+        display: inline-block;
+        margin-top: 12px;
+        margin-bottom: 0;
+        color: var(--text-color);
+      }
+
+      p {
+        font-size: 14px;
+        padding: 0 0 0 27px;
+        margin: 0;
+        font-weight: 300;
+        line-height: 1.57;
+        letter-spacing: 0.3px;
+        color: var(--main-text);
+      }
+    }
+
+    .rule-wrapper {
+      display: flex;
+      overflow: hidden;
+      justify-content: space-between;
+      padding: 0 0 0 30px;
+
+      h3 {
+        color: var(--main-text);
+      }
+
+      .rule {
+        div.field {
+          display: inline-flex;
+          width: 48%;
+
+          &:nth-child(2n + 1) {
+            margin-right: 2%;
+          }
+        }
+      }
+
+      .fields-row {
+        padding-bottom: 20px;
+      }
+
+      div.field {
+        justify-content: space-between;
+
+        dx-number-box {
+          ::ng-deep input {
+            text-align: center;
+          }
+        }
+
+        dx-text-box,
+        dx-select-box,
+        dx-number-box,
+        dx-drop-down-box {
+          width: 100%;
+          height: 37px;
+
+          ::ng-deep input {
+            padding: 2px 10px;
+          }
+        }
+
+        dx-select-box,
+        dx-drop-down-box {
+          ::ng-deep input {
+            padding-right: 55px !important;
+          }
+        }
+      }
+
+      .transactions-link {
+        margin-bottom: 20px;
+
+        a {
+          cursor: pointer;
+          color: var(--primary-color);
+          text-decoration: underline;
+        }
+      }
+
+      ::ng-deep .dx-widget {
+        .dx-placeholder {
+          top: -5px !important;
+          font-size: 14px;
+          font-weight: 300;
+          letter-spacing: 0.3px;
+          color: var(--muted-text);
+          line-height: 36px;
+
+          &.dx-state-invisible {
+            opacity: 0;
+          }
+        }
+
+        &[invalid='true'] {
+          .dx-datagrid-rowsview {
+            border: solid 1px var(--danger-color, #d9534f) !important;
+          }
+        }
+
+        .dx-clear-button-area {
+          opacity: 0;
+        }
+
+        &.dx-state-hover {
+          .dx-clear-button-area {
+            opacity: 1;
+          }
+        }
+
+        tr.dx-edit-row .dx-texteditor-input {
+          font-weight: 400;
+          border-bottom: none !important;
+          margin-top: -1px;
+        }
+
+        input {
+          font-size: 15px;
+          font-weight: 300;
+          line-height: 1.67;
+          letter-spacing: 0.3px;
+          color: var(--main-text);
+        }
+      }
+
+      .rule {
+        width: 541px;
+        position: relative;
+
+        label {
+          width: 130px;
+          font-size: 14px;
+          font-weight: 300;
+          letter-spacing: 0.3px;
+          color: var(--muted-text);
+          line-height: 36px;
+          vertical-align: top;
+          border-bottom: 1px solid var(--border-color);
+        }
+
+        span {
+          position: relative;
+          bottom: 48px;
+          left: 35px;
+          font-size: 14px;
+          font-weight: 300;
+          line-height: 1.71;
+          letter-spacing: 0.3px;
+          color: var(--primary-color);
+          cursor: pointer;
+        }
+
+        &:before {
+          content: '';
+          top: 25px;
+          z-index: 1;
+          right: -44px;
+          position: absolute;
+          border-top: 13px solid transparent;
+          border-bottom: 13px solid transparent;
+          border-left: 15px solid #fff;
+        }
+
+        .inline-header {
+          display: flex;
+          justify-content: space-between;
+
+          & > * {
+            align-self: center;
+            margin-top: 24px;
+            margin-bottom: 16px;
+          }
+        }
+
+        ::ng-deep dx-radio-group {
+          .dx-item-content {
+            font-size: 15px;
+            font-weight: 300;
+            line-height: 1.33;
+            letter-spacing: 0.3px;
+            color: var(--main-text);
+          }
+
+          .dx-radiobutton-checked {
+            .dx-item-content {
+              font-weight: 400;
             }
 
-            &:before {
-                transform: rotate(45deg);
+            .dx-radiobutton-icon:before {
+              border: solid 1px var(--input-border, #dadee1);
             }
 
-            &:after {
-                transform: rotate(-45deg);
+            .dx-radiobutton-icon-dot {
+              background: var(--primary-color);
             }
+          }
         }
 
         ::ng-deep dx-data-grid {
-            .dx-datagrid-headers {
-                ::ng-deep * {
-                    font-size: 13px;
-                    color: #686f76;
-                    font-weight: 500;
-                }
+          &#keywords .dx-data-row td:first-child {
+            font-size: 15px;
+            font-weight: 300;
+            line-height: 1.67;
+            letter-spacing: 0.3px;
+            color: var(--main-text);
+          }
 
-                td {
-                    height: 45px;
-                    border: 0;
-                    vertical-align: middle;
-                    text-align: left;
-                    line-height: 1.85;
-                    letter-spacing: 0.5px;
-                    text-transform: uppercase;
+          .dx-data-row.dx-edit-row:not(:nth-last-child(2)) td:first-child {
+            &:before {
+              content: 'and';
+              position: absolute;
+              color: var(--border-color);
+              font-size: 10px;
+              left: -18px;
+              top: 6px;
+              margin-top: 3px;
+            }
+          }
 
-                    .dx-sort-indicator {
-                        color: #212c36;
-                    }
-                }
+          .dx-datagrid-header-panel {
+            display: none;
+          }
+
+          .dx-datagrid-rowsview {
+            height: auto !important;
+            padding-bottom: 50px;
+            border: solid 1px var(--input-border, #dadee1);
+            border-radius: 8px;
+
+            .dx-datagrid-nodata {
+              width: 100%;
+              margin-top: 0 !important;
+              margin-right: 0 !important;
+              margin-left: 0 !important;
+              text-align: center;
             }
 
-            .dx-datagrid-rowsview {
+            .dx-datagrid-content {
+              padding: 10px 24px;
+
+              .dx-datagrid-table {
+                transform: rotate(180deg);
+
+                colgroup col:last-child {
+                  width: 56px !important;
+                }
+
                 tr {
-                    &:nth-child(even) {
-                        background-color: #F3F7FA;
-                    }
+                  ::ng-deep dx-select-box[ng-reflect-access-key='attributeTypesSelect'] input {
+                    width: 135px !important;
+                  }
 
-                    td {
-                        height: 45px;
-                        border-left: 0;
-                        border-right: 0;
-                        vertical-align: middle;
-                        font-size: 15px;
-                        line-height: 1.6;
-                        color: #424c56;
-                        font-weight: 400;
-                    }
+                  &.dx-freespace-row {
+                    display: none !important;
+                  }
 
-                    &.dx-freespace-row td {
-                        border-bottom: 0;
-                    }
+                  transform: rotate(180deg);
                 }
-            }
-        }
-    }
+              }
 
-    .rule-container {
-        width: 1110px;
-        max-width: 1111px;
-        min-width: 720px;
+              .dx-datagrid-focus-overlay {
+                height: 35px !important;
+                border: 1px solid var(--primary-color);
+              }
 
-        .warning-box {
-            width: 100%;
-            height: 68px;
-            padding-left: 57px;
-            display: flex;
-            background-color: #FDEFF3;
-            border-top: 1px solid #F9B6CB;
-            border-bottom: 1px solid #F9B6CB;
-            background-image: url('../../../../assets/common/icons/exclamation-mark.svg');
-            background-repeat: no-repeat;
-            background-position: 24px 20px;
+              td.dx-command-edit {
+                text-overflow: unset;
+                text-align: right !important;
 
-            h3 {
+                a.dx-link {
+                  width: 25px;
+                  display: none;
+                  color: transparent !important;
+
+                  &.dx-link-add {
+                    background: url('../../../../assets/common/icons/add.svg') no-repeat center;
+                  }
+
+                  &.dx-link-edit {
+                    background: url('../../../../assets/common/icons/edit.svg') no-repeat center;
+                  }
+
+                  &.dx-link-delete {
+                    background: url('../../../../assets/common/icons/delete-icon.svg') no-repeat
+                      center;
+                  }
+
+                  &.dx-link-save {
+                    display: inline-block;
+                    background: url('../../../../assets/common/icons/check.svg') no-repeat center;
+                  }
+
+                  &.dx-link-cancel {
+                    display: inline-block;
+                    background: url('../../../../assets/common/icons/cancel.svg') no-repeat center;
+                  }
+                }
+              }
+
+              tr:hover td.dx-command-edit a.dx-link {
                 display: inline-block;
-                margin-top: 12px;
-                margin-bottom: 0;
-                color: #212c36;
+              }
             }
+          }
+        }
+      }
 
-            p {
-                font-size: 14px;
-                padding: 0 0 0 27px;
-                margin: 0;
-                font-weight: 300;
-                line-height: 1.57;
-                letter-spacing: 0.3px;
-                color: #424c56;
-            }
+      .category {
+        width: 510px;
+        position: relative;
+        background-color: var(--category-bg, #f9fbfc);
+        padding: 0 24px 15px 31px;
+        border-left: 1px solid var(--border-color);
+
+        &:before {
+          content: '';
+          top: 25px;
+          left: 0;
+          z-index: 0;
+          position: absolute;
+          border-top: 13px solid transparent;
+          border-bottom: 13px solid transparent;
+          border-left: 15px solid var(--border-color);
         }
 
-        .rule-wrapper {
-            display: flex;
-            overflow: hidden;
-            justify-content: space-between;
-            padding: 0 0 0 30px;
-
-            h3 {
-                color: #202b35;
-            }
-
-            .rule {
-                div.field {
-                    display: inline-flex;
-                    width: 48%;
-
-                    &:nth-child(2n + 1) {
-                        margin-right: 2%;
-                    }
-                }
-            }
-
-            .fields-row {
-                padding-bottom: 20px;
-            }
-
-            div.field {
-                justify-content: space-between;
-
-                dx-number-box {
-                    ::ng-deep input {
-                        text-align: center;
-                    }
-                }
-
-                dx-text-box, dx-select-box, dx-number-box, dx-drop-down-box {
-                    width: 100%;
-                    height: 37px;
-
-                    ::ng-deep input {
-                        padding: 2px 10px;
-                    }
-                }
-
-                dx-select-box, dx-drop-down-box {
-                    ::ng-deep input {
-                        padding-right: 55px !important;
-                    }
-                }
-            }
-
-            .transactions-link {
-                margin-bottom: 20px;
-
-                a {
-                    cursor: pointer;
-                    color: #00aeef;
-                    text-decoration: underline;
-                }
-            }
-
-            ::ng-deep .dx-widget {
-                .dx-placeholder {
-                    top: -5px !important;
-                    font-size: 14px;
-                    font-weight: 300;
-                    letter-spacing: 0.3px;
-                    color: #677380;
-                    line-height: 36px;
-
-                    &.dx-state-invisible {
-                        opacity: 0;
-                    }
-                }
-
-                &[invalid="true"] {
-                    .dx-datagrid-rowsview {
-                        border: solid 1px #d9534f !important;
-                    }
-                }
-
-                .dx-clear-button-area {
-                    opacity: 0;
-                }
-
-                &.dx-state-hover {
-                    .dx-clear-button-area {
-                        opacity: 1;
-                    }
-                }
-
-                tr.dx-edit-row .dx-texteditor-input {
-                    font-weight: 400;
-                    border-bottom: none !important;
-                    margin-top: -1px;
-                }
-
-                input {
-                    font-size: 15px;
-                    font-weight: 300;
-                    line-height: 1.67;
-                    letter-spacing: 0.3px;
-                    color: #424c56;
-                }
-            }
-
-            .rule {
-                width: 541px;
-                position: relative;
-
-                label {
-                    width: 130px;
-                    font-size: 14px;
-                    font-weight: 300;
-                    letter-spacing: 0.3px;
-                    color: #677380;
-                    line-height: 36px;
-                    vertical-align: top;
-                    border-bottom: 1px solid #dfdfdf;
-                }
-
-                span {
-                    position: relative;
-                    bottom: 48px;
-                    left: 35px;
-                    font-size: 14px;
-                    font-weight: 300;
-                    line-height: 1.71;
-                    letter-spacing: 0.3px;
-                    color: #00aeef;
-                    cursor: pointer;
-                }
-
-                &:before {
-                    content: "";
-                    top: 25px;
-                    z-index: 1;
-                    right: -44px;
-                    position: absolute;
-                    border-top: 13px solid transparent;
-                    border-bottom: 13px solid transparent;
-                    border-left: 15px solid #FFF;
-                }
-
-                .inline-header {
-                    display: flex;
-                    justify-content: space-between;
-
-                    & > * {
-                        align-self: center;
-                        margin-top: 24px;
-                        margin-bottom: 16px;
-                    }
-                }
-
-                ::ng-deep dx-radio-group {
-                    .dx-item-content {
-                        font-size: 15px;
-                        font-weight: 300;
-                        line-height: 1.33;
-                        letter-spacing: 0.3px;
-                        color: #202b35;
-                    }
-
-                    .dx-radiobutton-checked {
-                        .dx-item-content {
-                            font-weight: 400;
-                        }
-
-                        .dx-radiobutton-icon:before {
-                            border: solid 1px #dadee1;
-                        }
-
-                        .dx-radiobutton-icon-dot {
-                            background: #00aeef;
-                        }
-                    }
-                }
-
-                ::ng-deep dx-data-grid {
-                    &#keywords .dx-data-row td:first-child {
-                        font-size: 15px;
-                        font-weight: 300;
-                        line-height: 1.67;
-                        letter-spacing: 0.3px;
-                        color: #424c56;
-                    }
-
-                    .dx-data-row.dx-edit-row:not(:nth-last-child(2)) td:first-child {
-                        &:before {
-                            content: 'and';
-                            position: absolute;
-                            color: #dfdfdf;
-                            font-size: 10px;
-                            left: -18px;
-                            top: 6px;
-                            margin-top: 3px;
-                        }
-                    }
-
-                    .dx-datagrid-header-panel {
-                        display: none;
-                    }
-
-                    .dx-datagrid-rowsview {
-                        height: auto !important;
-                        padding-bottom: 50px;
-                        border: solid 1px #dadee1;
-                        border-radius: 8px;
-
-                        .dx-datagrid-nodata {
-                            width: 100%;
-                            margin-top: 0 !important;
-                            margin-right: 0 !important;
-                            margin-left: 0 !important;
-                            text-align: center;
-                        }
-
-                        .dx-datagrid-content {
-                            padding: 10px 24px;
-
-                            .dx-datagrid-table {
-                                transform: rotate(180deg);
-
-                                colgroup col:last-child {
-                                    width: 56px !important;
-                                }
-
-                                tr {
-                                    ::ng-deep dx-select-box[ng-reflect-access-key="attributeTypesSelect"] input {
-                                        width: 135px !important;
-                                    }
-
-                                    &.dx-freespace-row {
-                                        display: none !important;
-                                    }
-
-                                    transform: rotate(180deg);
-                                }
-                            }
-
-                            .dx-datagrid-focus-overlay {
-                                height: 35px !important;
-                                border: 1px solid #00aeef;
-                            }
-
-                            td.dx-command-edit {
-                                text-overflow: unset;
-                                text-align: right !important;
-
-                                a.dx-link {
-                                    width: 25px;
-                                    display: none;
-                                    color: transparent !important;
-
-                                    &.dx-link-add {
-                                        background: url('../../../../assets/common/icons/add.svg') no-repeat center;
-                                    }
-
-                                    &.dx-link-edit {
-                                        background: url('../../../../assets/common/icons/edit.svg') no-repeat center;
-                                    }
-
-                                    &.dx-link-delete {
-                                        background: url('../../../../assets/common/icons/delete-icon.svg') no-repeat center;
-                                    }
-
-                                    &.dx-link-save {
-                                        display: inline-block;
-                                        background: url('../../../../assets/common/icons/check.svg') no-repeat center;
-                                    }
-
-                                    &.dx-link-cancel {
-                                        display: inline-block;
-                                        background: url('../../../../assets/common/icons/cancel.svg') no-repeat center;
-                                    }
-                                }
-                            }
-
-                            tr:hover td.dx-command-edit a.dx-link {
-                                display: inline-block;
-                            }
-                        }
-                    }
-                }
-            }
-
-            .category {
-                width: 510px;
-                position: relative;
-                background-color: #F9FBFC;
-                padding: 0 24px 15px 31px;
-                border-left: 1px solid #dfdfdf;
-
-                &:before {
-                    content: "";
-                    top: 25px;
-                    left: 0;
-                    z-index: 0;
-                    position: absolute;
-                    border-top: 13px solid transparent;
-                    border-bottom: 13px solid transparent;
-                    border-left: 15px solid #dfdfdf;
-                }
-
-                div.field {
-                    margin-bottom: 10px;
-                }
-
-                ::ng-deep .dx-selectbox {
-                    input {
-                        border: solid 1px #e5e9ec;
-                        background-color: #ffffff;
-                        border-radius: 4px;
-
-                        &[attribute-selected="true"] {
-                            font-weight: 600;
-                        }
-                    }
-                }
-
-                h3 {
-                    margin-top: 34px;
-                    margin-bottom: 16px;
-                }
-            }
+        div.field {
+          margin-bottom: 10px;
         }
+
+        ::ng-deep .dx-selectbox {
+          input {
+            border: solid 1px var(--input-border, #e5e9ec);
+            background-color: var(--card-bg, #ffffff);
+            border-radius: 4px;
+
+            &[attribute-selected='true'] {
+              font-weight: 600;
+            }
+          }
+        }
+
+        h3 {
+          margin-top: 34px;
+          margin-bottom: 16px;
+        }
+      }
     }
+  }
 }

@@ -1,0 +1,108 @@
+.settings-header-container {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border-color: var(--headline-border);
+  position: sticky;
+  left: 0px;
+  right: 0px;
+  z-index: 10;
+  top: 0px;
+  display: flex;
+  height: auto;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--headline-border);
+  padding-left: 16px;
+  padding-right: 16px;
+  gap: 8px;
+  padding-bottom: 16px;
+  padding-top: 16px;
+  flex-wrap: wrap;
+
+  @media screen and (min-width: 768px) {
+    padding-left: 32px;
+    padding-right: 32px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    height: 64px;
+  }
+
+  button {
+    margin-right: 8px;
+    display: inline-flex;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 0.15s;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    background-color: var(--button-bg);
+    color: var(--text-color);
+  }
+
+  .title-container {
+    display: flex;
+    align-items: center;
+    flex: 1;
+
+    button {
+      width: 40px;
+      background-color: transparent;
+
+      lucide-angular {
+        display: flex;
+      }
+
+      ::ng-deep lucide-angular svg {
+        width: 20px;
+        height: 20px;
+        stroke-width: 1.5;
+      }
+    }
+
+    button.dark-mode {
+      color: var(--text-color);
+
+      &:hover {
+        background-color: var(--hover-bg);
+        color: var(--text-color);
+      }
+    }
+
+    button.white-mode {
+      &:hover {
+        background-color: var(--hover-bg);
+      }
+    }
+
+    h1 {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: 18px;
+      line-height: 28px;
+      font-weight: 600;
+      margin-bottom: 0;
+
+      @media screen and (min-width: 768px) {
+        font-size: 20px;
+        line-height: 28px;
+      }
+
+      @media screen and (min-width: 1024px) {
+        font-size: 24px;
+        line-height: 32px;
+      }
+    }
+  }
+}

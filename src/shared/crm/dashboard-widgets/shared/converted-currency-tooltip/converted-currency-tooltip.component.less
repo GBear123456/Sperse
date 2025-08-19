@@ -1,75 +1,77 @@
 :host {
-    .info {
-        cursor: pointer;
-    }
+  .info {
+    cursor: pointer;
+  }
 }
 
 .currency-breakdown-tooltip-template {
-    padding: 10px;
-    min-width: 280px;
+  padding: 10px;
+  min-width: 280px;
 
-    .header {
-        font-size: 14px;
-        margin-bottom: 12px;
-        font-weight: 600;
+  .header {
+    font-size: 14px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+
+  .currency-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .currency-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      color: var(--text-color);
     }
 
-    .currency-breakdown {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-
-        .currency-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 0;
-        }
-
-        .currency-label {
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .currency-flag {
-            width: 16px;
-            height: 12px;
-        }
-
-        .currency-amount {
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-        }
-
-        .divider {
-            height: 1px;
-            background: #94a3b8;
-            margin: 8px 0;
-        }
+    .currency-label {
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .note {
-        font-size: 12px;
-        color: #94a3b8;
-        font-style: italic;
+    .currency-flag {
+      width: 16px;
+      height: 12px;
     }
 
-    .clipboard-holder {
-        padding-right: 25px;
-
-        .save-to-clipboard {
-            display: none;
-        }
-
-        &:hover {
-            padding-right: 0;
-
-            .save-to-clipboard {
-                display: inline-block;
-            }
-        }
+    .currency-amount {
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
     }
+
+    .divider {
+      height: 1px;
+      background: var(--muted-color);
+      margin: 8px 0;
+    }
+  }
+
+  .note {
+    font-size: 12px;
+    color: var(--muted-color);
+    font-style: italic;
+  }
+
+  .clipboard-holder {
+    padding-right: 25px;
+
+    .save-to-clipboard {
+      display: none;
+    }
+
+    &:hover {
+      padding-right: 0;
+
+      .save-to-clipboard {
+        display: inline-block;
+      }
+    }
+  }
 }

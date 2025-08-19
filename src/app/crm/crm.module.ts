@@ -41,8 +41,8 @@ import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxSchedulerModule } from 'devextreme-angular/ui/scheduler';
 import { DxPopoverModule } from 'devextreme-angular/ui/popover';
 import { DxCalendarModule } from 'devextreme-angular/ui/calendar';
-import { DxFileManagerModule } from 'devextreme-angular';
-import { DxSwitchModule } from 'devextreme-angular';
+import { DxChartModule, DxFileManagerModule } from 'devextreme-angular';
+import { DxPieChartModule } from 'devextreme-angular';
 import { FileUploadModule } from 'ng2-file-upload';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { CKEditorModule } from 'ckeditor4-angular';
@@ -92,7 +92,7 @@ import { SliceModule } from '@app/shared/common/slice/slice.module';
 import { MapModule } from '@app/shared/common/slice/map/map.module';
 import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
-import { InvoiceGridMenuModule } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.module'
+import { InvoiceGridMenuModule } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.module';
 import { ReportsComponent } from '@app/crm/reports/reports.component';
 import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dropdown.component';
 import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.service';
@@ -120,164 +120,336 @@ import { TenantReportsComponent } from './tenant-reports/tenant-reports.componen
 import { CrmContactGroupGuard } from './crm-contact-group-guard';
 import { ZapierModule } from '@shared/common/zapier/zapier.module';
 import {CreateMailTemplateModalComponent} from './shared/create-mail-template-modal/create-mail-template-modal.component'
+import { LeadConversionJourneyComponent } from './traffic-stats/lead-conversion-journey/lead-conversion-journey.component';
+import { AggregateAnalyticsDashboardComponent } from './traffic-stats/aggregate-analytics-dashboard/aggregate-analytics-dashboard.component';
+
+import {
+  LucideAngularModule,
+  House,
+  Users,
+  TrendingUp,
+  ChartColumn,
+  Globe,
+  Search,
+  Filter,
+  MapPin,
+  FileText,
+  Wifi,
+  DollarSign,
+  Target,
+  User,
+  Crosshair,
+  Clock,
+  BarChart3,
+  Crown,
+  Star,
+  Zap,
+  Award,
+  BadgeDollarSign,
+  MessageSquare,
+  LogIn,
+  UserCheck,
+  Calendar,
+  Copy,
+  Megaphone,
+  Rss,
+  Tag,
+  Radio,
+  Smartphone,
+  Globe2,
+  File,
+  History,
+  GlobeLock,
+  Eye,
+  MousePointer,
+  Network,
+  MapPinCheck,
+  Navigation,
+  Laptop,
+  Monitor,
+  Languages,
+  Server,
+  Settings,
+  ExternalLink,
+  MoveLeft,
+  MoveRight,
+  ArrowLeft,
+  ArrowRight,
+} from 'lucide-angular';
+import { AggregateAnalyticsHeaderComponent } from './traffic-stats/aggregate-analytics-dashboard/components/header/header.component';
+import { AggregateAnalyticsFiltersComponent } from './traffic-stats/common/filters/filters.component';
+import { AggregateAnalyticsDateRangeComponent } from './traffic-stats/common/date-range/date-range.component';
+import { AggregateAnalyticsSelectorComponent } from './traffic-stats/common/site-selector/selector.component';
+import { StatsCardsComponent } from './traffic-stats/aggregate-analytics-dashboard/components/stats-cards/stats-cards.component';
+import { KeywordsComponent } from './traffic-stats/aggregate-analytics-dashboard/components/keywords/keywords.component';
+import { ReferrersComponent } from './traffic-stats/aggregate-analytics-dashboard/components/referrers/referrers.component';
+import { CountriesComponent } from './traffic-stats/aggregate-analytics-dashboard/components/countries/countries.component';
+import { StatesComponent } from './traffic-stats/aggregate-analytics-dashboard/components/states/states.component';
+import { DevicesComponent } from './traffic-stats/aggregate-analytics-dashboard/components/devices/devices.component';
+import { BrowsersComponent } from './traffic-stats/aggregate-analytics-dashboard/components/browsers/browsers.component';
+import { EntryPagesComponent } from './traffic-stats/aggregate-analytics-dashboard/components/entry-pages/entry-pages.component';
+import { NetworksComponent } from './traffic-stats/aggregate-analytics-dashboard/components/networks/networks.component';
+import { IpAddressesComponent } from './traffic-stats/aggregate-analytics-dashboard/components/ip-addresses/ip-addresses.component';
+import { ConversionTrackingComponent } from './traffic-stats/conversion-tracking/conversion-tracking.component';
+import { ConversionTrackingHeaderComponent } from './traffic-stats/conversion-tracking/components/header/header.component';
+import { ConversionMetricsComponent } from './traffic-stats/conversion-tracking/components/conversion-metrics/conversion-metrics.component';
+import { TopAffiliatesComponent } from './traffic-stats/conversion-tracking/components/top-affiliates/top-affiliates.component';
+import { ConversionShareChartComponent } from './traffic-stats/conversion-tracking/components/conversion-share-chart/conversion-share-chart.component';
+import { VisitsTrendChartComponent } from './traffic-stats/conversion-tracking/components/visits-trend-chart/visits-trend-chart.component';
+import { HourlyTrafficHeatmapComponent } from './traffic-stats/conversion-tracking/components/hourly-traffic-heatmap/hourly-traffic-heatmap.component';
+import { MonthlyRevenueChartComponent } from './traffic-stats/conversion-tracking/components/monthly-revenue-chart/monthly-revenue-chart.component';
+import { ConversionTrendsChartComponent } from './traffic-stats/conversion-tracking/components/conversion-trends-chart/conversion-trends-chart.component';
+import { TrafficConversionsChartComponent } from './traffic-stats/conversion-tracking/components/traffic-conversions-chart/traffic-conversions-chart.component';
+import { TopAffiliatePerformanceComponent } from './traffic-stats/conversion-tracking/components/top-affiliate-performance/top-affiliate-performance.component';
+import { KeyMetricsPanelComponent } from './traffic-stats/conversion-tracking/components/key-metrics-panel/key-metrics-panel.component';
+import { ConversionJourneyHeaderComponent } from './traffic-stats/lead-conversion-journey/components/conversion-journey-header/conversion-journey-header.component';
+import { ReferralSourceCardComponent } from './traffic-stats/lead-conversion-journey/components/referral-source-card/referral-source-card.component';
+import { UtmParametersCardComponent } from './traffic-stats/lead-conversion-journey/components/utm-parameters-card/utm-parameters-card.component';
+import { VisitHistoryPanelComponent } from './traffic-stats/lead-conversion-journey/components/visit-history-panel/visit-history-panel.component';
+import { LocationNetworkCardComponent } from './traffic-stats/lead-conversion-journey/components/location-network-card/location-network-card.component';
+import { DeviceSessionPanelComponent } from './traffic-stats/lead-conversion-journey/components/device-session-panel/device-session-panel.component';
+import { CustomFieldsTrackingComponent } from './traffic-stats/lead-conversion-journey/components/custom-fields-tracking/custom-fields-tracking.component';
+import { UrlAgentPanelComponent } from './traffic-stats/lead-conversion-journey/components/url-agent-panel/url-agent-panel.component';
 
 @NgModule({
-    imports: [
-        CrmRoutingModule,
-        CKEditorModule,
-        FormsModule,
-        ngCommon.CommonModule,
-        CommonModule,
-        AppCommonModule,
-        DxDropDownBoxModule,
-        DxTreeListModule,
-        DxDataGridModule,
-        DxPivotGridModule,
-        DxToolbarModule,
-        DxTemplateModule,
-        DxDateBoxModule,
-        DxTextBoxModule,
-        DxValidatorModule,
-        DxValidationGroupModule,
-        DxValidationSummaryModule,
-        DxButtonModule,
-        DxFileUploaderModule,
-        DxSelectBoxModule,
-        DxNumberBoxModule,
-        DxScrollViewModule,
-        DxTextAreaModule,
-        DxContextMenuModule,
-        DxTooltipModule,
-        DxListModule,
-        DxSliderModule,
-        DxRadioGroupModule,
-        DxCheckBoxModule,
-        DxTagBoxModule,
-        DxSchedulerModule,
-        DxPopoverModule,
-        DxCalendarModule,
-        DxFileManagerModule,
-        DxSwitchModule,
-        MatIconModule,
-        
-        ReactiveFormsModule,
-        MatSidenavModule,
-        MatProgressBarModule,
-        MatTabsModule,
-        MatDialogModule,
-        MatProgressSpinnerModule,
-        MatSelectModule,
-        MatStepperModule,
-        SourceContactListModule,
-        CurrencySelectorModule,
-        CRMDashboardWidgetsModule,
-        ContactsModule,
-        FileUploadModule,
-        UtilsModule,
-        PipelineModule,
-        SharedIntroStepsModule,
-        LoadingSpinnerModule,
-        BankCodeLettersModule,
-        SliceModule,
-        MapModule,
-        OrderDropdownModule,
-        ActionMenuModule,
-        InvoiceGridMenuModule,
-        StaticListModule,
-        StaticTreeViewModule,
-        CountryPhoneNumberModule,
-        ModalDialogModule,
-        ListsModule,
-        GooglePlaceModule,
-        MatInputModule,
-        MatButtonModule,
-        TenantSettingsWizardModule,
-        LeftMenuModule,
-        ZapierModule,
-        EditTenantModule,
-        NgxFileDropModule
-    ],
-    declarations: [
-        ClientsComponent,
-        DocumentsComponent,
-        PartnersComponent,
-        ProductsComponent,
-        CouponsComponent,
-        AddCouponDialogComponent,
-        LeadsComponent,
-        OrdersComponent,
-        InvoicesComponent,
-        ReportsComponent,
-        WelcomeComponent,
-        DashboardComponent,
-        ShortcutsComponent,
-        ImportListComponent,
-        ImportLeadsComponent,
-        BankSettingsDialogComponent,
-        CrmIntroComponent,
-        ActivityComponent,
-        TypesDropdownComponent,
-        EntityCheckListDialogComponent,
-        OrdersHeaderDropdownComponent,
-        CommissionHistoryComponent,
-        CommissionEarningsDialogComponent,
-        LedgerCompleteDialogComponent,
-        LedgerHistoryDialogComponent,
-        PayPalCompleteDialogComponent,
-        RequestWithdrawalDialogComponent,
-        UpdateCommissionableDialogComponent,
-        UpdateCommissionRateDialogComponent,
-        EditTypeItemDialogComponent,
-        TenantReportsComponent,
-        CreateMailTemplateModalComponent
-
-    ],
-    providers: [
-        ImportServiceProxy,
-        ImportLeadsService,
-        DataSourceService,
-        LeftMenuService,
-        CalendarService,
-        CrmContactGroupGuard,
-        { provide: 'leftMenuCollapsed', useValue: AppConsts.isMobile },
-        { provide: 'showGlobalSearch', useValue: true }
-    ],
-    entryComponents: [
-        AddCouponDialogComponent,
-        BankSettingsDialogComponent,
-        CrmIntroComponent,
-        EntityCheckListDialogComponent,
-        CommissionEarningsDialogComponent,
-        LedgerCompleteDialogComponent,
-        LedgerHistoryDialogComponent,
-        RequestWithdrawalDialogComponent,
-        UpdateCommissionableDialogComponent,
-        UpdateCommissionRateDialogComponent,
-        EditTypeItemDialogComponent
-    ]
+  imports: [
+    CrmRoutingModule,
+    CKEditorModule,
+    FormsModule,
+    ngCommon.CommonModule,
+    CommonModule,
+    AppCommonModule,
+    DxDropDownBoxModule,
+    DxTreeListModule,
+    DxDataGridModule,
+    DxPivotGridModule,
+    DxToolbarModule,
+    DxTemplateModule,
+    DxDateBoxModule,
+    DxTextBoxModule,
+    DxValidatorModule,
+    DxValidationGroupModule,
+    DxValidationSummaryModule,
+    DxButtonModule,
+    DxFileUploaderModule,
+    DxSelectBoxModule,
+    DxNumberBoxModule,
+    DxScrollViewModule,
+    DxTextAreaModule,
+    DxContextMenuModule,
+    DxTooltipModule,
+    DxListModule,
+    DxSliderModule,
+    DxRadioGroupModule,
+    DxCheckBoxModule,
+    DxTagBoxModule,
+    DxSchedulerModule,
+    DxPopoverModule,
+    DxCalendarModule,
+    DxFileManagerModule,
+    DxPieChartModule,
+    DxChartModule,
+    ReactiveFormsModule,
+    MatSidenavModule,
+    MatProgressBarModule,
+    MatTabsModule,
+    MatDialogModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatStepperModule,
+    SourceContactListModule,
+    CurrencySelectorModule,
+    CRMDashboardWidgetsModule,
+    ContactsModule,
+    FileUploadModule,
+    UtilsModule,
+    PipelineModule,
+    SharedIntroStepsModule,
+    LoadingSpinnerModule,
+    BankCodeLettersModule,
+    SliceModule,
+    MapModule,
+    OrderDropdownModule,
+    ActionMenuModule,
+    InvoiceGridMenuModule,
+    StaticListModule,
+    StaticTreeViewModule,
+    CountryPhoneNumberModule,
+    ModalDialogModule,
+    ListsModule,
+    GooglePlaceModule,
+    MatInputModule,
+    MatButtonModule,
+    TenantSettingsWizardModule,
+    LeftMenuModule,
+    ZapierModule,
+    EditTenantModule,
+    LucideAngularModule.pick({
+      House,
+      Users,
+      TrendingUp,
+      ChartColumn,
+      Globe,
+      Search,
+      Filter,
+      MapPin,
+      FileText,
+      Wifi,
+      DollarSign,
+      Target,
+      User,
+      Crosshair,
+      Clock,
+      BarChart3,
+      Crown,
+      Star,
+      Zap,
+      Award,
+      BadgeDollarSign,
+      MessageSquare,
+      LogIn,
+      UserCheck,
+      Calendar,
+      Copy,
+      Megaphone,
+      Radio,
+      Tag,
+      Smartphone,
+      Globe2,
+      File,
+      History,
+      GlobeLock,
+      Eye,
+      MousePointer,
+      Network,
+      MapPinCheck,
+      Navigation,
+      Laptop,
+      Monitor,
+      Languages,
+      Server,
+      Settings,
+      ExternalLink,
+      MoveLeft,
+      MoveRight,
+      ArrowLeft,
+      ArrowRight,
+    }),
+  ],
+  declarations: [
+    ClientsComponent,
+    DocumentsComponent,
+    PartnersComponent,
+    ProductsComponent,
+    CouponsComponent,
+    AddCouponDialogComponent,
+    LeadsComponent,
+    OrdersComponent,
+    InvoicesComponent,
+    ReportsComponent,
+    WelcomeComponent,
+    DashboardComponent,
+    ShortcutsComponent,
+    ImportListComponent,
+    ImportLeadsComponent,
+    BankSettingsDialogComponent,
+    CrmIntroComponent,
+    ActivityComponent,
+    TypesDropdownComponent,
+    EntityCheckListDialogComponent,
+    OrdersHeaderDropdownComponent,
+    CommissionHistoryComponent,
+    CommissionEarningsDialogComponent,
+    LedgerCompleteDialogComponent,
+    LedgerHistoryDialogComponent,
+    PayPalCompleteDialogComponent,
+    RequestWithdrawalDialogComponent,
+    UpdateCommissionableDialogComponent,
+    UpdateCommissionRateDialogComponent,
+    EditTypeItemDialogComponent,
+    TenantReportsComponent,
+    CreateMailTemplateModalComponent,
+    LeadConversionJourneyComponent,
+    AggregateAnalyticsDashboardComponent,
+    AggregateAnalyticsHeaderComponent,
+    AggregateAnalyticsFiltersComponent,
+    AggregateAnalyticsDateRangeComponent,
+    AggregateAnalyticsSelectorComponent,
+    StatsCardsComponent,
+    KeywordsComponent,
+    ReferrersComponent,
+    CountriesComponent,
+    StatesComponent,
+    DevicesComponent,
+    BrowsersComponent,
+    EntryPagesComponent,
+    NetworksComponent,
+    IpAddressesComponent,
+    ConversionTrackingComponent,
+    ConversionTrackingHeaderComponent,
+    ConversionMetricsComponent,
+    TopAffiliatesComponent,
+    ConversionShareChartComponent,
+    VisitsTrendChartComponent,
+    HourlyTrafficHeatmapComponent,
+    MonthlyRevenueChartComponent,
+    ConversionTrendsChartComponent,
+    TrafficConversionsChartComponent,
+    TopAffiliatePerformanceComponent,
+    KeyMetricsPanelComponent,
+    ConversionJourneyHeaderComponent,
+    ReferralSourceCardComponent,
+    UtmParametersCardComponent,
+    VisitHistoryPanelComponent,
+    LocationNetworkCardComponent,
+    DeviceSessionPanelComponent,
+    CustomFieldsTrackingComponent,
+    UrlAgentPanelComponent,
+  ],
+  providers: [
+    ImportServiceProxy,
+    ImportLeadsService,
+    DataSourceService,
+    LeftMenuService,
+    CalendarService,
+    CrmContactGroupGuard,
+    { provide: 'leftMenuCollapsed', useValue: AppConsts.isMobile },
+    { provide: 'showGlobalSearch', useValue: true },
+  ],
+  entryComponents: [
+    AddCouponDialogComponent,
+    BankSettingsDialogComponent,
+    CrmIntroComponent,
+    EntityCheckListDialogComponent,
+    CommissionEarningsDialogComponent,
+    LedgerCompleteDialogComponent,
+    LedgerHistoryDialogComponent,
+    RequestWithdrawalDialogComponent,
+    UpdateCommissionableDialogComponent,
+    UpdateCommissionRateDialogComponent,
+    EditTypeItemDialogComponent,
+  ],
 })
 export class CrmModule {
-    private readonly name = 'CRM';
+  private readonly name = 'CRM';
 
-    constructor(
-        private appService: AppService,
-        private appStoreService: AppStoreService,
-        private importLeadsService: ImportLeadsService,
-        private permissionService: AppPermissionService,
-        private store$: Store<AppStore.State>
-    ) {
-        if (abp.session.userId) {
-            setTimeout(() => this.appStoreService.loadUserDictionaries(), 2000);
-            if (permissionService.isGranted(AppPermissions.CRMBulkImport))
-                appService.subscribeModuleChange((config) => {
-                    if (config['name'] == this.name)
-                        importLeadsService.setupImportCheck();
-                    else
-                        importLeadsService.stopImportCheck();
-                });
-            if (this.permissionService.isGranted(AppPermissions.CRM)) {
-                this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(false));
-            }
-        }
+  constructor(
+    private appService: AppService,
+    private appStoreService: AppStoreService,
+    private importLeadsService: ImportLeadsService,
+    private permissionService: AppPermissionService,
+    private store$: Store<AppStore.State>
+  ) {
+    if (abp.session.userId) {
+      setTimeout(() => this.appStoreService.loadUserDictionaries(), 2000);
+      if (permissionService.isGranted(AppPermissions.CRMBulkImport))
+        appService.subscribeModuleChange(config => {
+          if (config['name'] == this.name) importLeadsService.setupImportCheck();
+          else importLeadsService.stopImportCheck();
+        });
+      if (this.permissionService.isGranted(AppPermissions.CRM)) {
+        this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(false));
+      }
     }
+  }
 }

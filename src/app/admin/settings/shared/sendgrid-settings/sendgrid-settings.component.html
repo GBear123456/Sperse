@@ -1,39 +1,122 @@
-<h2>{{l('SendGrid')}} {{l('Settings')}}</h2>
-<div>
-    <div class="form-group">
-        <dx-check-box id="SendGridIsEnabled"
-                      [text]="l('Enabled')"
-                      [(value)]="sendGridSettings.isEnabled">
-        </dx-check-box>
-    </div>
-    <div class="form-group">
-        <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
-        <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control" [(ngModel)]="sendGridSettings.defaultFromAddress" maxlength="100">
-    </div>
-    <div class="form-group">
-        <label for="DefaultFromDisplayName">{{l("DefaultFromDisplayName")}}</label>
-        <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control" [(ngModel)]="sendGridSettings.defaultFromDisplayName" maxlength="100">
-    </div>
-    <div class="form-group">
-        <label for="SendGridApiKey">{{l("SendGridApiKey")}}</label>
-        <input id="SendGridApiKey" type="text" name="SendGridApiKey" class="form-control" [(ngModel)]="sendGridSettings.apiKey" maxlength="128">
-    </div>
-    <div class="form-group">
-        <label for="SendGridWebhookKey">{{l("SendGridWebhookKey")}}</label>
-        <input id="SendGridWebhookKey" type="text" name="SendGridWebhookKey" class="form-control" [(ngModel)]="sendGridSettings.webhookKey" maxlength="128">
-    </div>
-    <p>
-        <span [innerHtml]="l('SendGridWebhookHint', 'https://app.sendgrid.com/settings/mail_settings')"></span>
-        <br /><b>{{getSendGridWebhookUrl()}}</b><br /><br />
-    </p>
-    <ng-container *ngIf="isPerformancePartner">
-        <div class="form-group">
-            <label for="SendGridRPTemplateId">{{l("SendGridRPTemplate")}}</label>
-            <input id="SendGridRPTemplateId" type="text" name="SendGridRPTemplateId" class="form-control" [(ngModel)]="sendGridSettings.rpTemplateId" maxlength="128">
+<div class="base-card integration-wrapper">
+    <div class="integration-container">
+        <div class="integration-content">
+            <div class="content-header">
+                <h2>SendGrid Integration</h2>
+                <p>
+                    Connect your SendGrid account to send transactional and marketing emails campaigns, and track email performance directly from your CRM.
+                </p>
+            </div>
+            <div class="integration-check">
+                <ul>
+                    <li>
+                        <span class="check">✓</span>
+                        <span class="title">Automatically sync contacts between systems</span>
+                    </li>
+                    <li>
+                        <span class="check">✓</span>
+                        <span class="title">Create and manage email campaigns</span>
+                    </li>
+                    <li>
+                        <span class="check">✓</span>
+                        <span class="title">Track open rates, clicks and engagement
+                        </span>
+                    </li>
+                    <li>
+                        <span class="check">✓</span>
+                        <span class="title">Send targeted emails based on CRM data</span>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="SendGridRPFrom">{{l("SendGridRPFrom")}}</label>
-            <input id="SendGridRPFrom" type="email" name="SendGridRPFrom" class="form-control" [(ngModel)]="sendGridSettings.rpFromEmail" maxlength="128">
+        <div class="integration-image">
+            <img 
+            src="./assets/common/images/sendgrid.png" 
+            alt="MailChimp Logo" 
+            />
         </div>
-    </ng-container>
+    </div>
+
+    <div class="integration-footer">
+        <lucide-angular [img]="AlertIcon"></lucide-angular>
+        <p>Connect your SendGrid account to get started with email marketing and transactional emails.</p>
+        <button class="base-button" *ngIf="!sendGridSettings.isEnabled" (click)="sendGridSettings.apiKey && sendGridSettings.isEnabled = true">
+            <lucide-angular [img]="LinkIcon"></lucide-angular>
+            <span>Connect</span>
+        </button>
+        <button class="base-button mailchimp-connected" *ngIf="sendGridSettings.isEnabled">
+            <lucide-angular [img]="CheckIcon"></lucide-angular>
+            <span>Connected</span>
+        </button>
+    </div>
+</div>
+
+<div class="base-card">
+    <div class="config-container">
+        <div class="content-header">
+            <h2>Configuration Settings</h2>
+            <p>
+                Connect your SendGrid account to get started with sending emails.
+            </p>
+        </div>
+        <div class="config-content">
+            <div class="config-sender">
+                <div class="form-group">
+                    <label for="senderemail" class="base-label">{{l("DefaultFromAddress")}}</label>
+                    <input class="base-input" id="senderemail" type="text" name="senderemail" [(ngModel)]="sendGridSettings.defaultFromAddress" maxlength="100" placeholder="youremail@example.com" />
+                </div>
+                <div class="form-group">
+                    <label for="sendername" class="base-label">{{l("DefaultFromDisplayName")}}</label>
+                    <input class="base-input" id="sendername" type="text" name="sendername" [(ngModel)]="sendGridSettings.defaultFromDisplayName" maxlength="100" placeholder="Your Name or Company" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="apikey" class="base-label">{{l("SendGridApiKey")}}</label>
+                <input class="base-input" id="apikey" type="text" name="apikey" [(ngModel)]="sendGridSettings.apiKey" maxlength="128" placeholder="Enter your SendGrid API Key" />
+                <p class="base-hint">You can find your API Key in your SendGrid account settings.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="webhookkey" class="base-label">{{l("SendGridWebhookKey")}}</label>
+                <input class="base-input" id="webhookkey" type="text" name="webhookkey" [(ngModel)]="sendGridSettings.webhookKey" maxlength="128" placeholder="Enter your SendGrid Webhook Key" />
+                <p class="base-hint">Optional: Used for event tracking like opens, clicks, and bounces.</p>
+            </div>
+
+            <div class="config-url">
+                <p>To update email delivery status please enter any secure string above, then enable Event webhooks on SendGrid selecting all event types and using the following HTTP Post URL:</p>
+                <code>{{ getSendGridWebhookUrl() }}<i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></code>
+            </div>
+
+            <ng-container *ngIf="isPerformancePartner">
+                <div class="form-group">
+                    <label class="base-label" for="SendGridRPTemplateId">{{l("SendGridRPTemplate")}}</label>
+                    <input class="base-input" id="SendGridRPTemplateId" type="text" name="SendGridRPTemplateId" [(ngModel)]="sendGridSettings.rpTemplateId" maxlength="128">
+                </div>
+                <div class="form-group">
+                    <label class="base-label" for="SendGridRPFrom">{{l("SendGridRPFrom")}}</label>
+                    <input class="base-input" id="SendGridRPFrom" type="email" name="SendGridRPFrom" [(ngModel)]="sendGridSettings.rpFromEmail" maxlength="128">
+                </div>
+            </ng-container>
+        </div>
+
+        <hr *ngIf="sendGridSettings.isEnabled"/>
+        <div class="config-footer" *ngIf="sendGridSettings.isEnabled">
+            <button class="base-button" (click)="sendGridSettings.isEnabled = false">
+                Disconnect
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="base-card">
+    <div class="help-container">
+        <div class="help-header">
+            <lucide-angular [img]="AlertIcon"></lucide-angular>
+            <h2>Need Help?</h2>
+        </div>
+        <p class="help-content">
+            If you're experiencing issues with your SendGrid integration or have questions about setting it up, please visit our <a href="#">help documentation</a> or 
+            contact <a href="#">customer support</a>.
+    </div>
 </div>

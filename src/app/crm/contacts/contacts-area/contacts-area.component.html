@@ -1,50 +1,202 @@
 <div class="contacts">
-    <div *ngIf="showContactType == 'phones'">
-        <div class="phone" *ngFor="let phone of contactInfoData?.phones; let i = index;">
-            <i class="icons phone type-{{phone?.usageTypeId || 'P'}}"></i>
-            <ul *ngIf="!phone.inplaceEdit">
-                <div class="actions" *ngIf="isEditAllowed">
-                    <i class="copy save-to-clipboard" aria-hidden="true" (click)="copyToClipbord(phone.phoneNumber)"></i><i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog('phoneNumber', phone, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deletePhoneNumber(phone, $event, i)"></i>
+    <div class="phones" *ngIf="showContactType == 'phones'">
+        <button
+            class="icon-btn"
+            aria-label="Contact action"
+            (click)="showDialog('phoneNumber', null, $event)"
+        >
+            <img src="./assets/common/icons/contact/plus.svg" alt="icon" />
+        </button>
+        <ul>
+            <li *ngFor="let phone of contactInfoData?.phones; let i = index">
+                <div class="email-row" *ngIf="!phone.inplaceEdit">
+                    <div class="phone-content">
+                        <span
+                            class="email-address"
+                            (click)="
+                                inPlaceEdit('phoneNumber', phone, $event, i)
+                            "
+                        >
+                            {{ phone.phoneNumber | phone }}
+                            <span *ngIf="phone.phoneExtension" class="phoneExt"
+                                >Ext. {{ phone.phoneExtension }}</span
+                            >
+                            <img
+                                [src]="getUsageTypeImage(phone.usageTypeId)"
+                                alt="send"
+                            />
+                        </span>
+                    </div>
+
+                    <div
+                        class="actions"
+                        *ngIf="isEditAllowed"
+                        [class.visible]="hovered"
+                    >
+                        <a [href]="'tel:' + phone.phoneNumber"><span
+                            *ngIf="isEditAllowed"
+                            class="send-icon"
+                        >
+                            <img
+                                src="./assets/common/icons/contact/call-calling.svg"
+                                alt="send"
+                            />
+                            call
+                        </span></a>
+                        <i
+                            class="copy save-to-clipboard"
+                            aria-hidden="true"
+                            (click)="copyToClipbord(phone.phoneNumber)"
+                        ></i>
+                        <i
+                            class="edit"
+                            aria-hidden="true"
+                            (click)="
+                                showDialog('phoneNumber', phone, $event, i)
+                            "
+                        ></i>
+                        <i
+                            class="trash"
+                            aria-hidden="true"
+                            (click)="deletePhoneNumber(phone, $event, i)"
+                        ></i>
+                        <!-- <i class="trash" aria-hidden="true"></i> -->
+                    </div>
                 </div>
-                <li (click)="inPlaceEdit('phoneNumber', phone, $event, i)">{{ phone.phoneNumber | phone }}
-                    <span *ngIf="phone.phoneExtension" class="phoneExt">Ext. {{ phone.phoneExtension }}</span>
-                </li>
-            </ul>
-            <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
+            </li>
+        </ul>
+        <!-- <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
                 <country-phone-number [(phoneNumber)]="phone.phoneNumber" #countryPhoneNumber></country-phone-number>
-                <dx-button class="update" icon="todo" (onClick)="updatePhoneNumber(countryPhoneNumber.isValid(), phone, $event)"></dx-button>
+                <dx-button class="update" icon="todo"
+                           (onClick)="updatePhoneNumber(countryPhoneNumber.isValid(), phone, $event)"></dx-button>
                 <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('phoneNumber', phone)"></dx-button>
-            </div>
-        </div>
-        <div *ngIf="isEditAllowed" class="add-contact" (click)="showDialog('phoneNumber', null, $event)">+ {{ls.l('Add') + ' ' + ls.l('Phone')}}</div>
+            </div> -->
     </div>
     <div *ngIf="showContactType == 'emails'">
-        <div class="emails" *ngIf="contactInfoData?.emails?.length">
-            <i class="icons email"></i>
-            <ul *ngFor="let email of contactInfoData?.emails; let i = index;">
-                <div *ngIf="!email.inplaceEdit">
-                    <div class="actions" *ngIf="isEditAllowed">
-                        <i class="copy save-to-clipboard" aria-hidden="true" (click)="copyToClipbord(email.emailAddress)"></i>
-                        <i *ngIf="checkEditEmailAllowed(email)" class="edit fa fa-pencil" aria-hidden="true" (click)="editEmailAddress(email, $event, i)"></i>
-                        <i *ngIf="checkEditEmailAllowed(email)" class="delete fa fa-times" aria-hidden="true" (click)="deleteEmailAddress(email, $event, i)"></i>
-                        <i *ngIf="!checkEditEmailAllowed(email)" class="edit-info" [title]="ls.l('EmailEditForbidden')"></i>
+        <div class="emails">
+            <button
+                class="icon-btn"
+                aria-label="Contact action"
+                (click)="showDialog('emailAddress', null, $event)"
+            >
+                <img src="./assets/common/icons/contact/plus.svg" alt="icon" />
+            </button>
+            <ul *ngIf="contactInfoData?.emails?.length">
+                <li
+                    *ngFor="let email of contactInfoData?.emails; let i = index"
+                >
+                    <div class="email-row" *ngIf="!email.inplaceEdit">
+                        <div class="email-content">
+                            <img
+                                class="verify-icon"
+                                *ngIf="email.isConfirmed"
+                                src="../../../../assets/common/icons/varified.svg"
+                                alt=""
+                            />
+                            <img
+                                class="un-verify-icon"
+                                *ngIf="!email.isConfirmed"
+                                src="../../../../assets/common/icons/unverified.svg"
+                                alt=""
+                            />
+                            <span
+                                [title]="email.emailAddress"
+                                class="email-address"
+                                (click)="
+                                    inPlaceEdit(
+                                        'emailAddress',
+                                        email,
+                                        $event,
+                                        i
+                                    )
+                                "
+                                >{{ email.emailAddress }}</span
+                            >
+                        </div>
+
+                        <div
+                            class="actions"
+                            *ngIf="isEditAllowed"
+                            [class.visible]="hovered"
+                        >
+                            <span 
+                                class="send-icon" 
+                                (click)="showNewEmailDialog()"
+                            >
+                                <img
+                                    src="./assets/common/icons/contact/send_icon.svg"
+                                    alt="send"
+                                />
+                                send
+                            </span>
+                            <i
+                                class="copy save-to-clipboard"
+                                aria-hidden="true"
+                                (click)="copyToClipbord(email.emailAddress)"
+                            ></i>
+                            <i
+                                *ngIf="checkEditEmailAllowed(email)"
+                                class="edit"
+                                aria-hidden="true"
+                                (click)="editEmailAddress(email, $event, i)"
+                            ></i>
+                            <!-- <i
+                                *ngIf="checkEditEmailAllowed(email)"
+                                class="delete"
+                                aria-hidden="true"
+                                (click)="deleteEmailAddress(email, $event, i)"
+                            ></i> -->
+                            <i
+                                *ngIf="checkEditEmailAllowed(email)"
+                                class="trash"
+                                aria-hidden="true"
+                            ></i>
+                            <i
+                                *ngIf="!checkEditEmailAllowed(email)"
+                                class="edit-info"
+                                [title]="ls.l('EmailEditForbidden')"
+                            ></i>
+                        </div>
                     </div>
-                    <li (click)="inPlaceEdit('emailAddress', email, $event, i)" [title]="email.emailAddress">{{email.emailAddress}}</li>
-                </div>
-                <div *ngIf="email.inplaceEdit" class="inplace-edit-wrapper">
-                    <dx-validation-group>
-                        <dx-text-box placeholder="" [(value)]="email.emailAddress" (onValueChanged)="itemValueChanged('emailAddress', email)">
-                            <dx-validator>
-                                <dxi-validation-rule type="required" message="{{ls.l('EmailIsRequired')}}."></dxi-validation-rule>
-                                <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{ls.l('EmailIsNotValid')}}."></dxi-validation-rule>
-                            </dx-validator>
-                        </dx-text-box>
-                        <dx-button class="update" icon="todo" (onClick)="updateItem('emailAddress', email, $event)"></dx-button>
-                        <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('emailAddress', email)"></dx-button>
-                    </dx-validation-group>
-                </div>
+                    <div *ngIf="email.inplaceEdit" class="inplace-edit-wrapper">
+                        <dx-validation-group>
+                            <dx-text-box
+                                placeholder=""
+                                [(value)]="email.emailAddress"
+                                (onValueChanged)="
+                                    itemValueChanged('emailAddress', email)
+                                "
+                            >
+                                <dx-validator>
+                                    <dxi-validation-rule
+                                        type="required"
+                                        message="{{ ls.l('EmailIsRequired') }}."
+                                    ></dxi-validation-rule>
+                                    <dxi-validation-rule
+                                        type="pattern"
+                                        [pattern]="emailRegEx"
+                                        message="{{ ls.l('EmailIsNotValid') }}."
+                                    ></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                            <dx-button
+                                class="update"
+                                icon="todo"
+                                (onClick)="
+                                    updateItem('emailAddress', email, $event)
+                                "
+                            ></dx-button>
+                            <dx-button
+                                class="exit"
+                                icon="refresh"
+                                (onClick)="
+                                    closeInPlaceEdit('emailAddress', email)
+                                "
+                            ></dx-button>
+                        </dx-validation-group>
+                    </div>
+                </li>
             </ul>
         </div>
-        <div *ngIf="isEditAllowed" class="add-contact" (click)="showDialog('emailAddress', null, $event)">+ {{ls.l('Add') + ' ' + ls.l('Email')}}</div>
     </div>
 </div>

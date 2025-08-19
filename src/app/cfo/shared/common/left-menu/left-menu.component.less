@@ -1,13 +1,13 @@
 :host {
-    z-index: 2;
+  z-index: 2;
 
+  ::ng-deep .left-menu {
+    height: calc(~'100vh - 50px') !important;
+  }
+
+  &.show-left-bar {
     ::ng-deep .left-menu {
-        height: calc(~"100vh - 150px") !important;
+      height: calc(~'100vh - 75px') !important;
     }
-
-    &.show-left-bar {
-        ::ng-deep .left-menu {
-            height: calc(~"100vh - 75px") !important;
-        }            
-    }
+  }
 }

@@ -1,0 +1,36 @@
+<div class="bg-[#fff] p-6 overflow-hidden rounded-xl dark:bg-gray-800 h-full">
+  <div class="mb-4">
+    <h2 class="text-xl font-semibold text-pink-700 flex items-center space-x-2 dark:text-pink-400">
+      <lucide-icon name="target" class="w-5 h-5 text-pink-700 dark:text-pink-400"></lucide-icon>
+      <span>Conversion Share by Affiliate</span>
+    </h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+      Percentage of total conversions by affiliate
+    </p>
+  </div>
+
+  <div class="flex flex-col items-center">
+    <dx-pie-chart
+      [dataSource]="chartData"
+      type="doughnut"
+      palette="Soft Pastel"
+      [innerRadius]="0.6"
+      [legend]="{ visible: false }"
+      [tooltip]="{
+        enabled: true,
+        format: 'percent',
+        customizeTooltip: customizeTooltip
+      }"
+      class="w-full h-72"
+    >
+      <dxi-series argumentField="affiliate" valueField="share" colorField="color"></dxi-series>
+    </dx-pie-chart>
+
+    <div class="flex justify-center mt-6 space-x-4 flex-wrap text-sm font-medium">
+      <div *ngFor="let item of chartData" class="flex items-center space-x-2">
+        <div class="w-3 h-3 rounded-sm" [ngStyle]="{ 'background-color': item.color }"></div>
+        <span [ngStyle]="{ color: item.color }">{{ item.affiliate }}</span>
+      </div>
+    </div>
+  </div>
+</div>

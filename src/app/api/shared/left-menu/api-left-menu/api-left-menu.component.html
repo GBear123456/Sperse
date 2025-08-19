@@ -1,0 +1,29 @@
+<div class="left-menu">
+  <p *ngIf="headerTitle" class="title">
+    <a *ngIf="headerLink; else simpleText" [routerLink]="headerLink">{{ headerTitle }}</a>
+    <ng-template #simpleText>{{ headerTitle }}</ng-template>
+  </p>
+  <ul class="items-progress">
+    <ng-template ngFor let-item [ngForOf]="items" let-i="index">
+      <li
+        *ngIf="itemIsVisible(item) | async"
+        [ngClass]="{
+          'items-progress-item': true,
+          passed: i < selectedItemIndex,
+          current: !item.isModalDialog && i == selectedItemIndex,
+          disabled: item.disabled
+        }"
+      >
+        <div class="img">
+          <img [src]="item.iconSrc" />
+        </div>
+        <div [ngClass]="{ link: item.component || item.onClick }" (click)="onClick($event, item)">
+          <span>{{ item.caption }}</span>
+          <span *ngIf="item.showPlus" class="add-button" (click)="addButtonClick($event, item)"
+            >+</span
+          >
+        </div>
+      </li>
+    </ng-template>
+  </ul>
+</div>

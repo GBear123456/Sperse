@@ -1,39 +1,39 @@
 :host {
-    display: block;
-    max-width: 400px;
-    padding: 20px;
+  display: block;
+  max-width: 400px;
+  padding: 20px;
 
-    ::ng-deep dx-check-box {
-        padding: 20px 0;
-        .dx-checkbox-text {
-            white-space: nowrap;
-        }
+  ::ng-deep dx-check-box {
+    padding: 20px 0;
+    .dx-checkbox-text {
+      white-space: nowrap;
     }
+  }
 
-    ::ng-deep .dx-selectbox {
-        display: inline-block;
-        input {
-            height: 48px;
-            font-size: 15px;
-            font-weight: 300;
-            font-style: normal;
-            font-stretch: normal;
-            letter-spacing: 0.3px;
-            color: #424c56;
-        }
-        &.dx-state-focused .dx-placeholder {
-            font-size: 10px;
-        }
-        .dx-placeholder {
-            font-size: 14px;
-            font-weight: 300;
-            font-style: normal;
-            font-stretch: normal;
-            letter-spacing: 0.3px;
-        }
+  ::ng-deep .dx-selectbox {
+    display: inline-block;
+    input {
+      height: 48px;
+      font-size: 15px;
+      font-weight: 300;
+      font-style: normal;
+      font-stretch: normal;
+      letter-spacing: 0.3px;
+      color: var(--main-text);
     }
+    &.dx-state-focused .dx-placeholder {
+      font-size: 10px;
+    }
+    .dx-placeholder {
+      font-size: 14px;
+      font-weight: 300;
+      font-style: normal;
+      font-stretch: normal;
+      letter-spacing: 0.3px;
+    }
+  }
 
-    mat-dialog-actions {
-        justify-content: flex-end;
-    }
+  mat-dialog-actions {
+    justify-content: flex-end;
+  }
 }

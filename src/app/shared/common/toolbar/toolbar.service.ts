@@ -9,6 +9,9 @@ export class ToolbarService {
     isSearchBoxEnabled$: Observable<boolean> = this._isSearchBoxEnabled.asObservable();
     latestSearchConfig$: Observable<any> = this._latestSearchConfig.asObservable();
 
+    private _tooltipTarget$ = new BehaviorSubject<string | null>(null);
+    tooltipTarget$ = this._tooltipTarget$.asObservable();
+
     get isSearchBoxEnabled(): boolean {
         return this._isSearchBoxEnabled.getValue();
     } 
@@ -54,5 +57,13 @@ export class ToolbarService {
 
     showSearchBox(display: boolean) {
         this._isSearchBoxEnabled.next(display);
+    }
+
+    showTooltipFor(target: string) {
+        this._tooltipTarget$.next(target);
+    }
+
+    hideTooltip() {
+        this._tooltipTarget$.next(null);
     }
 }

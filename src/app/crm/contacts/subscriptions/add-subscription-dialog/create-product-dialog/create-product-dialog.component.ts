@@ -734,6 +734,16 @@ export class CreateProductDialogComponent implements AfterViewInit, OnInit, OnDe
     isOneTime = false;
     EmailTemplateType = EmailTemplateType;
 
+    eventLocations = [
+        { value: ProductEventLocation.Online, label: "Online" },
+        { value: ProductEventLocation.InPerson, label: "In-Person" },
+        { value: ProductEventLocation.ToBeAnnounced, label: "To be announced" },
+    ]
+    eventTypes = [
+        { value: "single", label: "Single Event" },
+        { value: "recurring", label: "Recurring Event" },
+    ]
+    eventType = 'single'
     eventLocation = ProductEventLocation;
     eventDurationTypes = EventDurationHelper.eventDurationDataSource;
     languages: LanguageDto[] = [];

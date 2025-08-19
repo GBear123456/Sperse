@@ -2,6 +2,7 @@
     height: 100%;
     display: block;
     position: relative;
+    color: var(--text-color);
 
     h2 {
         text-transform: uppercase;
@@ -17,7 +18,7 @@
     }
 
     span.optional {
-        color: #adadad;
+        color: var(--disabled-color);
         padding: 0 5px;
     }
 
@@ -50,11 +51,11 @@
 
         ::ng-deep dx-button {
             &.update i {
-                color: #00aeef;
+                color: var(--primary-color);
             }
 
             &.exit i {
-                color: #f44336;
+                color: var(--danger-color);
             }
 
             border: none;
@@ -69,7 +70,7 @@
     }
 
     ::ng-deep .mat-tab-label {
-        color: #677380;
+        color: var(--muted-color);
         text-transform: uppercase;
         font-size: 14px;
         font-weight: 300;
@@ -86,7 +87,7 @@
         border-bottom: none;
         background: none;
         font-weight: 500;
-        color: #202b35;
+        color: var(--text-color);
     }
 
     ul.roles {
@@ -123,6 +124,10 @@
             }
         }
 
+        .invite-user-info {
+            color: var(--text-color);
+        }
+
         .invite-user-info .dx-checkbox {
             margin: 15px 0;
         }
@@ -152,7 +157,7 @@
             line-height: 1.67;
             letter-spacing: 0.7px;
             text-align: left;
-            color: #677380;
+            color: var(--muted-color);
             margin-bottom: 22px;
             font-weight: 400;
         }
@@ -184,7 +189,7 @@
         font-weight: normal;
         line-height: 35px;
         letter-spacing: 0.7px;
-        color: #677380;
+        color: var(--muted-color);
         margin-right: 5px;
     }
 
@@ -206,7 +211,7 @@
         }
 
         .no-phone {
-            color: #adadad;
+            color: var(--disabled-color);
             font-style: italic;
         }
 
@@ -217,7 +222,7 @@
                 white-space: nowrap;
 
                 .edit-phone, .delete-phone {
-                    color: #00aeef;
+                    color: var(--primary-color);
                     display: none;
                     font-size: 18px;
                     padding: 7px;
@@ -230,7 +235,7 @@
                 }
 
                 .delete-phone {
-                    color: red;
+                    color: var(--danger-color);
                     font-size: 21px;
                     padding: 4px;
                 }

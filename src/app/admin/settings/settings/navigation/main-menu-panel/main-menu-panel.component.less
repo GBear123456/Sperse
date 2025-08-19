@@ -1,0 +1,88 @@
+.header-container {
+  position: relative;
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+  height: 100%;
+
+  .header {
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 64px;
+
+    ::ng-deep lucide-angular {
+      display: flex;
+    }
+
+    .main-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: var(--text-color);
+
+      .title-icon {
+        color: var(--headline-title-color);
+      }
+
+      h1 {
+        font-weight: 800;
+        font-size: 18px;
+        line-height: 28px;
+        margin-bottom: 0px;
+        color: var(--headline-title-color);
+      }
+
+      ::ng-deep lucide-angular svg {
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    button {
+      cursor: pointer;
+      background-color: transparent;
+      background-image: none;
+      border-width: 0;
+      text-transform: none;
+      padding: 4px;
+      border-radius: 6px;
+      transition-property: color, background-color, border-color, text-decoration-color, fill,
+        stroke;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-duration: 150ms;
+      outline: none;
+      color: var(--text-color);
+
+      ::ng-deep lucide-angular svg {
+        width: 20px;
+        height: 20px;
+        stroke-width: 1.5;
+      }
+    }
+
+    button.dark-mode:hover {
+      background-color: var(--hover-bg);
+    }
+
+    button.white-mode:hover {
+      background-color: var(--hover-bg);
+    }
+  }
+
+  .main-content {
+    padding-top: 12px;
+    padding-bottom: 12px;
+
+    .content ::ng-deep main-menu-item > div {
+      // margin-top: 0.25rem;
+      // margin-bottom: 0;
+    }
+  }
+}

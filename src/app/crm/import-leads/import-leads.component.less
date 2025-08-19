@@ -1,83 +1,107 @@
 :host-context(.subscription-bar-visible) {
-    left-menu {
-        top: 193px!important;
+  left-menu {
+    top: 193px !important;
+  }
+  ::ng-deep import-wizard {
+    .mat-horizontal-content-container {
+      margin-top: 50px !important;
     }
-    ::ng-deep import-wizard {
-        .mat-horizontal-content-container {
-            margin-top: 50px!important;
-        }
-    }
+  }
 }
 
 :host {
-    .import-wrapper {
-        height: 100%;
+  .import-wrapper {
+    height: 100%;
+    width: calc('100vw - 90px');
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  .import-wrapper.reverse {
+    flex-direction: row-reverse;
+  }
+
+  .success {
+    width: 800px;
+    display: inline-block;
+    text-align: center;
+    margin-left: calc(~'50% - 400px');
+    margin-top: 150px;
+
+    p {
+      font-size: 18px;
     }
 
-    .success {
-        width: 800px;
-        display: inline-block;
-        text-align: center;
-        margin-left: calc(~"50% - 400px");
-        margin-top: 150px;
+    ::ng-deep import-progress-bar {
+      position: relative;
+      width: 100%;
+      height: 90px;
+      left: 50% !important;
+      dx-progress-bar {
+        position: initial !important;
+      }
+      .dx-progressbar-status {
+        visibility: hidden;
+      }
+      .dx-progressbar-container {
+        border: 1px solid #ddd;
+        height: 15px;
+      }
+    }
+  }
 
-        p {
-            font-size: 18px;
-        }
+  left-menu {
+    top: 148px;
 
-        ::ng-deep import-progress-bar {
-            position: relative;
-            width: 100%;
-            height: 90px;
-            left: 50%!important;
-            dx-progress-bar {
-                position: initial!important;
-            }
-            .dx-progressbar-status {
-                visibility: hidden;
-            }
-            .dx-progressbar-container {
-                border: 1px solid #ddd;
-                height: 15px;
-            }
-        }
+    ::ng-deep .left-menu {
+      height: calc(~'100vh - 148px');
+    }
+  }
+
+  ::ng-deep import-wizard {
+    margin: 0;
+    height: 100%;
+    max-width: calc(100% - 340px) !important;
+    width: calc(100% - 340px);
+    overflow-x: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+
+    h1 {
+      i {
+        position: relative;
+        top: 2px;
+        margin-right: 5px;
+      }
     }
 
-    left-menu {
-        top: 148px;
-
-        ::ng-deep .left-menu {
-            height: calc(~"100vh - 148px");
-        }
+    .mat-horizontal-content-container {
+      padding: 0 0 0 320px;
+      transition: 0.5s;
     }
 
-    ::ng-deep import-wizard {
-        margin: 0;
-        height: 100%;
-        max-width: 100% !important;
-        position: absolute;
-        top: 75px;
-
-        h1 {
-            i {
-                position: relative;
-                top: 2px;
-                margin-right: 5px;
-            }
-        }
-
-        .mat-horizontal-content-container {
-            padding: 0 0 0 320px;
-            transition: .5s;
-        }
-
-        &.leftMenuCollapsed .mat-horizontal-content-container {
-            padding-left: 0;
-        }
-
-        .mat-horizontal-stepper-header-container {
-            background-color: #f3f7fa;
-            border-bottom: 1px solid #dfdfdf;
-        }
+    &.leftMenuCollapsed .mat-horizontal-content-container {
+      padding-left: 0;
     }
+
+    .mat-horizontal-stepper-header-container {
+      background-color: var(--background-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .leftMenuCollapsed {
+      margin-left: 0px !important;
+    }
+  }
+
+  ::ng-deep .dx-scrollable-wrapper {
+    color: var(--text-color) !important;
+  }
+}
+::ng-deep .dx-texteditor-input {
+  background: var(--background-color) !important;
+}
+
+::ng-deep .dx-progressbar-status {
+  color: var(--text-color) !important;
 }

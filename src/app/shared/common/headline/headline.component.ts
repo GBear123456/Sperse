@@ -58,6 +58,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     @Input() showTotalCount: Boolean;
     @Input() showCompactView = true;
     @Input() buttons: HeadlineButton[];
+    @Input() showToogleButton = false;
     @Input() showReloadButton = false;
     @Input() showToggleToolbarButton = false;
     @Input() showToggleCompactViewButton = false;
@@ -153,13 +154,13 @@ export class HeadLineComponent implements OnInit, OnDestroy {
                 this.isFullScreenMode = isFullScreenMode;
             });
         this.showRefreshButtonSeparately = this.showReloadButton && this.toggleButtonPosition === 'left';
-        this.showHeadlineMenuToggleButton = this.showReloadButton && !this.showRefreshButtonSeparately
+        this.showHeadlineMenuToggleButton = this.showToogleButton || (this.showReloadButton && !this.showRefreshButtonSeparately
             || this.showToggleToolbarButton
             || this.showToggleCompactViewButton
             || this.showToggleFullScreenButton
             || this.showToggleColumnSelectorButton
             || this.showPrintButton
-            || this.showToggleLeftMenuButton;
+            || this.showToggleLeftMenuButton);
 
         this.showLeftBar = this.layoutService.showLeftBar;
     }

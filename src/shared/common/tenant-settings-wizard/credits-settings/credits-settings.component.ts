@@ -24,7 +24,6 @@ import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wiz
     selector: 'credits-settings',
     templateUrl: 'credits-settings.component.html',
     styleUrls: [
-        '../shared/styles/common.less',
         'credits-settings.component.less'
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,

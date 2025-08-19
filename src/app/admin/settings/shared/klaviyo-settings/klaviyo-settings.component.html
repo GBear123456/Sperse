@@ -1,18 +1,90 @@
-<h2>{{l('Klaviyo')}} {{l('Settings')}}</h2>
-<div>
-    <div class="form-group">
-        <br />
-        <dx-check-box id="KlaviyoIsEnabled"
-                      [text]="l('Enabled')"
-                      [(value)]="klaviyoSettings.isEnabled">
-        </dx-check-box>
-    </div>
-    <div>
-        <div class="form-group">
-            <label>{{l("ApiKey")}}</label>
-            <dx-text-box class="form-control"
-                         [(value)]="klaviyoSettings.apiKey">
-            </dx-text-box>
+<div class="base-card integration-wrapper">
+    <div class="integration-container">
+        <div class="integration-content">
+            <div class="content-header">
+                <h2>Klaviyo Integration</h2>
+                <p>
+                    Connect your Klaviyo account to automatically sync contacts, manage campaigns, and track email performance directly from your CRM.
+                </p>
+            </div>
+            <div class="integration-check">
+                <ul>
+                    <li>
+                        <span class="check">✓</span>
+                        <span class="title">Automatically sync contacts between systems</span>
+                    </li>
+                    <li>
+                        <span class="check">✓</span>
+                        <span class="title">Create and manage email campaigns</span>
+                    </li>
+                    <li>
+                        <span class="check">✓</span>
+                        <span class="title">Track open rates, clicks and engagement</span>
+                    </li>
+                    <li>
+                        <span class="check">✓</span>
+                        <span class="title">Send targeted emails based on CRM data</span>
+                    </li>
+                </ul>
+            </div>
         </div>
+        <div class="integration-image">
+          <img 
+            src="./assets/common/images/klaviyo-logo.svg" 
+            alt="Klaviyo Logo" 
+          />
+        </div>
+    </div>
+
+    <div class="integration-footer">
+        <lucide-angular [img]="AlertIcon"></lucide-angular>
+        <p>Enter your Klaviyo API Key below to get started with email marketing automation.</p>
+
+        <button class="base-button" *ngIf="!klaviyoSettings.isEnabled" (click)="klaviyoSettings.apiKey && klaviyoSettings.isEnabled = true">
+            <lucide-angular [img]="LinkIcon"></lucide-angular>
+            <span>Connect</span>
+        </button>
+        <button class="base-button mailchimp-connected" *ngIf="klaviyoSettings.isEnabled">
+            <lucide-angular [img]="CheckIcon"></lucide-angular>
+            <span>Connected</span>
+        </button>
+    </div>
+</div>
+
+<div class="base-card">
+    <div class="config-container">
+        <div class="content-header">
+            <h2>API Configuration</h2>
+            <p>
+                Enter your Klaviyo API Key to connect your account
+            </p>
+        </div>
+        <div class="config-content">
+            <div class="form-group">
+                <label for="apikey" class="base-label">{{l("ApiKey")}}</label>
+                <input class="base-input" id="apikey" type="text" name="apikey" [(ngModel)]="klaviyoSettings.apiKey" placeholder="Enter your Klaviyo API Key" />
+                <p class="base-hint">You can find your API Key in your Klaviyo account settings.</p>
+            </div>
+        </div>
+
+        <hr *ngIf="klaviyoSettings.isEnabled"/>
+
+        <div class="config-footer" *ngIf="klaviyoSettings.isEnabled">
+            <button class="base-button" (click)="klaviyoSettings.isEnabled = false">
+                Disconnect
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="base-card">
+    <div class="help-container">
+        <div class="help-header">
+            <lucide-angular [img]="AlertIcon"></lucide-angular>
+            <h2>Need Help?</h2>
+        </div>
+        <p class="help-content">
+            If you're experiencing issues with your Klaviyo integration or have questions about setting it up, please visit our <a href="#">help documentation</a> or 
+            contact <a href="#">customer support</a>.
     </div>
 </div>
