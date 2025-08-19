@@ -970,6 +970,7 @@ export class CreateMailTemplateModalComponent implements OnInit, AfterViewInit {
 
     onFieldFocus(fieldType: string, event: any) {
         this.currentFocusedField = fieldType;
+        this.isTagsTooltipVisible= false;
         this.changeDetectorRef.detectChanges();
     }
 
@@ -979,6 +980,7 @@ export class CreateMailTemplateModalComponent implements OnInit, AfterViewInit {
 
     onCKEditorFocus(event: any) {
         this.currentFocusedField = 'ckeditor';
+        this.isTagsTooltipVisible= false;
         this.currentFocusedElement = event.target || this.ckEditor?.container?.$;
         this.changeDetectorRef.detectChanges();
     }
@@ -1042,6 +1044,7 @@ export class CreateMailTemplateModalComponent implements OnInit, AfterViewInit {
         event.preventDefault();
         
         const fieldType = this.currentFocusedField;
+        console.log(fieldType)
         
         if (fieldType) {
             this.showTagsTooltip(fieldType, event);
