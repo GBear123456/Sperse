@@ -1,240 +1,330 @@
-<h2><img width="140" src="./assets/common/images/paypal.svg" /></h2>
-
-<div class="form-group">
-  <dx-check-box
-    id="PaypalIsEnabled"
-    [text]="l('Enabled')"
-    [(value)]="paypalPaymentSettings.isEnabled"
-  >
-  </dx-check-box>
+<div class="header">
+    <img src="assets/common/icons/paypal.svg" />
+    <mat-slide-toggle
+        class="header-toggle"
+        [(ngModel)]="paypalPaymentSettings.isEnabled"
+        labelPosition="before"
+    >
+        {{ l('Enable PayPal Payments For Checkout') }}
+    </mat-slide-toggle>
 </div>
-<mat-tab-group *ngIf="paypalPaymentSettings" [(selectedIndex)]="selectedTabIndex">
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <img src="./assets/common/icons/house.svg" />
-      <div class="title">PAYPAL INTRODUCTION</div>
-    </ng-template>
-    <div class="container-fluid introduction-tab">
-      <div class="row">
-        <div class="col-12 col-lg-8">
-          <div class="take-payments-header">
-            <div>
-              <h3>Accept PayPal Payments</h3>
-              <span>Connect with the world's most powerful and easy to use Payment Gateway</span>
+
+<mat-tab-group
+    *ngIf="paypalPaymentSettings"
+    animationDuration="10ms"
+    disableRipple="true"
+    class="main-tabs"
+>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <lucide-angular [img]="HouseIcon"></lucide-angular>
+            <span>{{l('Paypal Introduction')}}</span>
+        </ng-template>
+
+        <div class="introduction-tab">
+            <div class="left-side">
+                <div class="payment-header">
+                    <h2>Accept PayPal Payments</h2>
+                    <p>Connect with the world's most powerful and easy to use Payment Gateway</p>
+                </div>
+
+                <div class="content-wrapper">
+                    <div class="content-info">
+                        <div class="info-img">
+                            <img src="./assets/common/images/paypal-benefits.png">
+                        </div>
+                        <h3>Now your customers can pay by card</h3>
+                        <ul>
+                            <li>
+                                <div>•</div>
+                                <span class="title">Take instant online card payments</span>
+                            </li>
+                            <li>
+                                <div>•</div>
+                                <span class="title">Get your money quickly and securely</span>
+                            </li>
+                            <li>
+                                <div>•</div>
+                                <span class="title">Choose which invoices can be paid this way</span>
+                            </li>
+                        </ul>
+                        <a class="base-link-button" target="_blank" href="https://www.paypal.com/en/webapps/mpp/how-paypal-works">
+                            Learn more about how PayPal works
+                            <lucide-angular [img]="ExternalIcon"></lucide-angular>
+                        </a>
+                    </div>
+
+                    <div class="content-invoice">
+                        <h3>Connect PayPal collect payments from customers worldwide!</h3>
+                        <p>Only pay a small percentage of your invoice total:</p>
+
+                        <ul>
+                            <li>
+                                <span class="check">✓</span>
+                                <span class="title">Accept all Major Credit Cards</span>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <span class="title">Flexible subsrcriptions and billing terms</span>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <span class="title">Accept SEPA</span>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <span class="title">Accept Apple Pay</span>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <span class="title">Accept iDeal</span>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <span class="title">Fraud prevention tools</span>
+                            </li>
+                        </ul>
+
+                        <button class="base-button" (click)="createConnectedAccount()" disabled>
+                            {{ l('Connect to PayPal') }}
+                        </button>
+                    </div>
+                </div>
             </div>
-            <button
-              *ngIf="
-                paypalPaymentSettings.isHostAccountEnabled && !paypalPaymentSettings.merchantId
-              "
-              class="btn btn-layout stripe-button"
-              (click)="createConnectedAccount()"
-            >
-              {{ l('Connect to Paypal') }}
-            </button>
-          </div>
-          <div class="video-block">
-            <img src="./assets/common/images/paypal_promo.png" />
-            <div class="video-block-text">
-              <div class="video-block-title">Now your customers can pay by card</div>
-              <ul>
-                <li>Take instant online card payments</li>
-                <li>Get your money quickly and securely</li>
-                <li>Choose which invoices can be paud this way</li>
-              </ul>
-              <div class="video-block-learnmore">
-                <a target="_blank" href="https://www.paypal.com/us/digital-wallet/how-paypal-works">
-                  Learn more about how PayPal works<i class="fa fa-long-arrow-right"></i>
-                </a>
-              </div>
+            <div class="faq-side">
+                <div class="faq-block-title">FAQ</div>
+                <cdk-accordion [multi]="true">
+                    <cdk-accordion-item
+                        *ngFor="let item of faqs; let index = index;"
+                        #accordionItem="cdkAccordionItem"
+                        class="accordion-item"
+                        role="button"
+                        tabindex="0"
+                        [attr.id]="'accordion-header-' + index"
+                        [attr.aria-expanded]="accordionItem.expanded"
+                        [attr.aria-controls]="'accordion-body-' + index"
+                    >
+                        <div class="accordion-item-header" (click)="accordionItem.toggle()">
+                            <span *ngIf="item.content">{{ item.title }}</span>
+                            <a *ngIf="item.link" [href]="item.link" target="_blank">{{ item.title }}</a>
+                            <lucide-angular [img]="ChevronIcon" *ngIf="item.content"></lucide-angular>
+                        </div>
+                        <div
+                            *ngIf="item.content"
+                            class="accordion-item-body"
+                            role="region"
+                            [style.display]="accordionItem.expanded ? '' : 'none'"
+                            [attr.id]="'accordion-body-' + index"
+                            [attr.aria-labelledby]="'accordion-header-' + index"
+                        >
+                            {{ item.content }}
+                        </div>
+                    </cdk-accordion-item>
+                </cdk-accordion>
             </div>
-          </div>
-          <div class="payments-block">
-            <h2>Connect PayPal collect payments from customers worldwide!</h2>
-            <h3>Only pay a small percentage of your invoice total:</h3>
-            <ul>
-              <li>Accept all Major Credit Cards</li>
-              <li>Flexible subsrcriptions and billing terms</li>
-              <li>Accept SEPA</li>
-              <li>Accept Apple Pay</li>
-              <li>Accept iDeal</li>
-              <li>Fraud prevention tools</li>
-            </ul>
-          </div>
         </div>
-        <div class="col-12 col-lg-4 faq-block">
-          <div class="faq-block-title">FAQ</div>
-          <div class="faq-block-row">
-            <img src="./assets/common/icons/document-text.svg" />
-            <a
-              target="_blank"
-              href="https://www.paypal.com/c2/webapps/mpp/how-to-guides/how-to-use-paypal"
-              >What’s Paypal and how do I get started?</a
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-  </mat-tab>
-  <mat-tab *ngIf="!isHost && paypalPaymentSettings.merchantId">
-    <ng-template mat-tab-label>
-      <img src="./assets/common/icons/peoples.svg" />
-      <div class="title">CONNECTED ACCOUNT</div>
-    </ng-template>
-    <div class="connected-tab blocks-tab">
-      <div class="connected-account block" [class.active]="isMerchantConnected">
-        <div class="section top-bar">
-          <i
-            class="fa check-icon"
-            [ngClass]="isMerchantConnected ? 'fa-check-circle' : 'fa-circle-thin'"
-          ></i>
-          <span class="name-title">{{ paypalPaymentSettings.merchantLegalName }}</span>
-        </div>
-        <div class="section account-info">
-          <div class="stripe-button-container">
-            <button class="btn btn-layout paypal-button">
-              {{ isMerchantConnected ? l('Connected with') : l('Finish onboarding with') }}
-              <img width="100" src="./assets/common/images/paypal.svg" />
-            </button>
-          </div>
-          <div class="account-details">
-            <h6>{{ l('Merchant account info') }}:</h6>
-            <div class="clipboard-holder">
-              <span>Merchant Id: </span><b>{{ paypalPaymentSettings.merchantId }}</b
-              ><i
-                class="copy save-to-clipboard"
-                aria-hidden="true"
-                (click)="copyToClipboard(paypalPaymentSettings.merchantId)"
-              ></i>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <lucide-angular [img]="SettingsIcon"></lucide-angular>
+            <span>{{l('Api Settings')}}</span>
+        </ng-template>
+        <div class="settings-tab">
+            <div class="api-config">
+                <div class="settings-header">
+                    <h3>API Configuration</h3>
+                    <p>Configure your PayPal API credentials</p>
+                </div>
+
+                <mat-tab-group
+                    animationDuration="10ms"
+                    disableRipple="true"
+                    class="child-tabs"
+                    (selectedTabChange)="onTabChange($event)"
+                    selectedIndex="0"
+                >
+                <mat-tab label="Sandbox (Test)">
+                    <div class="form-group">
+                        <label for="PayPalClientId" class="base-label">Client ID</label>
+                        <input class="base-input" id="PayPalClientId" type="text" name="PayPalClientId" [(ngModel)]="paypalPaymentSettings.clientId" />
+                        <p class="base-hint">Found in your PayPal Developer Dashboard under REST API apps in Sandbox mode</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="PayPalClientSecret" class="base-label">Client Secret</label>
+                        <input class="base-input" id="PayPalClientSecret" type="text" name="PayPalClientSecret" [(ngModel)]="paypalPaymentSettings.clientSecret" />
+                        <p class="base-hint">Keep this secure - found in your PayPal Developer Dashboard in Sandbox mode</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="PayPalWebhookKey" class="base-label">Webhook ID</label>
+                        <input class="base-input" id="PayPalWebhookKey" type="text" name="PayPalWebhookKey" [(ngModel)]="paypalPaymentSettings.webhookKey" maxlength="128"/>
+                        <p class="base-hint">Generated when you create a webhook in your PayPal Developer Dashboard in Sandbox mode</p>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Live (Production)">
+                    <div class="form-group">
+                        <label for="PayPalClientId" class="base-label">Client ID</label>
+                        <input class="base-input"  id="PayPalClientId" type="text" name="PayPalClientId" [(ngModel)]="paypalPaymentSettings.clientId" />
+                        <p class="base-hint">Found in your PayPal Developer Dashboard under REST API apps in Live mode</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="PayPalClientSecret" class="base-label">Client Secret</label>
+                        <input class="base-input" id="PayPalClientSecret" type="text" name="PayPalClientSecret" [(ngModel)]="paypalPaymentSettings.clientSecret"/>
+                        <p class="base-hint">Keep this secure - found in your PayPal Developer Dashboard in Live mode</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="PayPalWebhookKey" class="base-label">Webhook ID</label>
+                        <input class="base-input" id="PayPalWebhookKey" type="text" name="PayPalWebhookKey" [(ngModel)]="paypalPaymentSettings.webhookKey" maxlength="128"/>
+                        <p class="base-hint">Generated when you create a webhook in your PayPal Developer Dashboard in Live mode</p>
+                    </div>
+                </mat-tab>
+                </mat-tab-group>
             </div>
-            <div class="clipboard-holder">
-              <span>Legal Name: </span><b>{{ paypalPaymentSettings.merchantLegalName }}</b
-              ><i
-                class="copy save-to-clipboard"
-                (click)="copyToClipboard(paypalPaymentSettings.merchantLegalName)"
-              ></i>
+
+            <div class="advanced-config">
+                <div class="settings-header">
+                    <h3>Webhook Configuration</h3>
+                    <p>Set up webhooks to receive real-time payment updates</p>
+                </div>
+                <div class="webhook-config">
+                    <lucide-angular [img]="AlertIcon"></lucide-angular>
+                    <div class="webhook-content">
+                        <p>Configure your webhook endpoint</p>
+                        <p>To receive webhooks from PayPal, please add this endpoint to your PayPal dashboard:</p>
+                        <code>{{ getPayPalWebhookUrl() }}<i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></code>
+                    </div>
+                </div>
+
+                <div class="settings-header">
+                    <h3>Webhook Events</h3>
+                    <p>Select the events you want to receive notifications for</p>
+                </div>
+
+                <div class="feature-sub-group">
+                    <h4>Payment Events</h4>
+                    <div class="feature-wrapper">
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Billing subscription activated</p>
+                            </div>
+                        </div>
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Billing subscription cancelled</p>
+                            </div>
+                        </div>
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Payment sale completed</p>
+                            </div>
+                        </div>
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Payment sale refunded</p>
+                            </div>
+                        </div>
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Payment capture completed</p>
+                            </div>
+                        </div>
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Payment capture refunded</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-sub-group">
+                    <h4>Payout Events</h4>
+                    <div class="feature-wrapper">
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Payment payouts-item succeeded</p>
+                            </div>
+                        </div>
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Payment payouts-item failed</p>
+                            </div>
+                        </div>
+                        <div class="feature-config">
+                            <mat-checkbox [checked]="true" (click)="$event.preventDefault()"></mat-checkbox>
+                            <div class="feature-content">
+                                <p>Payment payouts-item unclaimed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <div class="clipboard-holder">
-              <span>Merchant Email: </span><b>{{ paypalPaymentSettings.merchantEmail }}</b
-              ><i
-                class="copy save-to-clipboard"
-                (click)="copyToClipboard(paypalPaymentSettings.merchantEmail)"
-              ></i>
+        </div>
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <lucide-angular [img]="TestTubeIcon"></lucide-angular>
+            <span>{{l('Test & Verify')}}</span>
+        </ng-template>
+        <div class="verify-tab">
+            <div class="settings-header">
+                <h3>Testing & Verification</h3>
+                <p>Verify your PayPal integration is working correctly</p>
             </div>
-          </div>
-          <div class="account-warning" *ngIf="!paypalPaymentSettings.merchantEmailConfirmed">
-            * Your PayPal account email is not confirmed. Email confirmation is required to use
-            PayPal for receiving payments.
-          </div>
-          <div class="account-warning" *ngIf="!paypalPaymentSettings.merchantPaymentsReceivable">
-            * Your PayPal account is currently not ready to receive payments. Please ensure your
-            account is fully set up and that all required permissions are granted. Reconnecting your
-            account may help resolve the issue.
-          </div>
+
+            <div class="test-content">
+                <div class="card">
+                    <h4>Test Transaction</h4>
+                    <p>Run a test payment to ensure your PayPal integration works correctly</p>
+                    <button class="base-button">
+                        <lucide-angular [img]="CreditCardIcon"></lucide-angular>
+                        <span>Test Payment</span>
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h4>Test Credentials</h4>
+                    <p>Use these sandbox accounts for testing:</p>
+                    <div class="transaction-list">
+                        <div class="transaction-card">
+                            <span>Test Buyer:</span>
+                            <div class="transaction-details">
+                                <span>sb-buyer@example.com</span>
+                                <span>password123</span>
+                            </div>
+                        </div>
+
+                        <div class="transaction-card">
+                            <span>Test Merchant:</span>
+                            <div class="transaction-details">
+                                <span>sb-merchant@example.com</span>
+                                <span>password123</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="test-guide">
+                <h4>Test Guide</h4>
+                <div class="test-guide-mode">
+                    <h5>Testing PayPal in Sandbox Mode</h5>
+                    <ol>
+                        <li>Ensure you've configured your sandbox API credentials correctly</li>
+                        <li>Use the "Test Payment" button to simulate a payment flow</li>
+                        <li>Log in using the sandbox test account credentials provided</li>
+                        <li>Check that webhooks are received by using the "Verify Webhook" button</li>
+                        <li>Verify that the transaction appears in your PayPal Sandbox dashboard</li>
+                    </ol>
+                </div>
+            </div>
         </div>
-        <div class="account-actions">
-          <span (click)="unlinkMerchant()"><i class="fa fa-trash-o"></i>Unlink Connection</span>
-        </div>
-      </div>
-    </div>
-  </mat-tab>
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <img src="./assets/common/icons/blocks.svg" />
-      <div class="title">API KEY</div>
-    </ng-template>
-    <div class="api-keys-tab blocks-tab">
-      <div class="api-key-account block">
-        <div class="form-group">
-          <label for="PayPalEnvironment">{{ l('PayPal environment') }}</label>
-          <dx-select-box
-            class="bold-text"
-            stylingMode="outlined"
-            valueExpr="value"
-            displayExpr="text"
-            [showClearButton]="true"
-            [(value)]="paypalPaymentSettings.environment"
-            [dataSource]="payPalEnvironments"
-          >
-          </dx-select-box>
-        </div>
-        <div class="form-group">
-          <label for="PayPalClientId">{{ l('Client ID') }}</label>
-          <input
-            id="PayPalClientId"
-            type="text"
-            name="PayPalClientId"
-            class="form-control"
-            [(ngModel)]="paypalPaymentSettings.clientId"
-          />
-        </div>
-        <div class="form-group">
-          <label for="PayPalClientSecret">{{ l('Client Secret') }}</label>
-          <input
-            id="PayPalClientSecret"
-            type="text"
-            name="PayPalClientSecret"
-            class="form-control"
-            [(ngModel)]="paypalPaymentSettings.clientSecret"
-          />
-        </div>
-        <div *ngIf="isHost" class="form-group">
-          <label for="BNCode">{{ l('BN Code') }}</label>
-          <input
-            id="BNCode"
-            type="text"
-            name="BNCode"
-            class="form-control"
-            [(ngModel)]="paypalPaymentSettings.bnCode"
-            maxlength="128"
-          />
-        </div>
-        <div *ngIf="isHost" class="form-group">
-          <label for="HostMerchantId">{{ l('Merchant Id') }}</label>
-          <input
-            id="HostMerchantId"
-            type="text"
-            name="HostMerchantId"
-            class="form-control"
-            [(ngModel)]="paypalPaymentSettings.hostMerchantId"
-            maxlength="128"
-          />
-        </div>
-        <div class="form-group">
-          <label for="PayPalWebhookKey">{{ l('Webhook Id') }}</label>
-          <input
-            id="PayPalWebhookKey"
-            type="text"
-            name="PayPalWebhookKey"
-            class="form-control"
-            [(ngModel)]="paypalPaymentSettings.webhookKey"
-            maxlength="128"
-          />
-        </div>
-        <p>
-          <span class="small"
-            >* To recieve webhooks from PayPal please add new endpoint on your application using the
-            following info and save Webhook Id in the field above:</span
-          ><br />
-          <span class="small"
-            >URL -
-            <span class="copy-url"
-              ><b>{{ getPayPalWebhookUrl() }}</b
-              ><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span
-          ><br />
-          <span class="small">
-            Events -
-            <b>'Billing subscription activated'</b>, <b>'Billing subscription cancelled'</b>,
-            <b>'Billing subscription expired'</b>, <b>'Payment sale completed'</b>,
-            <b>'Payment sale refunded'</b>, <b>'Payment capture completed'</b>,
-            <b>'Payment capture refunded'</b>, <b>'Payment payouts-item succeeded'</b>,
-            <b>'Payment payouts-item failed'</b>, <b>'Payment payouts-item unclaimed'</b>
-            <b *ngIf="isHost"
-              >, 'Merchant onboarding completed', 'Customer merchant-integration
-              seller-consent-granted', 'Merchant partner-consent revoked'</b
-            >
-          </span>
-        </p>
-      </div>
-    </div>
-  </mat-tab>
+    </mat-tab>
 </mat-tab-group>

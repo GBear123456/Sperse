@@ -13,7 +13,7 @@
         [totalCount]="totalCount">
     </app-headline-title>
     <div
-        class="headline-content" 
+        class="headline-content"
         [ngClass]="{'menu-empty': (!buttons || !buttons.length) && !showReloadButton && !showToggleToolbarButton && !showToggleCompactViewButton && !showToggleFullScreenButton}">
         <ng-content></ng-content>
     </div>
@@ -40,10 +40,6 @@
                     <i class="icon {{settingService.get('App.Appearance.NavPosition') == 'Vertical' ? 'top' : 'left'}}-bar"></i>
                 </div>
                 <span class="text">{{ls.l((settingService.get('App.Appearance.NavPosition') == 'Vertical' ? 'Top' : 'Left') + ' Navigation Bar')}}</span>
-            </li>
-            <li *ngIf="layoutService.showLeftBar" (click)="toggleLeftBar()">
-                <div><i class="icon left-panel-{{layoutService.expandedLeftBarSubject.value ? 'hide' : 'show'}}"></i></div>
-                <span class="text">{{( layoutService.expandedLeftBarSubject.value ? ls.l('Collapse') : ls.l('Expand') ) + ' Left Bar'}}</span>
             </li>
             <li *ngIf="showReloadButton && !showRefreshButtonSeparately" (click)="reload($event)">
                 <div><span class="icon reload"></span></div>
