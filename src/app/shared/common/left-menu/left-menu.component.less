@@ -55,7 +55,12 @@
     width: 341px;
     height: calc(~'100vh - 215px');
     border-right: 1px solid var(--border-color);
-    background-color: var(--navbar-bg);
+    border-left: 1px solid var(--border-color);
+
+    background: #fff;
+    .dark-theme & {
+      background-color: var(--navbar-bg);
+    }
 
     float: right;
     transition:
