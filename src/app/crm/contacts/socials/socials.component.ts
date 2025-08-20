@@ -33,6 +33,7 @@ import { AppLocalizationService } from "@app/shared/common/localization/app-loca
 import { AppPermissionService } from "@shared/common/auth/permission.service";
 import { AppPermissions } from "@shared/AppPermissions";
 import { LinkType } from "@shared/AppEnums";
+import { SocialDialogComponent } from "@shared/social-dialog";
 
 @Component({
     selector: "socials",
@@ -323,5 +324,55 @@ export class SocialsComponent {
         else {
             this.selectedLinks = [];
         }
+    }
+
+    // New function to open social dialog modal
+    openSocialDialog(event: any) {
+        const dialogRef = this.dialog.open(SocialDialogComponent, {
+            width: '450px',
+            data: {
+                platform: '',
+                url: '',
+                comment: '',
+                isActive: true,
+                isConfirmed: false
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                console.log('Social dialog result:', result);
+                // Handle the result here - you can integrate with your existing logic
+                // For example, create a new social link
+                this.handleSocialDialogResult(result);
+            }
+        });
+    }
+
+    // Handle the result from social dialog
+    private handleSocialDialogResult(result: any) {
+        // Create a new contact link using the existing logic
+        const newLinkData = {
+            field: "url",
+            id: undefined,
+            value: result.url,
+            name: this.ls.l("Link"),
+            groups: this.contactInfo.groups,
+            contactId: this.contactInfoData?.contactId,
+            url: result.url,
+            confirmationDate: undefined,
+            confirmedByUserFullName: undefined,
+            usageTypeId: AppConsts.otherLinkTypeId, // Default to other link type
+            isConfirmed: result.isConfirmed,
+            isActive: result.isActive,
+            comment: result.comment,
+            isCompany: this.isCompany,
+            deleteItem: () => {
+                // Handle delete if needed
+            },
+        };
+
+        // Use existing update logic to create the link
+        this.updateDataField(null, newLinkData);
     }
 }
