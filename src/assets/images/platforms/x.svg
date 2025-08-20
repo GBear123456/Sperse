@@ -1,1 +1,11 @@
-<svg data-lov-id="src\components\SocialIcon.tsx:97:10" data-lov-name="svg" data-component-path="src\components\SocialIcon.tsx" data-component-line="97" data-component-file="SocialIcon.tsx" data-component-name="svg" data-component-content="%7B%7D" xmlns="http://www.w3.org/2000/svg" width="1200" height="1227" viewBox="0 0 1200 1227" class="h-8 w-8 text-white drop-shadow-sm"><path data-lov-id="src\components\SocialIcon.tsx:98:12" data-lov-name="path" data-component-path="src\components\SocialIcon.tsx" data-component-line="98" data-component-file="SocialIcon.tsx" data-component-name="path" data-component-content="%7B%7D" d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" fill="currentColor"></path></svg>
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="40" height="40" rx="10" fill="#08A5F6"/>
+<g clip-path="url(#clip0_1_3)">
+<path d="M21.8655 18.4686L29.1509 10H27.4245L21.0986 17.3532L16.0462 10H10.2188L17.8591 21.1193L10.2188 30H11.9452L18.6255 22.2348L23.9613 30H29.7887L21.8651 18.4686H21.8655ZM19.5009 21.2173L18.7267 20.1101L12.5673 11.2997H15.2191L20.1898 18.4099L20.964 19.5172L27.4253 28.7594H24.7735L19.5009 21.2177V21.2173Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_1_3">
+<rect width="20" height="20" fill="white" transform="translate(10 10)"/>
+</clipPath>
+</defs>
+</svg>
