@@ -82,56 +82,6 @@
       height: 4px;
     }
   }
-  ::ng-deep .form-control {
-    background-color: var(--background-color);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-family: var(--app-font-family);
-    font-size: 1rem;
-    line-height: 1.5;
-    padding: 0.5rem 0.75rem;
-    transition: all 0.2s ease-in-out;
-
-    &:hover {
-      border-color: var(--border-color-hover);
-    }
-
-    &:focus {
-      border-color: var(--primary-color);
-      outline: none;
-      box-shadow: 0 0 0 2px var(--primary-color-light);
-    }
-
-    &::placeholder {
-      color: var(--muted-color);
-    }
-
-    &:disabled {
-      background-color: var(--disabled-bg);
-      border-color: var(--border-color);
-      color: var(--muted-color);
-      cursor: not-allowed;
-    }
-
-    &.is-invalid {
-      border-color: var(--danger-color);
-      background-color: var(--danger-color-light);
-
-      &:focus {
-        box-shadow: 0 0 0 2px var(--danger-color-light);
-      }
-    }
-
-    &.is-valid {
-      border-color: var(--success-color);
-      background-color: var(--success-color-light);
-
-      &:focus {
-        box-shadow: 0 0 0 2px var(--success-color-light);
-      }
-    }
-  }
 
   ::ng-deep dx-text-box {
     width: 100%;

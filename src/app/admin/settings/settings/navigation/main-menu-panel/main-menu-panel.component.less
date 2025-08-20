@@ -8,7 +8,9 @@
   .header {
     padding-left: 20px;
     padding-right: 20px;
-    background-color: var(--card-bg);
+    background-color: var(--sidebar-bg);
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
     color: var(--text-color);
     display: flex;
     justify-content: space-between;
@@ -79,10 +81,6 @@
   .main-content {
     padding-top: 12px;
     padding-bottom: 12px;
-
-    .content ::ng-deep main-menu-item > div {
-      // margin-top: 0.25rem;
-      // margin-bottom: 0;
-    }
+    background-color: var(--sidebar-bg);
   }
 }
