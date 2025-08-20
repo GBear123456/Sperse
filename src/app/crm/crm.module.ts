@@ -122,6 +122,7 @@ import { CrmContactGroupGuard } from './crm-contact-group-guard';
 import { ZapierModule } from '@shared/common/zapier/zapier.module';
 import { LeadConversionJourneyComponent } from './traffic-stats/lead-conversion-journey/lead-conversion-journey.component';
 import { AggregateAnalyticsDashboardComponent } from './traffic-stats/aggregate-analytics-dashboard/aggregate-analytics-dashboard.component';
+import { SocialDialogModule } from '@shared/social-dialog';
 
 import {
   LucideAngularModule,
@@ -286,6 +287,7 @@ import {CreateMailTemplateModalComponent} from './shared/create-mail-template-mo
     ZapierModule,
     EditTenantModule,
     CKEditorModule,
+    SocialDialogModule,
     LucideAngularModule.pick({
       House,
       Users,

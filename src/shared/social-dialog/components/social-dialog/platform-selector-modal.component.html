@@ -1,0 +1,70 @@
+<div class="platform-selector-modal" *ngIf="isVisible">
+  <div class="modal-overlay" (click)="closeModal()"></div>
+  <div class="modal-content">
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">Select Link Type</h2>
+      <div class="header-actions">
+       
+        <button class="view-mode-btn" (click)="toggleViewMode()" [class.active]="isGridView">
+          <div>
+            <svg class="grid-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 3h7v7H3V3zM14 3h7v7h-7V3zM3 14h7v7H3v-7zM14 14h7v7h-7v-7z" fill="currentColor"/>
+            </svg>
+            
+          </div>
+          <div class="view-mode-btn-text">{{ isGridView ? 'View as list' : 'View as icons' }}</div>
+        </button>
+        <button class="close-btn" (click)="closeModal()">
+          <svg class="close-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Search an app or platform to add your URL link"
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+      >
+    </div>
+
+    <!-- Platform List View -->
+    <div class="platform-list" *ngIf="!isGridView">
+      <div 
+        *ngFor="let platform of filteredPlatforms" 
+        class="platform-item"
+        [class.selected]="platform.id === selectedPlatformId"
+        (click)="selectPlatform(platform)"
+      >
+        <div class="platform-icon" [style.background-color]="platform.color">
+          <img [src]="platform.icon" [alt]="platform.name" class="icon-image">
+        </div>
+        <span class="platform-name">{{ platform.name }}</span>
+      </div>
+    </div>
+
+    <!-- Platform Icons Grid View -->
+    <div class="platform-grid" *ngIf="isGridView">
+      <div 
+        *ngFor="let platform of filteredPlatforms" 
+        class="platform-grid-item"
+        [class.selected]="platform.id === selectedPlatformId"
+        (click)="selectPlatform(platform)"
+        [attr.data-tooltip]="platform.name"
+      >
+        <div class="platform-grid-icon" [style.background-color]="platform.color">
+          <img [src]="platform.icon" [alt]="platform.name" class="icon-image">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
