@@ -37,7 +37,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 24px 16px 24px;
+  padding: 24px 24px 0px 24px;
+  border-bottom: none !important;
 }
 
 .modal-title {
@@ -82,15 +83,17 @@
   background: white;
   border: 1px solid #d1d5db;
   border-radius: 6px;
-  padding: 6px 12px;
+  padding: 2px 6px;
   display: flex;
+  width: 120px;
   align-items: center;
   gap: 6px;
   cursor: pointer;
   transition: all 0.2s;
   font-size: 13px;
   color: #374151;
-
+  justify-content: center;
+  outline: none;
   &:hover {
     border-color: #9ca3af;
     background: #f9fafb;
@@ -152,7 +155,7 @@
 
 .search-input {
   width: 100%;
-  padding: 12px 12px 12px 44px;
+  padding: 10px 12px 7px 44px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   font-size: 14px;
@@ -169,6 +172,65 @@
   &::placeholder {
     color: #9ca3af;
   }
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 36px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f3f4f6;
+  }
+
+  .clear-icon {
+    width: 16px;
+    height: 16px;
+    color: #9ca3af;
+  }
+}
+
+// No Search Results
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+  height: 400px;
+}
+
+.no-results-icon {
+  margin-bottom: 16px;
+  
+  svg {
+    width: 64px;
+    height: 64px;
+    color: #9ca3af;
+  }
+}
+
+.no-results-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.no-results-suggestion {
+  font-size: 14px;
+  color: #9ca3af;
 }
 
 // Platform List
@@ -209,9 +271,8 @@
 }
 
 .platform-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -220,8 +281,8 @@
 }
 
 .icon-image {
-  width: 20px;
-  height: 20px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
@@ -299,7 +360,6 @@
 .platform-grid-icon {
   width: 75px;
   height: 75px;
-  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -339,5 +399,276 @@
 
 
 .view-mode-btn-text {
-  padding-top: 4px;
+  padding-top: 6px;
+}
+
+// Social Media Background Classes
+.social-bg-facebook {
+  background: linear-gradient(135deg, #1877F2 0%, #166FE5 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-instagram {
+  background: linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #F77737 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-x {
+  background: linear-gradient(135deg, #1DA1F2 0%, #1A91DA 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-linkedin {
+  background: linear-gradient(135deg, #0A66C2 0%, #0E57A6 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-youtube {
+  background: linear-gradient(135deg, #FF0000 0%, #E60000 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-tiktok {
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-discord {
+  background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-github {
+  background: linear-gradient(135deg, #181717 0%, #333333 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-bluesky {
+  background: linear-gradient(135deg, #0085ff 0%, #0066cc 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-bbb {
+  background: linear-gradient(135deg, #003087 0%, #002066 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-whatsapp {
+  background: linear-gradient(135deg, #25D366 0%, #1FA352 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-telegram {
+  background: linear-gradient(135deg, #26A5E4 0%, #229ED9 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-pinterest {
+  background: linear-gradient(135deg, #BD081C 0%, #A00616 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-reddit {
+  background: linear-gradient(135deg, #FF4500 0%, #E63E00 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-snapchat {
+  background: linear-gradient(135deg, #FFFC00 0%, #F7F700 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-twitch {
+  background: linear-gradient(135deg, #9146FF 0%, #7B3EE8 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-dribbble {
+  background: linear-gradient(135deg, #EA4C89 0%, #D23669 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-soundcloud {
+  background: linear-gradient(135deg, #FF5500 0%, #E64B00 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-skype {
+  background: linear-gradient(135deg, #00AFF0 0%, #009DD1 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-zoom {
+  background: linear-gradient(135deg, #2D8CFF 0%, #1E7CE8 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-vimeo {
+  background: linear-gradient(135deg, #1AB7EA 0%, #17A6D3 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-threads {
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-cal {
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-calendly {
+  background: linear-gradient(135deg, #006BFF 0%, #0056CC 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-podcast {
+  background: linear-gradient(135deg, #9C6DD6 0%, #8B5FBF 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-rss {
+  background: linear-gradient(135deg, #F26522 0%, #DB5A1E 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-slack {
+  background: linear-gradient(135deg, #4A154B 0%, #3D1142 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-substack {
+  background: linear-gradient(135deg, #FF6719 0%, #E65A16 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-yelp {
+  background: linear-gradient(135deg, #D32323 0%, #B81C1C 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-website {
+  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-apple {
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-viber {
+  background: linear-gradient(135deg, #665CAC 0%, #574C92 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-messenger {
+  background: linear-gradient(135deg, #00B2FF 0%, #009CE6 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-wechat {
+  background: linear-gradient(135deg, #07C160 0%, #06A54A 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-paypal {
+  background: linear-gradient(135deg, #003087 0%, #009CDE 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-default {
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-google {
+  background: linear-gradient(135deg, #4285F4 0%, #3367D6 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-onlinecourse {
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-teams {
+  background: linear-gradient(135deg, #6264A7 0%, #4E4E8C 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-opensea {
+  background: linear-gradient(135deg, #2081E2 0%, #1A6BC7 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-cb {
+  background: linear-gradient(135deg, #0288D1 0%, #0277BD 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-angel {
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-tweach {
+  background: linear-gradient(135deg, #9146FF 0%, #7B3EE8 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-trustpilot {
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.social-bg-opencorporates {
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
