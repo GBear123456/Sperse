@@ -91,6 +91,7 @@ export class SocialsComponent {
             .subscribe(() => {
                 this.isEditAllowed = false;
             });
+
     }
 
     linkTypesLoad() {
@@ -108,7 +109,7 @@ export class SocialsComponent {
                         this.LINK_TYPES[entity.id] = entity.name.replace(
                             / /g,
                             ""
-                        );
+                        ).toLowerCase();
                     });
                 });
         }
@@ -142,6 +143,7 @@ export class SocialsComponent {
     }
 
     showEditDialog(data, event) {
+        console.log(this.LINK_TYPES)
         if (this.enableLinkDialog) {
             if (
                 !this.isCompany ||
@@ -184,6 +186,8 @@ export class SocialsComponent {
 
     showSocialDialog(data, event) {
         // Open the new social dialog for editing
+        console.log(this.contactInfoData?.links)
+
         const dialogRef = this.dialog.open(SocialDialogComponent, {
             width: '450px',
             data: {
