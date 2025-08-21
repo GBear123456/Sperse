@@ -183,46 +183,100 @@ export class SocialsComponent {
     }
 
     showSocialDialog(data, event) {
-        let dialogData = {
-            field: "url",
-            id: data && data.id,
-            value: data && data.url,
-            name: this.ls.l("Link"),
-            groups: this.contactInfo.groups,
-            contactId:
-                (data && data.contactId) ||
-                (this.contactInfoData && this.contactInfoData.contactId),
-            url: data && data.url,
-            confirmationDate: data && data.confirmationDate,
-            confirmedByUserFullName: data && data.confirmedByUserFullName,
-            usageTypeId: data
-                ? data.linkTypeId || AppConsts.otherLinkTypeId
-                : this.isCompany
-                ? LinkType.Website
-                : AppConsts.otherLinkTypeId,
-            isConfirmed: Boolean(data && data.isConfirmed),
-            isActive: Boolean(data ? data.isActive : true),
-            comment: data && data.comment,
-            isCompany: this.isCompany,
-            deleteItem: () => {
-                this.deleteLink(data.id);
-            },
-        };
-        this.dialog.closeAll();
-        this.dialog
-            .open(EditContactDialog, {
-                data: dialogData,
-                hasBackdrop: false,
-                position: this.getDialogPosition(event),
-            })
-            .afterClosed()
-            .subscribe((result) => {
-                scrollTo(0, 0);
-                if (result && dialogData.contactId) {
-                    this.updateDataField(data, dialogData);
+        // Open the new social dialog for editing
+        const dialogRef = this.dialog.open(SocialDialogComponent, {
+            width: '450px',
+            data: {
+                id: data ? data.id : undefined, // Pass ID for edit mode
+                platform: data ? this.getPlatformFromLinkType(data.linkTypeId) : '',
+                url: data ? data.url : '',
+                comment: data ? data.comment : '',
+                isActive: data ? data.isActive : true,
+                isConfirmed: data ? data.isConfirmed : false
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                console.log('Social dialog edit result:', result);
+                if (result.isEditMode) {
+                    this.handleSocialDialogEditResult(data, result);
+                } else {
+                    this.handleSocialDialogResult(result);
                 }
-            });
+            }
+        });
         event.stopPropagation();
+    }
+
+    // Handle editing existing social links
+    private handleSocialDialogEditResult(originalData: any, result: any) {
+        if (originalData && originalData.id) {
+            // Update existing link
+            const updateData = {
+                field: "url",
+                id: originalData.id,
+                value: result.url,
+                name: this.ls.l("Link"),
+                groups: this.contactInfo.groups,
+                contactId: this.contactInfoData?.contactId,
+                url: result.url,
+                confirmationDate: originalData.confirmationDate,
+                confirmedByUserFullName: originalData.confirmedByUserFullName,
+                usageTypeId: this.mapPlatformToLinkType(result.platformId) || originalData.linkTypeId,
+                isConfirmed: result.isConfirmed,
+                isActive: result.isActive,
+                comment: result.comment,
+                isCompany: this.isCompany,
+                deleteItem: () => {
+                    this.deleteLink(originalData.id);
+                },
+            };
+
+            this.updateDataField(originalData, updateData);
+        }
+    }
+
+    // Helper method to get platform name from link type ID
+    private getPlatformFromLinkType(linkTypeId: string): string {
+        const linkTypeToPlatformMap: { [key: string]: string } = {
+            'facebook': 'Facebook',
+            'twitter': 'X.com',
+            'linkedin': 'LinkedIn',
+            'instagram': 'Instagram',
+            'youtube': 'YouTube',
+            'tiktok': 'TikTok',
+            'whatsapp': 'WhatsApp',
+            'telegram': 'Telegram',
+            'discord': 'Discord',
+            'github': 'GitHub',
+            'reddit': 'Reddit',
+            'snapchat': 'Snapchat',
+            'pinterest': 'Pinterest',
+            'skype': 'Skype',
+            'zoom': 'Zoom',
+            'vimeo': 'Vimeo',
+            'soundcloud': 'SoundCloud',
+            'slack': 'Slack',
+            'teams': 'Microsoft Teams',
+            'calendly': 'Calendly',
+            'cal': 'Cal.com',
+            'crunchbase': 'Crunchbase',
+            'angellist': 'AngelList',
+            'bbb': 'BBB.org',
+            'glassdoor': 'Glassdoor',
+            'opencorporates': 'Opencorporates',
+            'opensea': 'OpenSea',
+            'substack': 'Substack',
+            'threads': 'Threads',
+            'trustpilot': 'Trustpilot',
+            'tweach': 'Tweach',
+            'viber': 'Viber',
+            'wechat': 'WeChat',
+            'yelp': 'Yelp'
+        };
+        
+        return linkTypeToPlatformMap[linkTypeId] || '';
     }
 
     updateDataField(data, dialogData) {
@@ -328,6 +382,12 @@ export class SocialsComponent {
 
     // New function to open social dialog modal
     openSocialDialog(event: any) {
+        console.log('Opening social dialog with contact data:', {
+            contactId: this.contactInfoData?.contactId,
+            isCompany: this.isCompany,
+            existingLinks: this.contactInfoData?.links?.length || 0
+        });
+
         const dialogRef = this.dialog.open(SocialDialogComponent, {
             width: '450px',
             data: {
@@ -341,16 +401,20 @@ export class SocialsComponent {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                console.log('Social dialog result:', result);
+                console.log('Social dialog result received:', result);
                 // Handle the result here - you can integrate with your existing logic
                 // For example, create a new social link
                 this.handleSocialDialogResult(result);
+            } else {
+                console.log('Social dialog was cancelled');
             }
         });
     }
 
     // Handle the result from social dialog
     private handleSocialDialogResult(result: any) {
+        console.log('Processing social dialog result:', result);
+        
         // Create a new contact link using the existing logic
         const newLinkData = {
             field: "url",
@@ -362,7 +426,7 @@ export class SocialsComponent {
             url: result.url,
             confirmationDate: undefined,
             confirmedByUserFullName: undefined,
-            usageTypeId: AppConsts.otherLinkTypeId, // Default to other link type
+            usageTypeId: this.mapPlatformToLinkType(result.platformId) || AppConsts.otherLinkTypeId,
             isConfirmed: result.isConfirmed,
             isActive: result.isActive,
             comment: result.comment,
@@ -372,7 +436,69 @@ export class SocialsComponent {
             },
         };
 
+        console.log('Created new link data:', newLinkData);
+
         // Use existing update logic to create the link
         this.updateDataField(null, newLinkData);
+        
+        // Reset selected links to show all links after adding new one
+        this.selectedLinks = this.contactInfoData?.links || [];
+    }
+
+    // Map platform ID to the CRM system's link type ID
+    private mapPlatformToLinkType(platformId: string): string {
+        console.log('Mapping platform ID to link type:', platformId);
+        
+        const platformToLinkTypeMap: { [key: string]: string } = {
+            'apple': 'apple',
+            'angel': 'angellist',
+            'bbb.org': 'bbb',
+            'cb': 'crunchbase',
+            'cal.com': 'cal',
+            'calendly': 'calendly',
+            'discord': 'discord',
+            'dribbble': 'dribbble',
+            'facebook': 'facebook',
+            'github': 'github',
+            'glassdoor': 'glassdoor',
+            'google': 'google',
+            'instagram': 'instagram',
+            'linkedin': 'linkedin',
+            'messenger': 'messenger',
+            'opencorporates': 'opencorporates',
+            'opensea': 'opensea',
+            'pinterest': 'pinterest',
+            'reddit': 'reddit',
+            'rss': 'rss',
+            'skype': 'skype',
+            'slack': 'slack',
+            'snapchat': 'snapchat',
+            'soundcloud': 'soundcloud',
+            'substack': 'substack',
+            'teams': 'teams',
+            'telegram': 'telegram',
+            'threads': 'threads',
+            'tiktok': 'tiktok',
+            'trustpilot': 'trustpilot',
+            'tweach': 'tweach',
+            'viber': 'viber',
+            'vimeo': 'vimeo',
+            'wechat': 'wechat',
+            'whatsapp': 'whatsapp',
+            'x.com': 'twitter',
+            'yelp': 'yelp',
+            'youtube': 'youtube',
+            'zoom': 'zoom'
+        };
+        
+        // Try to find the link type ID from the store
+        const linkType = this.LINK_TYPES && Object.keys(this.LINK_TYPES).find(key => 
+            this.LINK_TYPES[key].toLowerCase() === platformToLinkTypeMap[platformId]?.toLowerCase()
+        );
+        
+        console.log('Available link types:', this.LINK_TYPES);
+        console.log('Mapped link type:', linkType || AppConsts.otherLinkTypeId);
+        
+        return linkType || AppConsts.otherLinkTypeId;
     }
 }
