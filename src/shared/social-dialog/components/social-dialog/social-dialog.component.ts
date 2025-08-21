@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {platforms} from './platforms.data'
 import { Platform } from './platform.interface';
+import { ThemeService } from '@app/shared/services/theme.service';
+import { Observable } from 'rxjs';
 
 export interface SocialLinkData {
   platform?: string;
@@ -25,12 +27,15 @@ export class SocialDialogComponent implements OnInit {
   showPlatformSelector: boolean = false;
   selectedPlatform: Platform | null = null;
   isEditMode: boolean = false; // Track if we're editing an existing link
+  isDark$: Observable<boolean>;
 
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<SocialDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: SocialLinkData
+    @Inject(MAT_DIALOG_DATA) public data: SocialLinkData,
+    private themeService: ThemeService
   ) {
+    this.isDark$ = this.themeService.isDarkTheme$;
     this.socialForm = this.fb.group({
       platform: ['', Validators.required],
       url: ['', [Validators.required]],

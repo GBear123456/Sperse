@@ -20,6 +20,30 @@
   width: 100%;
 
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  // Dark theme styles
+  &.dark-theme {
+    background: var(--card-bg);
+    color: var(--text-color);
+    
+    // Custom scrollbar for dark theme
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: var(--card-bg);
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+      background: var(--hover-bg);
+    }
+  }
 }
 
 // Header Styles
@@ -34,6 +58,10 @@
   font-weight: 700;
   color: #111827;
   line-height: 32px;
+  
+  .dark-theme & {
+    color: var(--text-color);
+  }
 }
 
 .dialog-subtitle {
@@ -41,6 +69,10 @@
   color: #6b7280;
   margin: 0;
   line-height: 20px;
+  
+  .dark-theme & {
+    color: var(--content-text);
+  }
 }
 
 
@@ -88,6 +120,10 @@
   color: #111827;
   margin: 0;
   line-height: 14px;
+  
+  .dark-theme & {
+    color: var(--text-color);
+  }
 }
 
 .select-link {
@@ -108,6 +144,14 @@
   &:hover {
     color: #2563eb;
     text-decoration: underline;
+  }
+  
+  .dark-theme & {
+    color: var(--primary-color);
+    
+    &:hover {
+      color: var(--btn-primary-hover);
+    }
   }
 }
 
@@ -142,6 +186,10 @@
     height: 16px;
     object-fit: contain;
   }
+  
+  .dark-theme & {
+    border: 1px solid var(--border-color);
+  }
 }
 
 .globe-icon {
@@ -154,7 +202,10 @@
   transition: all 0.2s ease;
   padding: 2px;
   border-radius: 4px;
-
+  
+  .dark-theme & {
+    color: var(--content-text);
+  }
 }
 
 .platform-tip {
@@ -162,6 +213,10 @@
   font-size: 12px;
   color: #6b7280;
   line-height: 14px;
+  
+  .dark-theme & {
+    color: var(--content-text);
+  }
 }
 
 .platform-input {
@@ -198,6 +253,27 @@
 
   &:hover:not(:read-only) {
     border-color: #9ca3af;
+  }
+  
+  .dark-theme & {
+    background: var(--input-bg);
+    color: var(--input-text);
+    border-color: var(--input-border);
+    
+    &::placeholder {
+      color: var(--input-placeholder);
+    }
+    
+    &:read-only {
+      background: var(--disabled-bg);
+      color: var(--disabled-color);
+      border-color: var(--border-color);
+    }
+    
+    &:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
   }
 }
 
@@ -254,6 +330,16 @@
     color: #6b7280;
     font-weight: 600;
   }
+  
+  .dark-theme & {
+    &:hover:not(:disabled) {
+      background: var(--hover-bg);
+    }
+    
+    &:active:not(:disabled) {
+      background: var(--disabled-bg);
+    }
+  }
 }
 
 // Comment Section
@@ -283,6 +369,21 @@
   &::placeholder {
     color: #9ca3af;
   }
+  
+  .dark-theme & {
+    background: var(--input-bg);
+    color: var(--input-text);
+    border-color: var(--input-border);
+    
+    &::placeholder {
+      color: var(--input-placeholder);
+    }
+    
+    &:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+  }
 }
 
 .comment-status {
@@ -305,6 +406,11 @@
 
   &::after {
     content: '✓';
+  }
+  
+  .dark-theme & {
+    background: var(--primary-color);
+    color: var(--btn-primary-text);
   }
 }
 
@@ -363,6 +469,18 @@
   &:hover .checkmark {
     border-color: #3b82f6;
   }
+  
+  .dark-theme & {
+    color: var(--text-color);
+    
+    .checkmark {
+      border-color: var(--border-color);
+    }
+    
+    &:hover .checkmark {
+      border-color: var(--primary-color);
+    }
+  }
 }
 
 // Action Buttons
@@ -401,6 +519,21 @@
   &:active {
     background: #f3f4f6;
   }
+  
+  .dark-theme & {
+    background: var(--card-bg);
+    color: var(--text-color);
+    border-color: var(--border-color);
+    
+    &:hover {
+      background: var(--hover-bg);
+      border-color: var(--primary-color);
+    }
+    
+    &:active {
+      background: var(--disabled-bg);
+    }
+  }
 }
 
 .save-button {
@@ -424,6 +557,20 @@
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
+  }
+  
+  .dark-theme & {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    
+    &:hover:not(:disabled) {
+      background: var(--btn-primary-hover);
+    }
+    
+    &:disabled {
+      background: var(--disabled-bg);
+      color: var(--disabled-color);
+    }
   }
 }
 
@@ -455,4 +602,8 @@
 .checkbox-div {
   border-bottom: 1px solid #b2b2b2;
   padding-bottom: 20px;
+  
+  .dark-theme & {
+    border-bottom-color: var(--border-color);
+  }
 }

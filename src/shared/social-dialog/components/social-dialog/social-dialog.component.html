@@ -1,4 +1,4 @@
-<div class="social-dialog-container">
+<div class="social-dialog-container" [class.dark-theme]="isDark$ | async">
   <!-- Header -->
   <div class="dialog-header">
     <h1 class="dialog-title">{{ isEditMode ? 'Edit Social Link' : 'Social Link Manager' }}</h1>

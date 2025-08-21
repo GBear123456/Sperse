@@ -1,4 +1,4 @@
-<div class="platform-selector-modal" *ngIf="isVisible">
+<div class="platform-selector-modal" *ngIf="isVisible" [class.dark-theme]="isDark$ | async">
   <div class="modal-overlay" (click)="closeModal()"></div>
   <div class="modal-content">
     <!-- Header -->
