@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, ElementRef, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 import { Platform } from './platform.interface';
 import { platforms } from './platforms.data';
 import { ThemeService } from '@app/shared/services/theme.service';
@@ -9,10 +9,14 @@ import { Observable } from 'rxjs';
   templateUrl: './platform-selector-modal.component.html',
   styleUrls: ['./platform-selector-modal.component.less']
 })
-export class PlatformSelectorModalComponent {
+export class PlatformSelectorModalComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() isVisible: boolean = false;
+  @Input() currentSelectedPlatform: Platform | null = null;
   @Output() platformSelected = new EventEmitter<Platform>();
   @Output() modalClosed = new EventEmitter<void>();
+
+  @ViewChild('platformList', { static: false }) platformList!: ElementRef;
+  @ViewChild('platformGrid', { static: false }) platformGrid!: ElementRef;
 
   searchTerm: string = '';
   selectedPlatformId: string = '';
@@ -24,7 +28,28 @@ export class PlatformSelectorModalComponent {
     this.isDark$ = this.themeService.isDarkTheme$;
   }
 
-  
+  ngOnInit(): void {
+    // Set the selected platform ID based on the current selected platform
+    if (this.currentSelectedPlatform) {
+      this.selectedPlatformId = this.currentSelectedPlatform.id;
+    }
+  }
+
+  ngAfterViewInit(): void {
+    // Scroll to selected platform when modal becomes visible
+    if (this.isVisible && this.currentSelectedPlatform) {
+      this.scrollToSelectedPlatform();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['isVisible'] && changes['isVisible'].currentValue && this.currentSelectedPlatform) {
+      // Use setTimeout to ensure DOM is rendered
+      setTimeout(() => {
+        this.scrollToSelectedPlatform();
+      }, 100);
+    }
+  }
 
   getSocialAppBackground(platform: string): string {
     switch (platform.toLowerCase()) {
@@ -176,9 +201,38 @@ export class PlatformSelectorModalComponent {
 
   toggleViewMode(): void {
     this.isGridView = !this.isGridView;
+    // Scroll to selected platform after view mode changes
+    setTimeout(() => {
+      this.scrollToSelectedPlatform();
+    }, 100);
   }
 
   onSearch(): void {
     // Search functionality is handled by the getter
+    // Scroll to selected platform after search
+    setTimeout(() => {
+      this.scrollToSelectedPlatform();
+    }, 100);
+  }
+
+  private scrollToSelectedPlatform(): void {
+    if (!this.selectedPlatformId) return;
+
+    // Try to find the selected platform element in the current view
+    let selectedElement: HTMLElement | null = null;
+    
+    if (this.isGridView && this.platformGrid) {
+      selectedElement = this.platformGrid.nativeElement.querySelector(
+        `[data-platform-id="${this.selectedPlatformId}"]`
+      );
+    } else if (!this.isGridView && this.platformList) {
+      selectedElement = this.platformList.nativeElement.querySelector(
+        `[data-platform-id="${this.selectedPlatformId}"]`
+      );
+    }
+
+    if (selectedElement) {
+      selectedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 }
