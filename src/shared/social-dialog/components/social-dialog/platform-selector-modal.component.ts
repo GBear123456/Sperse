@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Platform } from './platform.interface';
 import { platforms } from './platforms.data';
-
+import { ThemeService } from '@app/shared/services/theme.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-platform-selector-modal',
@@ -17,6 +18,11 @@ export class PlatformSelectorModalComponent {
   selectedPlatformId: string = '';
   isGridView: boolean = false;
   platforms: Platform[] = platforms;
+  isDark$: Observable<boolean>;
+
+  constructor(private themeService: ThemeService) {
+    this.isDark$ = this.themeService.isDarkTheme$;
+  }
 
   
 
