@@ -97,7 +97,6 @@ export class PlatformSelectorModalComponent {
       case "messenger": return "https://m.me/";
       case "opensea": return "https://opensea.io/";
       case "pinterest": return "https://www.pinterest.com/";
-      case "podcast": return "https://";
       case "rss": return "https://";
       case "reddit": return "https://www.reddit.com/user/";
       case "skype": return "https://www.skype.com/";
@@ -119,8 +118,8 @@ export class PlatformSelectorModalComponent {
       case "yelp": return "https://www.yelp.com/biz/";
       case "youtube": return "https://www.youtube.com/@";
       case "zoom": return "https://zoom.us/my/";
-      case "website": return "https://";
       case "opencorporates": return 'https://opencorporates.com/';
+      case "bbb.org": return "https://www.bbb.org/";
       default: return "https://";
     }
   }
@@ -128,8 +127,7 @@ export class PlatformSelectorModalComponent {
   selectPlatform(platform: Platform): void {
     this.selectedPlatformId = platform.id;
     // Get the URL prefix for the selected platform
-    const urlPrefix = this.getPlatformUrlPrefix(platform.name);
-    
+    const urlPrefix = this.getPlatformUrlPrefix(platform.id);
     // Create a platform object with the URL prefix and color
     const platformWithUrl = {
       ...platform,
