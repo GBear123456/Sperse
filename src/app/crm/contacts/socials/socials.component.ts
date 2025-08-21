@@ -274,7 +274,7 @@ export class SocialsComponent {
             'substack': 'Substack',
             'threads': 'Threads',
             'trustpilot': 'Trustpilot',
-            'tweach': 'Tweach',
+            'twitch': 'Twitch',
             'viber': 'Viber',
             'wechat': 'WeChat',
             'yelp': 'Yelp'
@@ -484,7 +484,7 @@ export class SocialsComponent {
             'threads': 'threads',
             'tiktok': 'tiktok',
             'trustpilot': 'trustpilot',
-            'tweach': 'tweach',
+            'twitch': 'twitch',
             'viber': 'viber',
             'vimeo': 'vimeo',
             'wechat': 'wechat',
