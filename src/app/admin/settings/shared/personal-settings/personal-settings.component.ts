@@ -15,7 +15,7 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { forkJoin, Observable, throwError } from 'rxjs';
 import { finalize, tap, catchError } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
-import { Camera, FileSignature, KeyRound, Mail, UserCircle } from 'lucide-angular';
+import { Camera, FileSignature, KeyRound, Mail, UserCircle, Plus, Edit, Trash2, Link } from 'lucide-angular';
 import { NotifyService } from 'abp-ng2-module';
 import { SettingService } from 'abp-ng2-module';
 import { MessageService } from 'abp-ng2-module';
@@ -34,19 +34,29 @@ import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-set
 import { GmailSettingsService } from '@shared/common/settings/gmail-settings.service';
 import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/country-phone-number.component';
 import { SettingsComponentBase } from '../settings-base.component';
+import { SocialLinkData } from '@shared/social-dialog/components/social-dialog/social-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { SocialDialogComponent } from '@shared/social-dialog/components/social-dialog/social-dialog.component';
 
 @Component({
     templateUrl: './personal-settings.component.html',
     styleUrls: ['./personal-settings.component.less', '../settings-base.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [GoogleServiceProxy, GmailSettingsService]
+    providers: [
+        GoogleServiceProxy, 
+        GmailSettingsService
+    ]
 })
 export class PersonalSettingsComponent extends SettingsComponentBase implements OnInit, AfterViewInit {
     readonly UserIcon = UserCircle;
     readonly EmailIcon = Mail;
     readonly SignatureIcon = FileSignature;
     readonly KeyIcon = KeyRound;
-    readonly CameraIcon = Camera
+    readonly CameraIcon = Camera;
+    readonly PlusIcon = Plus;
+    readonly EditIcon = Edit;
+    readonly TrashIcon = Trash2;
+    readonly LinkIcon = Link;
 
     @ViewChild('smsVerificationModal') smsVerificationModal: SmsVerificationModalComponent;
     @ViewChild(MatTabGroup) tabs: MatTabGroup;
@@ -98,6 +108,9 @@ export class PersonalSettingsComponent extends SettingsComponentBase implements 
     public showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     public canChangeUserName: boolean;
     public defaultTimezoneScope: SettingScopes = AppTimezoneScope.User;
+    
+    // Social Links properties
+    public socialLinks: SocialLinkData[] = [];
     public currentTab = this.l('Profile');
     public _initialUserSettings: any;
     public _initialEmailSettings: any;
@@ -143,7 +156,8 @@ export class PersonalSettingsComponent extends SettingsComponentBase implements 
         private changeDetectorRef: ChangeDetectorRef,
         private googleService: GoogleServiceProxy,
         private gmailSettingsService: GmailSettingsService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private dialog: MatDialog
     ) { 
         super(_injector);
     }
@@ -189,6 +203,9 @@ export class PersonalSettingsComponent extends SettingsComponentBase implements 
             });
 
         this.testEmailAddress = this.appSessionService.user.emailAddress;
+
+        // Initialize sample social links for testing
+        this.initializeSampleSocialLinks();
         
         this.route.params.subscribe(params => {
             const tabIndexes = ['profile', 'smtp', 'gmail', 'signature', '2fa'];
@@ -470,7 +487,7 @@ export class PersonalSettingsComponent extends SettingsComponentBase implements 
 
     onTabChanged(event) {
         this.currentTab = event.tab.textLabel;
-        this.buttons[0].disabled = ![this.l('SMTP'), this.l('Profile'), this.l('Gmail'), this.l('Signature')].includes(this.currentTab);
+        this.buttons[0].disabled = ![this.l('SMTP'), this.l('Profile'), this.l('Gmail'), this.l('Signature'), 'Social Links'].includes(this.currentTab);
         this.changeDetectorRef.detectChanges();
     }
 
@@ -483,5 +500,153 @@ export class PersonalSettingsComponent extends SettingsComponentBase implements 
             else
                 resolve(true);
         });
+    }
+
+    // Social Links Methods
+    private initializeSampleSocialLinks(): void {
+        // Sample data for testing - remove this in production
+        this.socialLinks = [
+            {
+                id: '1',
+                platform: 'BBB.org',
+                url: 'https://www.bbb.org/sdfsdf',
+                comment: 'Better Business Bureau profile',
+                isActive: true,
+                isConfirmed: false
+            },
+            {
+                id: '2',
+                platform: 'AngelList',
+                url: 'https://angel.co/u/sdf',
+                comment: 'AngelList profile',
+                isActive: true,
+                isConfirmed: false
+            },
+            {
+                id: '3',
+                platform: 'Twitch',
+                url: 'https://twitch.com/',
+                comment: 'Twitch channel',
+                isActive: true,
+                isConfirmed: false
+            },
+            {
+                id: '4',
+                platform: 'Vimeo',
+                url: 'https://vimeo.com/vda',
+                comment: 'Vimeo portfolio',
+                isActive: true,
+                isConfirmed: false
+            }
+        ];
+    }
+
+    addSocialLink(): void {
+        const dialogRef = this.dialog.open(SocialDialogComponent, {
+            width: '450px',
+            data: {
+                platform: '',
+                url: '',
+                comment: '',
+                isActive: true,
+                isConfirmed: false
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                console.log('Social dialog result received:', result);
+                // Handle the result here - create a new social link
+                this.socialLinks.push(result);
+                this.changeDetectorRef.detectChanges();
+            } else {
+                console.log('Social dialog was cancelled');
+            }
+        });
+    }
+
+    editSocialLink(link: SocialLinkData): void {
+        const dialogRef = this.dialog.open(SocialDialogComponent, {
+            width: '450px',
+            data: {
+                id: link.id, // Pass ID for edit mode
+                platform: link.platform || '',
+                url: link.url || '',
+                comment: link.comment || '',
+                isActive: link.isActive !== undefined ? link.isActive : true,
+                isConfirmed: link.isConfirmed || false
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                console.log('Social dialog edit result:', result);
+                if (result.isEditMode) {
+                    // Update existing link
+                    const index = this.socialLinks.findIndex(l => l.id === link.id);
+                    if (index !== -1) {
+                        this.socialLinks[index] = result;
+                        this.changeDetectorRef.detectChanges();
+                    }
+                } else {
+                    // Handle as new link if somehow not in edit mode
+                    this.socialLinks.push(result);
+                    this.changeDetectorRef.detectChanges();
+                }
+            } else {
+                console.log('Social dialog was cancelled');
+            }
+        });
+    }
+
+    deleteSocialLink(link: SocialLinkData): void {
+        this.messageService.confirm(
+            this.l('AreYouSure'),
+            'Are you sure you want to delete this social link?',
+            isConfirmed => {
+                if (isConfirmed) {
+                    const index = this.socialLinks.findIndex(l => l.id === link.id);
+                    if (index !== -1) {
+                        this.socialLinks.splice(index, 1);
+                        this.changeDetectorRef.detectChanges();
+                    }
+                }
+            }
+        );
+    }
+
+    trackBySocialLink(index: number, link: SocialLinkData): string {
+        return link.id || index.toString();
+    }
+
+    getPlatformColor(platformName: string): string {
+        const platform = this.getPlatformByName(platformName);
+        return platform ? platform.color : '#6B7280';
+    }
+
+    getPlatformIcon(platformName: string): string {
+        const platform = this.getPlatformByName(platformName);
+        return platform ? platform.icon : 'assets/images/platforms/globe.svg';
+    }
+
+    private getPlatformByName(platformName: string): any {
+        // This would need to be imported from the platforms data
+        // For now, returning a default platform object
+        const platformColors: { [key: string]: string } = {
+            'LinkedIn': '#0077B5',
+            'Facebook': '#1877F2',
+            'Twitter': '#1DA1F2',
+            'Instagram': '#E4405F',
+            'GitHub': '#181717',
+            'BBB.org': '#1E4D8C',
+            'AngelList': '#000000',
+            'Twitch': '#9146FF',
+            'Vimeo': '#1AB7EA'
+        };
+        
+        return {
+            color: platformColors[platformName] || '#6B7280',
+            icon: `assets/images/platforms/${platformName.toLowerCase().replace(/[^a-zA-Z0-9]/g, '')}.svg`
+        };
     }
 }

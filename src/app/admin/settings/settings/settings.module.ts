@@ -72,6 +72,7 @@ import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.mod
 import { CurrencySelectorModule } from '@shared/common/currency-selector/currency-selector.module';
 import { TenantSettingsWizardModule } from '@root/shared/common/tenant-settings-wizard/tenant-settings-wizard.module';
 import { ZapierModule } from '@shared/common/zapier/zapier.module';
+import { SocialDialogModule } from '@shared/social-dialog';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { SettingService } from './settings.service'
 import { ImpersonationService } from '../../users/impersonation.service';
@@ -205,6 +206,7 @@ import { CreditsSettingsComponent } from '../shared/credits-settings/credits-set
         TenantSettingsWizardModule,
         CKEditorModule,
         ZapierModule,
+        SocialDialogModule,
         NgxFileDropModule,
         CdkAccordionModule,
         InlineSVGModule.forRoot(),
