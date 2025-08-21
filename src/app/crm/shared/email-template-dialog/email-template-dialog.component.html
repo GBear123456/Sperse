@@ -3,7 +3,7 @@
               [buttons]="buttons"
               [editTitle]="false"
               class="email-template-dialog"
-              (onContextItemChanged)="save()">   
+              (onContextItemChanged)="save()">
     <ng-container headerContent>
         <div class="header">
             <div class="header-div">
@@ -20,7 +20,7 @@
             </div>
             <div class="right">
                 <div class="actions">
-                   
+
                     <span class="tab new-email" (click)="showTabs('new-email')"
                         [class.selected-tab]="selectedTab === 'new-email'">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -60,20 +60,20 @@
                 (click)="editTemplate(data)"></i>
         </div>  -->
 
-        <!-- <dx-context-menu 
-            *ngIf="addSendEmailMenuItems && addSendEmailMenuItems.length" 
+        <!-- <dx-context-menu
+            *ngIf="addSendEmailMenuItems && addSendEmailMenuItems.length"
             [selectByClick]="true"
-            selectionMode="single" 
+            selectionMode="single"
             [dataSource]="addSendEmailMenuItems"
-            [position]="{ my: 'top right', at: 'bottom right', offset: '1 0' }" 
+            [position]="{ my: 'top right', at: 'bottom right', offset: '1 0' }"
             target="#saveTemplateOptions"
             cssClass="custom-context-menu"
             [width]="200"
-            
+
         >
         </dx-context-menu> -->
-        
-    </ng-container>   
+
+    </ng-container>
     <div class="form-content">
         <div class="content-wrapper" [class.with-ai-prompt]="showAIPrompt">
             <div class="main-content">
@@ -255,7 +255,7 @@
                                     </span>
                                 </div>
                                 <dx-tooltip [width]="250"
-                                            [position]="tooltipPosition" 
+                                            [position]="tooltipPosition"
                                             [visible]="isTagsTooltipVisible && currentFocusedField === 'subject'"
                                             [target]="'.subject-tags-button.id' + uniqId">
                                     <div *dxTemplate="let data of 'content'" class="tags-container">
@@ -288,7 +288,7 @@
                                     </span>
                                 </div>
                                 <dx-tooltip [width]="250"
-                                            [position]="tooltipPosition" 
+                                            [position]="tooltipPosition"
                                             [visible]="isTagsTooltipVisible && currentFocusedField === 'preview'"
                                             [target]="'.preview-tags-button.id' + uniqId">
                                     <div *dxTemplate="let data of 'content'" class="tags-container">
@@ -305,11 +305,11 @@
                             </div>
 
                             <div class="field-area ckeditor bt-none" (keydown.escape)="onESC($event)">
-                                <ckeditor 
-                                    *ngIf="ckConfig.height && templateLoaded" 
-                                    [config]="ckConfig" 
+                                <ckeditor
+                                    *ngIf="ckConfig.height && templateLoaded"
+                                    [config]="ckConfig"
                                     [(data)]="data.body"
-                                    (ready)="onCKReady($event)" 
+                                    (ready)="onCKReady($event)"
                                     (change)="updateDataLength()"
                                     (focus)="onCKEditorManualFocus($event)"
                                     (blur)="onFieldBlur('ckeditor', $event)"
@@ -323,7 +323,7 @@
                                     </span>
                                 </div>
                                 <dx-tooltip [width]="250"
-                                            [position]="tooltipPosition" 
+                                            [position]="tooltipPosition"
                                             [visible]="isTagsTooltipVisible && currentFocusedField === 'ckeditor'"
                                             [target]="'.tags-button.id' + uniqId">
                                     <div *dxTemplate="let data of 'content'" class="tags-container">
@@ -346,7 +346,7 @@
                                             <a href="javascript:void(0);" class="attach-link" (click)="openDocuments()">
                                                 <img src="assets/common/icons/attach.svg">{{ ls.l('Add attachment') }}
                                             </a>
-                                           
+
                                         </ng-template>
                                     </ngx-file-drop>
                                 </div>
@@ -372,7 +372,7 @@
                             <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
                         </div>
 
-                        <div class="row editor-color" [hidden]="!showHtmlEditor" >   
+                        <div class="row editor-color" [hidden]="!showHtmlEditor" >
                             <!-- <form [formGroup]="templateForm" class="editor-form">
                                 <ngx-monaco-editor
                                 #editor
@@ -380,7 +380,7 @@
                                 formControlName="emailContentBodyTemplate" class="editor-container">
                                 </ngx-monaco-editor>
                             </form>                        -->
-                            <div class="d-flex setting-div"                                    
+                            <div class="d-flex setting-div"
                                 [style.backgroundColor]="editorColor"
                             >
                                 <dx-button
@@ -446,12 +446,12 @@
                                     </div>
                                 </div>
                             </div>
-                    
+
                             <div #editor style="height: calc(100vh - 127px); width: 100%; padding-top: 15px;" class="code-editor"></div>
-                        </div>   
+                        </div>
 
                         <div class="row  template-container " *ngIf="showTemplate">
-                            
+
                             <div class="row">
                                 <div class="col-md-3 col-sm-4 left-template-div"  >
                                     <div class="d-flex flex-column template-header">
@@ -467,7 +467,7 @@
                                             class="create-mail-template-btn"
                                         >
                                         </dx-button>
-                                        <dx-text-box 
+                                        <dx-text-box
                                             mode="search"
                                             height="40px"
                                             [placeholder]="placeholderText"
@@ -476,13 +476,13 @@
                                             (onFocusOut)="onFocusOut()"
                                             (onInput)="onSearchInput($event)"
                                         >
-                                        
+
                                         </dx-text-box>
 
                                         <div class="badge">
                                         {{(templates$ | async)?.length}}
                                         </div>
-        
+
                                     </div>
                                     <div class="template-list-div">
                                         <div *ngIf="(filteredTemplates$ | async)?.length== 0" class="template-item">
@@ -490,7 +490,7 @@
                                         </div>
                                         <div *ngFor="let template of filteredTemplates$ | async; let templateIndex = index" class="template-item-container"  (click)="viewDetailTemplate($event, template)">
                                             <div class="template-item" [class.active]="template.id === curTemplateId">
-                                                 <h5 class="template-item-title" style="" 
+                                                 <h5 class="template-item-title" style=""
                                                       [title]="template.name">
                                                      {{template.name}}
                                                  </h5>
@@ -520,7 +520,7 @@
                                         </div>
 
                                     </div>
-                                
+
                                 </div>
                                 <div class="col-md-9 col-sm-8 template-detail-preview">
                                     <div class="d-flex flex-column" style="min-height:60px; padding: 0 8px;">
@@ -535,16 +535,16 @@
                                             >
                                             </dx-button>
                                         </div>
-                                        <div class="text-center"> 
-                                         
+                                        <div class="text-center">
+
                                             <h4 style="white-space: nowrap; margin: 0; padding: 0 10px; word-break: break-all;" [title]="templateData.subject"> {{templateData.subject}}</h4></div>
                                         <div class="text-center ">
-                                         
-                                            <h6>{{templateData.previewText}}</h6> 
+
+                                            <h6>{{templateData.previewText}}</h6>
                                         </div>
 
                                     </div>
-                                
+
                                     <div class="template-preview-content" (keydown.escape)="onESC($event)">
                                         <ckeditor *ngIf="templateLoaded" class="template-cke" [config]="templatePreviewConfig" [(data)]="templateData.body"
                                         ></ckeditor>
@@ -561,7 +561,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                 </div>
 
                             </div>
@@ -577,12 +577,12 @@
                             Your AI Prompt
                         </h5>
                         <div style="display: flex; align-items: center;">
-                            <h5 class="your-prompt-title prompt-library-title" id="promptLibraryToggle"
+                            <h5 class="your-prompt-title prompt-library-title flex items-center gap-2" id="promptLibraryToggle"
                                 (click)="propmtTooltipVisible = true" [class]="'prompt-liabrary-button id' + uniqId">
                                 Your Prompt Library
                                 <img class="img" src="./assets/common/icons/down-arrow.png" />
                             </h5>
-    
+
                             <dx-tooltip [width]="380" [position]="'bottom'" [(visible)]="propmtTooltipVisible"
                                             [target]="'.prompt-liabrary-button.id' + uniqId">
                                 <div *dxTemplate="let data of 'content'" class="tags-container text-left p-2 prompt-tooltip-scroll" style="max-height: 500px; overflow-y: scroll; overflow-x: hidden; scrollbar-width: thin; -webkit-overflow-scrolling: touch; cursor: default;" tabindex="0" (wheel)="onPromptTooltipWheel($event)">
@@ -592,7 +592,7 @@
                                             <strong>{{ group.category }}</strong>
                                             <span style="float: right;">{{ group.expanded ? '▲' : '▼' }}</span>
                                         </div>
-    
+
                                         <!-- Prompt list inside group -->
                                         <div class="group-items" *ngIf="group.expanded">
                                             <div *ngFor="let item of group.prompts; let itemIndex = index"
@@ -606,15 +606,15 @@
                                     </div>
                                 </div>
                             </dx-tooltip>
-    
+
                         </div>
-    
+
                     </div>
-    
+
                     <dx-scroll-view showScrollbar="onHover" #scrollAIView>
                         <div class="content-container" *ngIf="!showAIOption">
                             <div class="html-container-div" contenteditable="true" dir="ltr" lang="en" autocomplete="off" autocorrect="off"
-                                autocapitalize="off" spellcheck="false" data-gramm="false" data-gramm_editor="false" 
+                                autocapitalize="off" spellcheck="false" data-gramm="false" data-gramm_editor="false"
                                 (input)="onContentChange($event)" (paste)="onPaste($event)" #contentEditableDiv>
                                 <p>
                                     Consectetur adipiscing elit, <strong>sed do eiusmod</strong> tempor incididunt
@@ -675,7 +675,7 @@
                             </div>
                         </div>
                     </dx-scroll-view>
-    
+
                     <div class="prompt-footer" style="outline: none">
                         <div style="display: flex; align-items: center;">
                             <div class="gpt-model-toggle" id="aiModelToggle"
@@ -701,7 +701,7 @@
                         </button>
                         <button class="cancel-button" (click)="cancelAIMessage()">Cancel</button>
                     </div>
-    
+
                     <!-- <div class="left-buttons">
                         <div class="ai-genrate-btn" (click)="getChatGptResponse(contentEditableDiv)">
                             <span>
@@ -715,5 +715,5 @@
             <bank-code-decode [content]="data.body" [source]="'CRMEmail'" (onDecodeStart)="startLoading()"
                 (onDecodeFinish)="finishLoading()"></bank-code-decode>
         </div> -->
-    </div>  
+    </div>
 </modal-dialog>

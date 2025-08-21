@@ -43,7 +43,7 @@
                         </dx-text-box>
                     </div>
                 </div>
-    
+
                 <div class="field-area subject">
                     <label class="caption">{{ ls.l("Subject") }}:</label>
                     <div class="input-with-tag-container">
@@ -69,7 +69,7 @@
                             </span>
                         </div>
                         <dx-tooltip [width]="250"
-                                    [position]="tooltipPosition" 
+                                    [position]="tooltipPosition"
                                     [visible]="isTagsTooltipVisible && currentFocusedField === 'subject' && tagsList && tagsList.length > 0"
                                     [target]="'.subject-tags-button.id' + uniqId">
                            <div *dxTemplate="let data of 'content'" class="tags-container">
@@ -104,7 +104,7 @@
                             </span>
                         </div>
                         <dx-tooltip [width]="250"
-                                    [position]="tooltipPosition" 
+                                    [position]="tooltipPosition"
                                     [visible]="isTagsTooltipVisible && currentFocusedField === 'previewText' && tagsList && tagsList.length > 0"
                                     [target]="'.preview-tags-button.id' + uniqId">
                             <div *dxTemplate="let data of 'content'" class="tags-container">
@@ -137,7 +137,7 @@
                         </span>
                     </div>
                     <dx-tooltip [width]="250"
-                                [position]="tooltipPosition" 
+                                [position]="tooltipPosition"
                                 [visible]="isTagsTooltipVisible && currentFocusedField === 'ckeditor' && tagsList && tagsList.length > 0"
                                 [target]="'.ckeditor-tags-button.id' + uniqId">
                         <div *dxTemplate="let data of 'content'" class="tags-container">
@@ -186,7 +186,7 @@
                         {{ charCount ? charCount : 0 }} chars
                     </div>
                 </div>
-    
+
                 <div class="field-area attachments">
                     <div
                         *ngFor="let attachment of attachments; let i = index"
@@ -228,7 +228,7 @@
 
                 <div style="display: flex; align-items: center">
                     <h5
-                        class="your-prompt-title prompt-library-title"
+                        class="your-prompt-title prompt-library-title flex items-center gap-2"
                         id="promptLibraryToggle"
                         (click)="propmtTooltipVisible = true"
                         [class]="'prompt-liabrary-button id' + uniqId"
