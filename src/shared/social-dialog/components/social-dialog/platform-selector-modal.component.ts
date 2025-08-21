@@ -66,7 +66,7 @@ export class PlatformSelectorModalComponent implements OnInit, AfterViewInit, On
       case "pinterest": return "social-bg-pinterest";
       case "reddit": return "social-bg-reddit";
       case "snapchat": return "social-bg-snapchat";
-      case "tweach": return "social-bg-tweach";
+      case "twitch": return "social-bg-tweach";
       case "dribbble": return "social-bg-dribbble";
       case "soundcloud": return "social-bg-soundcloud";
       case "skype": return "social-bg-skype";
@@ -133,7 +133,7 @@ export class PlatformSelectorModalComponent implements OnInit, AfterViewInit, On
       case "threads": return "https://www.threads.net/@";
       case "tiktok": return "https://www.tiktok.com/@";
       case "trustpilot": return "https://www.trustpilot.com/";
-      case "tweach": return "https://tweach.com/";
+      case "twitch": return "https://twitch.com/";
       case "viber": return "https://chats.viber.com/";
       case "vimeo": return "https://vimeo.com/";
       case "wechat": return "https://www.wechat.com/";
