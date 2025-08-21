@@ -88,6 +88,9 @@ import { TenantLandingPagesComponent } from './tenant-landing-pages/tenant-landi
 import { TenantLandingPageModalComponent } from './tenant-landing-pages/tenant-landing-page-modal/tenant-landing-page-modal.component';
 import { CurrencySelectorModule } from '@shared/common/currency-selector/currency-selector.module';
 
+import { SocialDialogModule } from '@shared/social-dialog';
+
+
 @NgModule({
     imports: [
         FormsModule,
@@ -149,7 +152,8 @@ import { CurrencySelectorModule } from '@shared/common/currency-selector/currenc
         ModalDialogModule,
         FeaturesModule,
         EditTenantModule,
-        CurrencySelectorModule
+        CurrencySelectorModule,
+        SocialDialogModule
     ],
     declarations: [
         UsersComponent,

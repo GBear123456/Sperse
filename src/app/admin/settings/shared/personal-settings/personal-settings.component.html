@@ -91,40 +91,65 @@
                                         <div class="form-group">
                                             <label>{{l("PhoneNumber")}}</label>
                                             <country-phone-number class="phoneNumber"
-                                                                    [(phoneNumber)]="user.phoneNumber"
-                                                                    [required]="false">
+                                            [(phoneNumber)]="user.phoneNumber"
+                                            [required]="false">
                                             </country-phone-number>
                                         </div>
                                     </div>
                                     <div class="form-group" *ngIf="showTimezoneSelection">
                                         <label for="Timezone">{{l("Timezone")}}</label>
                                         <timezone-combo id="Timezone"
-                                                        [(selectedTimeZone)]="user.timezone"
-                                                        [defaultTimezoneScope]="defaultTimezoneScope">
+                                            [(selectedTimeZone)]="user.timezone"
+                                            [defaultTimezoneScope]="defaultTimezoneScope">
                                         </timezone-combo>
                                     </div>
                                 </div>
                             </mat-tab>
                             <mat-tab label="Social Links">
-                                <div class="form-group">
-                                    <label for="linkedin">{{l("Linkedin URL")}}</label>
-                                    <input id="linkedin" placeholder="https://linkedin.com/in/yourprofile" class="form-control" type="text" name="linkedin">
-                                </div>
-                                <div class="form-group">
-                                    <label for="twitter">{{l("Twitter/X URL")}}</label>
-                                    <input id="twitter" placeholder="https://twitter.com/yourusername" class="form-control" type="text" name="twitter">
-                                </div>
-                                <div class="form-group">
-                                    <label for="facebook">{{l("Facebook URL")}}</label>
-                                    <input id="facebook" placeholder="https://facebook.com/yourusername" class="form-control" type="text" name="facebook">
-                                </div>
-                                <div class="form-group">
-                                    <label for="instagram">{{l("Instagram URL")}}</label>
-                                    <input id="instagram" placeholder="https://instagram.com/yourusername" class="form-control" type="text" name="instagram">
-                                </div>
-                                <div class="form-group">
-                                    <label for="github">{{l("GitHub URL")}}</label>
-                                    <input id="github" placeholder="https://github.com/yourusername" class="form-control" type="text" name="github">
+                                <div class="social-links-container">
+                                    <!-- Header with Add Button -->
+                                    <div class="social-links-header">
+                                        <button class="add-social-link-btn" (click)="addSocialLink()">
+                                            <lucide-angular [img]="PlusIcon"></lucide-angular>
+                                            <span>Add Social Link</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Social Links List -->
+                                    <div class="social-links-list" *ngIf="socialLinks.length > 0">
+                                        <div class="social-link-item" *ngFor="let link of socialLinks; trackBy: trackBySocialLink">
+                                            <div class="drag-handle">
+                                                
+                                            </div>
+                                            <div class="social-link-content">
+                                                <div class="platform-icon" >
+                                                    <img [src]="getPlatformIcon(link.platform)" [alt]="link.platform" class="icon-image">
+                                                </div>
+                                                <div class="social-link-url">{{ link.url }}</div>
+                                            </div>
+                                            <div class="social-link-actions">
+                                                <button class="action-btn edit-btn" (click)="editSocialLink(link)" title="Edit" aria-label="Edit social link" (keydown.enter)="editSocialLink(link)" (keydown.space)="editSocialLink(link)">
+                                            <lucide-angular [img]="EditIcon" style="margin-right: 0;"></lucide-angular>
+                                        </button>
+                                        <button class="action-btn delete-btn" (click)="deleteSocialLink(link)" title="Delete" aria-label="Delete social link" (keydown.enter)="deleteSocialLink(link)" (keydown.space)="deleteSocialLink(link)">
+                                            <lucide-angular [img]="TrashIcon" style="margin-right: 0;"></lucide-angular>
+                                        </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Empty State -->
+                                    <div class="social-links-empty" *ngIf="socialLinks.length === 0">
+                                        <div class="empty-icon">
+                                            <lucide-angular [img]="LinkIcon"></lucide-angular>
+                                        </div>
+                                        <h3>No Social Links Added</h3>
+                                        <p>Start building your online presence by adding your social media profiles and website links.</p>
+                                        <button class="add-social-link-btn empty-state-btn" (click)="addSocialLink()">
+                                            <lucide-angular [img]="PlusIcon"></lucide-angular>
+                                            <span>Add Your First Social Link</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </mat-tab>
                             <mat-tab label="Address">
