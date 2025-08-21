@@ -152,9 +152,9 @@ export const platforms: Platform[] = [
     icon: 'assets/images/platforms/trustpilot.svg'
   },
   {
-    id: 'tweach',
-    name: 'Tweach',
-    icon: 'assets/images/platforms/tweach.svg'
+    id: 'twitch',
+    name: 'Twitch',
+    icon: 'assets/images/platforms/twitch.svg'
   },
   {
     id: 'viber',
