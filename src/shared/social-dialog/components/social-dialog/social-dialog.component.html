@@ -90,6 +90,7 @@
   <!-- Platform Selector Modal -->
   <app-platform-selector-modal
     [isVisible]="showPlatformSelector"
+    [currentSelectedPlatform]="selectedPlatform"
     (platformSelected)="onPlatformSelected($event)"
     (modalClosed)="onPlatformSelectorClosed()"
   ></app-platform-selector-modal>
