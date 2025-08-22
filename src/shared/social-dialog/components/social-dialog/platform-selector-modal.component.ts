@@ -20,7 +20,7 @@ export class PlatformSelectorModalComponent implements OnInit, AfterViewInit, On
 
   searchTerm: string = '';
   selectedPlatformId: string = '';
-  isGridView: boolean = false;
+  isGridView: boolean = true;
   platforms: Platform[] = platforms;
   isDark$: Observable<boolean>;
 
