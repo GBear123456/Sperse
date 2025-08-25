@@ -48,6 +48,11 @@ import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { CKEditorModule } from 'ckeditor4-angular';
 
+// Chart modules for analytics dashboard
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { KpiCardModule } from './dashboard/kpi-card';
+import { CustomersChartModule } from './dashboard/customers-chart';
+
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -339,7 +344,10 @@ import {CreateMailTemplateModalComponent} from './shared/create-mail-template-mo
       ArrowLeft,
       ArrowRight,
     }),
-    NgxFileDropModule
+    NgxFileDropModule,
+    NgxChartsModule,
+    KpiCardModule,
+    CustomersChartModule,
   ],
   declarations: [
     ClientsComponent,

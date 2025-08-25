@@ -33,40 +33,6 @@
     padding: 0 40px;
   }
 
-  // KPI Cards Section
-  .kpi-cards-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
-    margin: 16px 0px;
-    margin-bottom: 16px;
-    padding: 0;
-  }
-
-  // Responsive Design for KPI Cards
-  @media (max-width: 1200px) {
-    .kpi-cards-container {
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin: 20px;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .kpi-cards-container {
-      grid-template-columns: 1fr;
-      gap: 16px;
-      margin: 16px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .kpi-cards-container {
-      margin: 12px;
-    }
-  }
-
-  // Analytics Dashboard Styles
   .left-side,
   .right-side {
     padding-left: 24px;
@@ -82,8 +48,6 @@
 
   .dashboard-widgets {
     height: calc(~'100vh - 200px');
-    padding-left: 24px;
-    padding-right: 24px;
 
     .counts-and-totals {
       border-bottom: 1px solid #e5e9ec;
