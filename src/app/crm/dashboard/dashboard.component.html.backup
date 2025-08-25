@@ -1,0 +1,71 @@
+<app-headline
+  [names]="[ls.ls(localization, 'Dashboard')]"
+  [text]="ls.ls(localization, 'statistics and reports')"
+  icon="globe"
+  [showReloadButton]="ui.showReload && hasAccessibleCG"
+  [showToggleLeftMenuButton]="true"
+  [showToggleFilterMenuButton]="hasAccessibleCG"
+  (onToggleLeftMenu)="repaint()"
+  (onReload)="refresh()"
+>
+  <import-progress-bar *ngIf="hasAccessibleCG"></import-progress-bar>
+  <calendar-button *ngIf="hasAccessibleCG"></calendar-button>
+</app-headline>
+<div>
+  <crm-left-menu
+    [ngStyle]="{ float: menuSide }"
+    [showIntroductionTour]="!appService.isHostTenant"
+    [currentContactGroup]="filterModelContactGroup.items.element.value"
+    (openIntro)="openDialog()"
+  >
+  </crm-left-menu>
+  <div
+    *ngIf="hasAccessibleCG; else noData"
+    class="widgets-wrapper"
+    [ngClass]="{ expanded: leftMenuCollapsed$ | async, 'left-nav-menu': layoutService.showLeftBar }"
+    [ngStyle]="menuSide === 'left' ? { 'margin-left': '251px' } : { 'margin-right': '251px' }"
+  >
+    <div class="wrapper">
+      <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
+        <div class="dashboard-widgets">
+          <counts-and-totals
+            *ngIf="hasAnyCGPermission || isGrantedOrders"
+            (loadComplete)="clientsByRegionLoad.next()"
+          >
+          </counts-and-totals>
+          <div class="analytics-wrap">
+            <div class="left-side col-xl-4">
+              <new-items-totals *ngIf="hasAnyCGPermission || isGrantedOrders"></new-items-totals>
+              <totals-by-source
+                *ngIf="hasAnyCGPermission"
+                [waitFor$]="totalsBySourceLoad.asObservable()"
+                (loadComplete)="recentClientsLoad.next()"
+              >
+              </totals-by-source>
+            </div>
+            <div class="right-side col-xl-8">
+              <ng-container *ngIf="hasAnyCGPermission">
+                <totals-by-period
+                  [waitFor$]="totalsByPeriodLoad.asObservable()"
+                  (loadComplete)="totalsBySourceLoad.next()"
+                >
+                </totals-by-period>
+                <recent-clients [waitFor$]="recentClientsLoad.asObservable()"> </recent-clients>
+              </ng-container>
+            </div>
+          </div>
+          <clients-by-region
+            *ngIf="hasAnyCGPermission"
+            [waitFor$]="clientsByRegionLoad.asObservable()"
+            (loadComplete)="totalsByPeriodLoad.next()"
+          >
+          </clients-by-region>
+        </div>
+      </dx-scroll-view>
+      <loading-spinner *ngIf="showLoadingSpinner"></loading-spinner>
+    </div>
+  </div>
+  <ng-template #noData>
+    <app-no-data> </app-no-data>
+  </ng-template>
+</div>

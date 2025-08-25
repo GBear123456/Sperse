@@ -1,0 +1,47 @@
+<div class="customers-chart-widget">
+  <!-- Header Section -->
+  <div class="chart-header">
+    <div class="header-left">
+      <h3 class="chart-title">CUSTOMERS (Between Dates)</h3>
+      <div class="main-metric">
+        <span class="metric-value">{{ currentPeriodTotal }}</span>
+        <span class="percentage-change" [ngClass]="{ 'positive': isPositiveChange, 'negative': !isPositiveChange }">
+          {{ isPositiveChange ? '+' : '' }}{{ percentageChange }}%
+        </span>
+      </div>
+    </div>
+    
+    <div class="header-right">
+      <div class="date-selector">
+        <div class="date-range">
+          <select class="date-select-box" (change)="onDateRangeChange($event)">
+            <option *ngFor="let option of dateOptions" [value]="option.value">{{ option.label }}</option>
+          </select>
+          <div class="date-inputs">
+            <div class="date-input">
+              <i class="fa fa-calendar"></i>
+              <span>{{ formatDate(startDate) }}</span>
+            </div>
+            <span class="date-separator">-</span>
+            <div class="date-input">
+              <i class="fa fa-calendar"></i>
+              <span>{{ formatDate(endDate) }}</span>
+            </div>
+          </div>
+          <div class="comparison-period">
+            Compared to {{ formatDate(comparisonStartDate) }} - {{ formatDate(comparisonEndDate) }}
+          </div>
+        </div>
+      </div>
+      
+      <div class="chart-icon">
+        <i class="fa fa-users"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart Section -->
+  <div class="chart-container">
+    <canvas #chartCanvas></canvas>
+  </div>
+</div>

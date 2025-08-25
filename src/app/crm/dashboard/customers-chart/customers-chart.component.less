@@ -1,0 +1,317 @@
+.customers-chart-widget {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+
+    .header-left {
+      .chart-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-color);
+        margin: 0 0 12px 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .main-metric {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+
+        .metric-value {
+          font-size: 32px;
+          font-weight: 700;
+          color: var(--text-color);
+          line-height: 1;
+        }
+
+        .percentage-change {
+          font-size: 16px;
+          font-weight: 600;
+          padding: 4px 8px;
+          border-radius: 6px;
+          line-height: 1;
+
+          &.positive {
+            background-color: var(--success-color-bg);
+            color: var(--success-color);
+          }
+
+          &.negative {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+          }
+        }
+      }
+    }
+
+    .header-right {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+
+      .date-selector {
+        .date-range {
+          text-align: right;
+
+          .date-select-box {
+            display: block;
+            width: 100%;
+            padding: 8px 12px;
+            background-color: white;
+            border: 2px solid #a1a1a1;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            outline: none;
+
+            &:focus {
+              border-color: #b91c1c;
+              box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+            }
+
+            option {
+              font-size: 12px;
+              font-weight: 600;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+          }
+
+          .date-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+          }
+
+          .date-inputs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+
+            .date-input {
+              .date-picker-field {
+                width: 140px;
+                
+                ::ng-deep {
+                  .mat-form-field-wrapper {
+                    padding-bottom: 0;
+                  }
+                  
+                  .mat-form-field-outline {
+                    color: #d1d5db;
+                    transition: all 0.2s ease;
+                  }
+                  
+                  .mat-form-field-outline-thick {
+                    color: #9ca3af;
+                  }
+                  
+                  .mat-form-field-label {
+                    font-size: 11px;
+                    font-weight: 600;
+                    color: var(--muted-color);
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                  }
+                  
+                  .mat-input-element {
+                    font-size: 12px;
+                    font-weight: 500;
+                    color: #374151;
+                    padding: 8px 0;
+                    cursor: pointer;
+                  }
+                  
+                  .mat-datepicker-toggle {
+                    color: #6b7280;
+                    transition: color 0.2s ease;
+                    
+                    &:hover {
+                      color: #374151;
+                    }
+                    
+                    .mat-icon-button {
+                      width: 24px;
+                      height: 24px;
+                      line-height: 24px;
+                      
+                      .mat-icon {
+                        font-size: 16px;
+                        width: 16px;
+                        height: 16px;
+                        line-height: 16px;
+                      }
+                    }
+                  }
+                  
+                  &:hover {
+                    .mat-form-field-outline {
+                      color: #9ca3af;
+                    }
+                  }
+                }
+              }
+            }
+
+            .date-separator {
+              color: var(--muted-color);
+              font-size: 12px;
+            }
+          }
+
+          .comparison-period {
+            font-size: 10px;
+            color: var(--content-text);
+            font-style: italic;
+          }
+        }
+      }
+
+      .chart-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--btn-primary-hover) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 16px;
+      }
+    }
+  }
+
+  .chart-container {
+    position: relative;
+    /** This seems silly, but the chart will not be responsive with a maxWidth: 100% container. :shrug: */
+    max-width: 99%;
+    height: 400px;
+    width: 100%;
+    margin: 0 auto;
+
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 1200px) {
+  .customers-chart-widget {
+    .chart-header {
+      flex-direction: column;
+      gap: 20px;
+
+      .header-right {
+        align-self: flex-start;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .customers-chart-widget {
+    padding: 20px;
+
+    .chart-header {
+      .header-left {
+        .main-metric {
+          .metric-value {
+            font-size: 28px;
+          }
+
+          .percentage-change {
+            font-size: 14px;
+          }
+        }
+      }
+
+      .header-right {
+        .date-selector {
+          .date-range {
+            .date-inputs {
+              flex-direction: column;
+              gap: 6px;
+
+              .date-separator {
+                display: none;
+              }
+              
+              .date-input {
+                .date-picker-field {
+                  width: 100%;
+                  min-width: 200px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .chart-container {
+      height: 300px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .customers-chart-widget {
+    padding: 16px;
+
+    .chart-header {
+      .header-left {
+        .chart-title {
+          font-size: 14px;
+        }
+
+        .main-metric {
+          .metric-value {
+            font-size: 24px;
+          }
+        }
+      }
+
+      .header-right {
+        .chart-icon {
+          width: 32px;
+          height: 32px;
+          font-size: 14px;
+        }
+      }
+    }
+
+    .chart-container {
+      height: 250px;
+    }
+  }
+}
+
+// Dark theme support
+:host-context(.dark-theme) {
+  .customers-chart-widget {
+    box-shadow: 0 2px 8px var(--shadow-color);
+  }
+}
