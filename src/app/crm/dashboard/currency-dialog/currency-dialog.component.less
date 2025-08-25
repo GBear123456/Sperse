@@ -1,0 +1,560 @@
+// Angular Material Dialog Container Override
+::ng-deep .mat-dialog-container {
+  padding: 0 !important;
+  background: transparent !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+.currency-dialog {
+  min-width: 380px;
+  max-width: 400px;
+  max-height: 75vh;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), 0 6px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+      pointer-events: none;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+
+      .header-icon {
+        font-size: 20px;
+        color: rgba(255, 255, 255, 0.9);
+        width: 20px;
+        height: 20px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: white;
+        letter-spacing: -0.3px;
+      }
+    }
+
+    .close-button {
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      z-index: 1;
+      display: flex;
+      outline: none;
+      align-items: center;
+      justify-content: center;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        transform: scale(1.1);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+  }
+
+  .search-section {
+    padding: 8px 10px;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 20px;
+      right: 20px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.08) 50%, transparent 100%);
+    }
+
+    .search-field {
+      width: 100%;
+      ::ng-deep .mat-form-field-infix {
+        padding-bottom: 10px;
+      }
+
+      ::ng-deep .mat-form-field-wrapper {
+        margin-bottom: 0;
+        padding-bottom: 10px;
+      }
+
+      ::ng-deep .mat-form-field-outline {
+        border-radius: 8px;
+        border-width: 1px;
+        transition: all 0.3s ease;
+      }
+
+      ::ng-deep .mat-form-field-outline-thick {
+        border-color: #667eea;
+        border-width: 2px;
+      }
+
+      ::ng-deep .mat-form-field-focus .mat-form-field-outline-thick {
+        border-color: #764ba2;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      ::ng-deep .mat-form-field-label {
+        color: #6c757d;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+      }
+
+      ::ng-deep .mat-form-field-focus .mat-form-field-label {
+        color: #667eea;
+      }
+
+      ::ng-deep .mat-input-element {
+        font-size: 14px;
+        color: #495057;
+        font-weight: 500;
+      }
+
+      .search-label-icon {
+        color: #667eea;
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+
+      .search-input-icon {
+        color: #667eea;
+        font-size: 18px;
+      }
+    }
+  }
+
+  .currency-list-container {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 350px;
+    background: #ffffff;
+    position: relative;
+
+    // Custom scrollbar
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f8f9fa;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 3px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      }
+    }
+
+    // Firefox scrollbar
+    scrollbar-width: thin;
+    scrollbar-color: #667eea #f8f9fa;
+
+    .currency-list {
+      .currency-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 10px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        position: relative;
+        overflow: hidden;
+        width: 98%;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 0;
+          background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+          transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        &:hover {
+          background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+          transform: translateX(6px);
+
+          &::before {
+            width: 3px;
+          }
+        }
+
+        &.selected {
+          background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+          border-left: 3px solid #667eea;
+          transform: translateX(3px);
+
+          .currency-check {
+            color: #667eea;
+            animation: checkPulse 0.6s ease-out;
+          }
+
+          &::before {
+            width: 3px;
+          }
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .currency-details {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex: 1;
+
+          .currency-symbol-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 8px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.3s ease;
+
+            .currency-symbol {
+              font-size: 16px;
+              font-weight: 700;
+              color: #667eea;
+              text-shadow: 0 1px 2px rgba(102, 126, 234, 0.2);
+            }
+          }
+
+          .currency-info {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+
+            .currency-code {
+              font-size: 13px;
+              font-weight: 700;
+              color: #495057;
+              letter-spacing: 0.3px;
+              background: rgba(102, 126, 234, 0.1);
+              padding: 2px 6px;
+              border-radius: 4px;
+              text-align: center;
+              align-self: flex-start;
+              min-width: 40px;
+            }
+
+            .currency-name {
+              font-size: 13px;
+              color: #6c757d;
+              font-weight: 500;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+          }
+        }
+
+        .currency-check {
+          color: #667eea;
+          margin-left: 8px;
+          font-size: 16px;
+          background: rgba(102, 126, 234, 0.1);
+          border-radius: 50%;
+          width: 28px;
+          height: 28px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+        }
+      }
+
+      .no-results {
+        padding: 40px 20px;
+        text-align: center;
+        color: #6c757d;
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+
+        .no-results-icon {
+          margin-bottom: 12px;
+
+          mat-icon {
+            font-size: 36px;
+            opacity: 0.3;
+            color: #667eea;
+            width: 36px;
+            height: 36px;
+          }
+        }
+
+        p {
+          margin: 0 0 6px 0;
+          font-size: 14px;
+          font-weight: 500;
+          color: #6c757d;
+        }
+
+        small {
+          color: #adb5bd;
+          font-size: 12px;
+          font-weight: 400;
+        }
+      }
+    }
+  }
+
+  .dialog-actions {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    background: #ffffff;
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 20px;
+      right: 20px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.08) 50%, transparent 100%);
+    }
+
+    .cancel-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 3px 12px rgba(102, 126, 234, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 3px 12px rgba(102, 126, 234, 0.3);
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes checkPulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: 768px) {
+  .currency-dialog {
+    min-width: 90vw;
+    max-width: 90vw;
+    max-height: 80vh;
+    border-radius: 10px;
+
+    .dialog-header {
+      padding: 16px 18px;
+
+      .header-content {
+        gap: 8px;
+
+        .header-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+
+        h2 {
+          font-size: 16px;
+        }
+      }
+
+      .close-button {
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    .search-section {
+      padding: 14px 18px;
+    }
+
+    .currency-list-container {
+      max-height: 350px;
+
+      .currency-list .currency-item {
+        padding: 10px 18px;
+
+        .currency-details {
+          gap: 10px;
+
+          .currency-symbol-container {
+            width: 32px;
+            height: 32px;
+
+            .currency-symbol {
+              font-size: 14px;
+            }
+          }
+
+          .currency-info {
+            .currency-code {
+              font-size: 12px;
+              min-width: 35px;
+              padding: 2px 5px;
+            }
+
+            .currency-name {
+              font-size: 12px;
+            }
+          }
+        }
+
+        .currency-check {
+          width: 24px;
+          height: 24px;
+          font-size: 14px;
+        }
+      }
+
+      .no-results {
+        padding: 30px 18px;
+
+        .no-results-icon mat-icon {
+          font-size: 28px;
+          width: 28px;
+          height: 28px;
+        }
+
+        p {
+          font-size: 13px;
+        }
+
+        small {
+          font-size: 11px;
+        }
+      }
+    }
+
+    .dialog-actions {
+      padding: 14px 18px;
+
+      .cancel-button {
+        padding: 8px 16px;
+        font-size: 12px;
+
+        mat-icon {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .currency-dialog {
+    min-width: 95vw;
+    max-width: 95vw;
+    max-height: 85vh;
+    border-radius: 8px;
+
+    .dialog-header {
+      padding: 14px 16px;
+
+      .header-content h2 {
+        font-size: 15px;
+      }
+    }
+
+    .search-section {
+      padding: 12px 16px;
+    }
+
+    .currency-list-container .currency-list .currency-item {
+      padding: 8px 16px;
+    }
+
+    .dialog-actions {
+      padding: 12px 16px;
+    }
+  }
+}

@@ -2,8 +2,6 @@
   <calendar-button *ngIf="hasAccessibleCG"></calendar-button>
 </app-headline>
 
-
-
 <div>
   <crm-left-menu [ngStyle]="{ float: menuSide }" [showIntroductionTour]="!appService.isHostTenant"
     [currentContactGroup]="filterModelContactGroup.items.element.value" (openIntro)="openDialog()">
@@ -16,16 +14,17 @@
         <div class="dashboard-widgets">
           <!-- KPI Cards Section -->
           <div class="kpi-cards-container">
-            <app-kpi-card *ngFor="let card of kpiCards" [cardData]="card">
+            <app-kpi-card *ngFor="let card of kpiCards" [cardData]="card" (currencyChange)="onCurrencyChange($event)">
             </app-kpi-card>
           </div>
+
           <div class="d-flex flex-column chart-container">
             <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
               [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
               [comparisonEndDate]="chartComparisonEndDate" [title]="'Gross Earnings'" [icon]="'attach_money'">
             </app-customers-chart>
           </div>
-          <div class="grid grid-cols-2 gap-1">
+          <div class="grid grid-cols-2 gap-2">
               <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
                 [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
                 [comparisonEndDate]="chartComparisonEndDate" [title]="'Customers'" [icon]="'people'">
