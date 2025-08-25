@@ -20,14 +20,28 @@
             </app-kpi-card>
           </div>
           <div class="d-flex flex-column chart-container">
-            <app-customers-chart
-              [currentPeriodTotal]="245"
-              [percentageChange]="80.15"
-              [startDate]="chartStartDate"
-              [endDate]="chartEndDate"
-              [comparisonStartDate]="chartComparisonStartDate"
-              [comparisonEndDate]="chartComparisonEndDate">
+            <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
+              [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
+              [comparisonEndDate]="chartComparisonEndDate" [title]="'Gross Earnings'" [icon]="'attach_money'">
             </app-customers-chart>
+          </div>
+          <div class="grid grid-cols-2 gap-1">
+              <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
+                [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
+                [comparisonEndDate]="chartComparisonEndDate" [title]="'Customers'" [icon]="'people'">
+              </app-customers-chart>
+              <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
+                [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
+                [comparisonEndDate]="chartComparisonEndDate" [title]="'Upgrades'" [icon]="'show_chart'">
+              </app-customers-chart>
+              <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
+                [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
+                [comparisonEndDate]="chartComparisonEndDate" [title]="'SHOP ORDERS'" [icon]="'shopping_cart'">
+              </app-customers-chart>
+              <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
+                [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
+                [comparisonEndDate]="chartComparisonEndDate" [title]="'CANCELLED'" [icon]="'trending_down'">
+              </app-customers-chart>
           </div>
           <clients-by-region *ngIf="hasAnyCGPermission" [waitFor$]="clientsByRegionLoad.asObservable()"
             (loadComplete)="totalsByPeriodLoad.next()">

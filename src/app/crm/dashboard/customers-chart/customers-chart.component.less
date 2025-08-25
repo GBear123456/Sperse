@@ -2,15 +2,14 @@
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
   box-shadow: 0 2px 8px var(--shadow-color);
-
+  
   .chart-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 24px;
+    padding: 12px 24px 8px;
 
     .header-left {
       .chart-title {
@@ -59,47 +58,106 @@
       align-items: flex-start;
       gap: 16px;
 
+      .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .refresh-button {
+          width: 40px;
+          height: 40px;
+          color: var(--primary-color);
+          transition: all 0.2s ease;
+          
+          &:hover:not(:disabled) {
+            background-color: rgba(var(--primary-color-rgb), 0.1);
+            transform: scale(1.05);
+          }
+          
+          &:disabled {
+            color: var(--muted-color);
+          }
+          
+          mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+          }
+        }
+
+        .chart-icon {
+          width: 40px;
+          height: 40px;
+          background: linear-gradient(135deg, var(--primary-color) 0%, var(--btn-primary-hover) 100%);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 16px;
+          
+          mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+          }
+        }
+      }
+
       .date-selector {
         .date-range {
           text-align: right;
 
-          .date-select-box {
-            display: block;
-            width: 100%;
-            padding: 8px 12px;
-            background-color: white;
-            border: 2px solid #a1a1a1;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-color);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+          .date-select-field {
+            width: 140px;
             margin-bottom: 8px;
-            cursor: pointer;
-            outline: none;
-
-            &:focus {
-              border-color: #b91c1c;
-              box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+            
+            ::ng-deep {
+              .mat-form-field-wrapper {
+                padding-bottom: 0;
+              }
+              
+              .mat-form-field-infix {
+                padding: 4px 0 !important;
+                min-height: 30px !important;
+                border-top: 1px !important;
+                height: 30px !important;
+                display: flex !important;
+                align-items: center !important;
+                .mat-select {
+                  height: 10px !important
+                }
+              }
+              
+              .mat-form-field-outline {
+                color: #d1d5db;
+                transition: all 0.2s ease;
+              }
+              
+              .mat-form-field-outline-thick {
+                color: #9ca3af;
+              }
+              
+              .mat-form-field-label {
+                font-size: 11px;
+                font-weight: 600;
+                color: var(--muted-color);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+              }
+              
+              .mat-select-value {
+                font-size: 12px;
+                font-weight: 500;
+                color: #374151;
+              }
+              
+              .mat-select-arrow {
+                color: #6b7280;
+              }
             }
-
-            option {
-              font-size: 12px;
-              font-weight: 600;
-              text-transform: uppercase;
-              letter-spacing: 0.5px;
-            }
-          }
-
-          .date-label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--muted-color);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
           }
 
           .date-inputs {
@@ -108,66 +166,77 @@
             gap: 8px;
             margin-bottom: 6px;
 
-            .date-input {
-              .date-picker-field {
-                width: 140px;
+            .date-picker-field {
+              width: 140px;
+              
+              ::ng-deep {
+                .mat-form-field-wrapper {
+                  padding-bottom: 0;
+                }
                 
-                ::ng-deep {
-                  .mat-form-field-wrapper {
-                    padding-bottom: 0;
-                  }
-                  
-                  .mat-form-field-outline {
-                    color: #d1d5db;
-                    transition: all 0.2s ease;
-                  }
-                  
-                  .mat-form-field-outline-thick {
-                    color: #9ca3af;
-                  }
-                  
-                  .mat-form-field-label {
-                    font-size: 11px;
-                    font-weight: 600;
-                    color: var(--muted-color);
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                  }
-                  
-                  .mat-input-element {
-                    font-size: 12px;
-                    font-weight: 500;
-                    color: #374151;
-                    padding: 8px 0;
-                    cursor: pointer;
-                  }
-                  
-                  .mat-datepicker-toggle {
-                    color: #6b7280;
-                    transition: color 0.2s ease;
-                    
-                    &:hover {
-                      color: #374151;
-                    }
-                    
-                    .mat-icon-button {
-                      width: 24px;
-                      height: 24px;
-                      line-height: 24px;
-                      
-                      .mat-icon {
-                        font-size: 16px;
-                        width: 16px;
-                        height: 16px;
-                        line-height: 16px;
-                      }
-                    }
-                  }
+                .mat-form-field-infix {
+                  padding: 4px 0 !important;
+                  min-height: 30px !important;
+                  height: 30px !important;
+                  display: flex !important;
+                  align-items: center !important;
+                }
+                
+                .mat-form-field-outline {
+                  color: #d1d5db;
+                  transition: all 0.2s ease;
+                }
+                
+                .mat-form-field-outline-thick {
+                  color: #9ca3af;
+                }
+                
+                .mat-form-field-label {
+                  font-size: 11px;
+                  font-weight: 600;
+                  color: var(--muted-color);
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                }
+                
+                .mat-input-element {
+                  font-size: 14px;
+                  font-weight: 500;
+                  color: #374151;
+                  padding: 4px 0;
+                  cursor: pointer;
+                  height: 30px;
+                  line-height: 30px;
+                  display: flex;
+                  align-items: center;
+                }
+                
+                .mat-datepicker-toggle {
+                  color: #6b7280;
+                  transition: color 0.2s ease;
                   
                   &:hover {
-                    .mat-form-field-outline {
-                      color: #9ca3af;
+                    color: #374151;
+                  }
+                  
+                  .mat-icon-button {
+                    width: 16px;
+                    height: 16px;
+                    line-height: 18px;
+                    outline: none !important;
+                    
+                    .mat-icon {
+                      font-size: 16px;
+                      width: 16px;
+                      height: 16px;
+                      line-height: 16px;
                     }
+                  }
+                }
+                
+                &:hover {
+                  .mat-form-field-outline {
+                    color: #9ca3af;
                   }
                 }
               }
@@ -176,6 +245,7 @@
             .date-separator {
               color: var(--muted-color);
               font-size: 12px;
+              font-weight: 600;
             }
           }
 
@@ -183,20 +253,9 @@
             font-size: 10px;
             color: var(--content-text);
             font-style: italic;
+            margin-top: 4px;
           }
         }
-      }
-
-      .chart-icon {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--btn-primary-hover) 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 16px;
       }
     }
   }
@@ -205,9 +264,10 @@
     position: relative;
     /** This seems silly, but the chart will not be responsive with a maxWidth: 100% container. :shrug: */
     max-width: 99%;
-    height: 400px;
+    height: 200px;
     width: 100%;
     margin: 0 auto;
+    padding: 0 24px 24px;
 
     canvas {
       width: 100% !important;
@@ -233,8 +293,6 @@
 
 @media (max-width: 768px) {
   .customers-chart-widget {
-    padding: 20px;
-
     .chart-header {
       .header-left {
         .main-metric {
@@ -249,8 +307,42 @@
       }
 
       .header-right {
+        .action-buttons {
+          flex-direction: column;
+          gap: 12px;
+          
+          .refresh-button {
+            width: 36px;
+            height: 36px;
+            
+            mat-icon {
+              font-size: 18px;
+              width: 18px;
+              height: 18px;
+              line-height: 18px;
+            }
+          }
+          
+          .chart-icon {
+            width: 36px;
+            height: 36px;
+            
+            mat-icon {
+              font-size: 18px;
+              width: 18px;
+              height: 18px;
+              line-height: 18px;
+            }
+          }
+        }
+        
         .date-selector {
           .date-range {
+            .date-select-field {
+              width: 100%;
+              min-width: 200px;
+            }
+            
             .date-inputs {
               flex-direction: column;
               gap: 6px;
@@ -259,11 +351,9 @@
                 display: none;
               }
               
-              .date-input {
-                .date-picker-field {
-                  width: 100%;
-                  min-width: 200px;
-                }
+              .date-picker-field {
+                width: 100%;
+                min-width: 200px;
               }
             }
           }
@@ -273,15 +363,16 @@
 
     .chart-container {
       height: 300px;
+      padding: 0 20px 20px;
     }
   }
 }
 
 @media (max-width: 480px) {
   .customers-chart-widget {
-    padding: 16px;
-
     .chart-header {
+      padding: 12px 16px 8px;
+      
       .header-left {
         .chart-title {
           font-size: 14px;
@@ -298,13 +389,20 @@
         .chart-icon {
           width: 32px;
           height: 32px;
-          font-size: 14px;
+          
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+            line-height: 16px;
+          }
         }
       }
     }
 
     .chart-container {
       height: 250px;
+      padding: 0 16px 16px;
     }
   }
 }

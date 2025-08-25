@@ -26,6 +26,8 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
   @Input() endDate: Date = new Date('2025-08-21');
   @Input() comparisonStartDate: Date = new Date('2025-06-21');
   @Input() comparisonEndDate: Date = new Date('2025-07-21');
+  @Input() title: string = 'CUSTOMERS';
+  @Input() icon: string = 'people';
 
   @ViewChild('chartCanvas', { static: false }) chartCanvas!: ElementRef<HTMLCanvasElement>;
   
@@ -34,13 +36,15 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
 
   // Chart configuration
   chartData: CustomerChartData[] = [];
-
+  dateRange: { label: string, value: string } = { label: 'Between Dates', value: 'BETWEEN_DATES' };
+  isLoading: boolean = false;
   dateOptions = [
     { label: 'Between Dates', value: 'BETWEEN_DATES' },
     { label: 'Month to Date', value: 'MONTH_TO_DATE' },
     { label: 'Quarter to Date', value: 'QUARTER_TO_DATE' },
     { label: 'Year to Date', value: 'YEAR_TO_DATE' },
   ]
+
 
   ngOnInit() {
     this.initializeChartData();
@@ -68,6 +72,17 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
     this.chartData = [...this.currentPeriodData, ...this.comparisonPeriodData];
   }
 
+  refreshChart() {
+    this.isLoading = true;
+    
+    // Simulate API call or data refresh
+    setTimeout(() => {
+      this.initializeChartData();
+      this.initializeChart();
+      this.isLoading = false;
+    }, 1000);
+  }
+
   private initializeChart() {
     if (!this.chartCanvas) return;
 
@@ -75,6 +90,12 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
     this.chartContext = canvas.getContext('2d');
     
     if (!this.chartContext) return;
+
+    // Destroy existing chart if it exists
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
 
     // Create gradients
     const currentPeriodGradient = this.chartContext.createLinearGradient(0, 0, 0, 400);
@@ -123,97 +144,101 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
       });
     }
 
-    this.chart = new Chart(canvas, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: datasets
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: {
-          duration: 1000
+    try {
+      this.chart = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: datasets
         },
-        legend: {
-          display: false
-        },
-        layout: {
-          padding: {
-            left: 2,
-            right: 1
-          }
-        },
-        scales: {
-          xAxes: [
-            {
-              gridLines: {
-                display: false,
-                drawBorder: false
-              },
-              ticks: {
-                padding: 4,
-                fontColor: '#6B7280',
-                autoSkip: true,
-                maxTicksLimit: 12,
-                fontSize: 11
-              }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 1000
+          },
+          legend: {
+            display: false
+          },
+          layout: {
+            padding: {
+              left: 2,
+              right: 1
             }
-          ],
-          yAxes: [
-            {
-              gridLines: {
-                display: false
-              },
-              ticks: {
-                fontColor: '#6B7280',
-                beginAtZero: true,
-                min: 0,
-                maxTicksLimit: 7,
-                callback: () => (''),
-                autoSkip: true,
-                fontSize: 11
+          },
+          scales: {
+            xAxes: [
+              {
+                gridLines: {
+                  display: false,
+                  drawBorder: false
+                },
+                ticks: {
+                  padding: 4,
+                  fontColor: '#6B7280',
+                  autoSkip: true,
+                  maxTicksLimit: 12,
+                  fontSize: 11
+                }
               }
-            }
-          ]
-        },
-        tooltips: {
-          enabled: true,
-          mode: 'index',
-          intersect: false,
-          backgroundColor: '#ffffff',
-          titleFontColor: '#111827',
-          bodyFontColor: '#6B7280',
-          borderColor: '#E5E7EB',
-          borderWidth: 1,
-          yPadding: 20,
-          xPadding: 20,
-          cornerRadius: 8,
-          displayColors: false,
-          callbacks: {
-            title: () => null,
-            label: (tooltipItem: any) => {
-              let prefix: string;
-              let xLabel: string;
-
-              if (tooltipItem.datasetIndex === 0) {
-                prefix = 'Current';
-                xLabel = `${tooltipItem.xLabel}`;
-              } else {
-                prefix = 'Previous';
-                xLabel = `${tooltipItem.xLabel}`;
+            ],
+            yAxes: [
+              {
+                gridLines: {
+                  display: false
+                },
+                ticks: {
+                  fontColor: '#6B7280',
+                  beginAtZero: true,
+                  min: 0,
+                  maxTicksLimit: 7,
+                  callback: () => (''),
+                  autoSkip: true,
+                  fontSize: 11
+                }
               }
+            ]
+          },
+          tooltips: {
+            enabled: true,
+            mode: 'index',
+            intersect: false,
+            backgroundColor: '#ffffff',
+            titleFontColor: '#111827',
+            bodyFontColor: '#6B7280',
+            borderColor: '#E5E7EB',
+            borderWidth: 1,
+            yPadding: 20,
+            xPadding: 20,
+            cornerRadius: 8,
+            displayColors: false,
+            callbacks: {
+              title: () => null,
+              label: (tooltipItem: any) => {
+                let prefix: string;
+                let xLabel: string;
 
-              return [
-                `${xLabel}: `,
-                `${prefix}: `,
-                `${tooltipItem.yLabel.toLocaleString()}`,
-              ].join('');
+                if (tooltipItem.datasetIndex === 0) {
+                  prefix = 'Current';
+                  xLabel = `${tooltipItem.xLabel}`;
+                } else {
+                  prefix = 'Previous';
+                  xLabel = `${tooltipItem.xLabel}`;
+                }
+
+                return [
+                  `${xLabel}: `,
+                  `${prefix}: `,
+                  `${tooltipItem.yLabel.toLocaleString()}`,
+                ].join('');
+              }
             }
           }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error('Error creating chart:', error);
+    }
   }
 
   private generateSampleData(startDate: Date, endDate: Date, periodName: string): CustomerChartData[] {
@@ -332,8 +357,73 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
 
   onDateRangeChange(event: any) {
     // Handle date range change
-    console.log('Date range changed:', event.target.value);
-    // You can implement date range logic here
-    // For example, fetch new data based on selected range
+    console.log('Date range changed:', event.value);
+    this.dateRange = this.dateOptions.find(option => option.value === event.value) || this.dateRange;
+    
+    // Update comparison dates based on selected range
+    this.updateComparisonDates();
+    
+    // Reinitialize chart with new data
+    this.initializeChartData();
+    this.initializeChart();
+  }
+
+  onStartDateChange(event: any) {
+    this.startDate = event.value;
+    this.updateComparisonDates();
+    this.initializeChartData();
+    this.initializeChart();
+  }
+
+  onEndDateChange(event: any) {
+    this.endDate = event.value;
+    this.updateComparisonDates();
+    this.initializeChartData();
+    this.initializeChart();
+  }
+
+  private updateComparisonDates() {
+    if (this.dateRange.value === 'BETWEEN_DATES') {
+      // Calculate comparison period (same duration before the selected period)
+      const periodDuration = this.endDate.getTime() - this.startDate.getTime();
+      this.comparisonStartDate = new Date(this.startDate.getTime() - periodDuration);
+      this.comparisonEndDate = new Date(this.startDate.getTime());
+    } else {
+      // Handle other date range types
+      this.updateComparisonDatesForRange();
+    }
+  }
+
+  private updateComparisonDatesForRange() {
+    const now = new Date();
+    let startDate: Date;
+    let endDate: Date;
+
+    switch (this.dateRange.value) {
+      case 'MONTH_TO_DATE':
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        endDate = now;
+        break;
+      case 'QUARTER_TO_DATE':
+        const quarter = Math.floor(now.getMonth() / 3);
+        startDate = new Date(now.getFullYear(), quarter * 3, 1);
+        endDate = now;
+        break;
+      case 'YEAR_TO_DATE':
+        startDate = new Date(now.getFullYear(), 0, 1);
+        endDate = now;
+        break;
+      default:
+        startDate = this.startDate;
+        endDate = this.endDate;
+    }
+
+    this.startDate = startDate;
+    this.endDate = endDate;
+
+    // Calculate comparison period
+    const periodDuration = endDate.getTime() - startDate.getTime();
+    this.comparisonStartDate = new Date(startDate.getTime() - periodDuration);
+    this.comparisonEndDate = new Date(startDate.getTime());
   }
 }
