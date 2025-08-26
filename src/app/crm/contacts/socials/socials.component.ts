@@ -365,16 +365,19 @@ export class SocialsComponent {
     onSelectLinks(link: ContactLinkDto) {
         if (this.selectedLinks?.length > 1) {
             this.selectedLinks = [link];
-            return;
-        }
-        const isAlreadySelected = this.selectedLinks?.some(
-            (m) => m.id === link.id
-        );
-        if (isAlreadySelected) {
-            this.selectedLinks = [];
         } else {
-            this.selectedLinks = [link];
+            const isAlreadySelected = this.selectedLinks?.some(
+                (m) => m.id === link.id
+            );
+            if (isAlreadySelected) {
+                this.selectedLinks = [];
+            } else {
+                this.selectedLinks = [link];
+            }
         }
+        
+        // Always show the social link modal when clicking an icon
+        this.showSocialDialog(link, null);
     }
     onAllSelectLinks() {
         if (this.selectedLinks?.length <= 1)
