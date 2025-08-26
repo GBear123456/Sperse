@@ -12,9 +12,13 @@
   </div>
   
   
-  <div class="currency-selector" *ngIf="showCurrencySelector">
-    <span>{{ cardData.currencyText }}</span>
+  <div class="currency-selector" *ngIf="showCurrencySelector" 
+       [ngClass]="{ 'loading': isLoading, 'currency-changed': currencyChanged }" 
+       (click)="onCurrencyClick()"
+       title="Click to change currency">
+    <span>{{ currentCurrencyText }}</span>
     <span class="status-badge active" *ngIf="showStatusBadge">{{ cardData.statusBadge }}</span>
-    <i class="fas fa-chevron-down"></i>
+    <div class="flex-1"></div>
+    <mat-icon>expand_more</mat-icon>
   </div>
 </div>

@@ -98,6 +98,7 @@ import { SliceModule } from '@app/shared/common/slice/slice.module';
 import { MapModule } from '@app/shared/common/slice/map/map.module';
 import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
+import { CurrencyDialogComponent } from './dashboard/currency-dialog/currency-dialog.component';
 import { InvoiceGridMenuModule } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.module';
 import { ReportsComponent } from '@app/crm/reports/reports.component';
 import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dropdown.component';
@@ -417,7 +418,8 @@ import {CreateMailTemplateModalComponent} from './shared/create-mail-template-mo
     DeviceSessionPanelComponent,
     CustomFieldsTrackingComponent,
     UrlAgentPanelComponent,
-    CreateMailTemplateModalComponent
+    CreateMailTemplateModalComponent,
+    CurrencyDialogComponent
   ],
   providers: [
     ImportServiceProxy,
@@ -441,6 +443,7 @@ import {CreateMailTemplateModalComponent} from './shared/create-mail-template-mo
     UpdateCommissionableDialogComponent,
     UpdateCommissionRateDialogComponent,
     EditTypeItemDialogComponent,
+    CurrencyDialogComponent,
   ],
 })
 export class CrmModule {
