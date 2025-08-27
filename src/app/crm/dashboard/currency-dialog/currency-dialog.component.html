@@ -1,0 +1,50 @@
+<div class="currency-dialog">
+  <div class="dialog-header">
+    <div class="header-content">
+      <mat-icon class="header-icon">currency_exchange</mat-icon>
+      <h2 mat-dialog-title>Select Currency</h2>
+    </div>
+    <button mat-icon-button (click)="onCancel()" class="close-button" matTooltip="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="search-section">
+    <mat-form-field appearance="outline" class="search-field" floatLabel="always">
+      <input matInput [formControl]="searchControl" placeholder="Type to search currencies..." autocomplete="off">
+      <mat-icon matSuffix class="search-input-icon">search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="currency-list-container">
+    <div class="currency-list">
+      <div 
+        *ngFor="let currency of filteredCurrencies; trackBy: trackByCurrency" 
+        class="currency-item"
+        [class.selected]="selectedCurrency?.id === currency.id"
+        (click)="selectCurrency(currency)"
+        matRipple>
+        <div class="currency-details">
+          <div class="currency-symbol-container">
+            <span class="currency-symbol">{{ currency.symbol }}</span>
+          </div>
+          <div class="currency-info">
+            <span class="currency-code">{{ currency.id }}</span>
+            <span class="currency-name">{{ currency.name }}</span>
+          </div>
+        </div>
+        <div class="currency-check" *ngIf="selectedCurrency?.id === currency.id">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+      </div>
+      
+      <div class="no-results" *ngIf="filteredCurrencies.length === 0">
+        <div class="no-results-icon">
+          <mat-icon>search_off</mat-icon>
+        </div>
+        <p>No currencies found matching "{{ searchControl.value }}"</p>
+        <small>Try adjusting your search terms</small>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,97 @@
+<div class="social-dialog-container" [class.dark-theme]="isDark$ | async">
+  <!-- Header -->
+  <div class="dialog-header">
+    <h1 class="dialog-title">{{ isEditMode ? 'Edit Social Link' : 'Social Link Manager' }}</h1>
+    <p class="dialog-subtitle">{{ isEditMode ? 'Update your social media link below.' : 'Enter your website or social media link below.' }}</p>
+    
+  </div>
+
+  <!-- Form -->
+  <form [formGroup]="socialForm" class="social-form">
+    
+    <!-- Social Platform & URL Section -->
+    <div class="form-section">
+      <div class="section-header">
+        <label class="section-label">Social Platform & URL</label>
+        <button type="button" class="select-link" (click)="openPlatformSelector()">
+          {{ selectedPlatform ? 'Change' : 'Select' }}
+        </button>
+      </div>
+      <div class="platform-input-wrapper">
+        <div class="platform-icon" *ngIf="selectedPlatform" [style.background-color]="selectedPlatform.color" (click)="openPlatformSelector()">
+          <img [src]="selectedPlatform.icon" [alt]="selectedPlatform.name" class="icon-image">
+        </div>
+        <span class="globe-icon" *ngIf="!selectedPlatform" >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe h-5 w-5 text-muted-foreground" data-lov-id="src\pages\Index.tsx:162:24" data-lov-name="Globe" data-component-path="src\pages\Index.tsx" data-component-line="162" data-component-file="Index.tsx" data-component-name="Globe" data-component-content="%7B%22className%22%3A%22h-5%20w-5%20text-muted-foreground%22%7D"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+        </span>
+        <input 
+          id="platform-field"
+          type="text" 
+          formControlName="url"
+          class="platform-input"
+          [placeholder]="selectedPlatform ? 'Enter your URL or handle...' : 'Select platform first'"
+          [readonly]="!selectedPlatform && !isEditMode"
+        >
+        <button type="button" class="external-link-button" (click)="openExternalLink()" [disabled]="!selectedPlatform || !socialForm.get('url')?.value">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link h-4 w-4 transition-colors text-gray-400" data-lov-id="src\pages\Index.tsx:198:22" data-lov-name="ExternalLink" data-component-path="src\pages\Index.tsx" data-component-line="198" data-component-file="Index.tsx" data-component-name="ExternalLink" data-component-content="%7B%7D"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
+        </button>
+      </div>
+      <div class="platform-tip" *ngIf="selectedPlatform">
+        <strong>{{ selectedPlatform.name }}:</strong> {{ getPlatformTip(selectedPlatform.id) }}
+      </div>
+      <div class="platform-tip" *ngIf="!selectedPlatform">
+        Tip: Select a platform first, then enter your handle or full URL
+      </div>
+    </div>
+
+    <!-- Comment Section -->
+    <div class="form-section">
+      <label class="section-label">Comment (Optional)</label>
+      <div class="comment-container">
+        <textarea 
+          formControlName="comment"
+          class="comment-textarea"
+          placeholder="Add a note about this link..."
+          rows="3"
+        ></textarea>
+        <div class="comment-status">
+          <div class="status-indicator"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Checkboxes -->
+    <div class="form-section checkbox-div">
+      <div class="status-options">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="isActive" class="status-checkbox">
+          <span class="checkmark"></span>
+          Active
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="isConfirmed" class="status-checkbox">
+          <span class="checkmark"></span>
+          Confirmed
+        </label>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button type="button" class="cancel-button" (click)="onCancel()">
+        Cancel
+      </button>
+      <button type="submit" class="save-button" [disabled]="!isFormValid" (click)="onSave()">
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </button>
+    </div>
+  </form>
+
+  <!-- Platform Selector Modal -->
+  <app-platform-selector-modal
+    [isVisible]="showPlatformSelector"
+    [currentSelectedPlatform]="selectedPlatform"
+    (platformSelected)="onPlatformSelected($event)"
+    (modalClosed)="onPlatformSelectorClosed()"
+  ></app-platform-selector-modal>
+</div>
