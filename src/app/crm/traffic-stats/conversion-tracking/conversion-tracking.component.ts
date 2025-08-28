@@ -3,6 +3,7 @@ import { Component, OnInit } from "@angular/core";
 @Component({
     selector: "app-conversion-tracking",
     templateUrl: "./conversion-tracking.component.html",
+    styleUrls: ['./conversion-tracking.component.less']
 })
 export class ConversionTrackingComponent implements OnInit {
     currentDateTime: string;

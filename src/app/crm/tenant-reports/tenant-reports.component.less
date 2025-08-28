@@ -12,10 +12,17 @@
             .dx-row.dx-data-row.dx-column-lines {
                 &:nth-child(odd) {
                     background: linear-gradient(0deg, #BEDCC840, #BEDCC840), linear-gradient(0deg, #E7F4E840, #E7F4E840);
+
+                    .dark-theme & {
+                        background: var(--card-bg);
+                    }
                 }
 
                 &:nth-child(even) {
                     background: linear-gradient(0deg, #D6DCD840, #D6DCD840), linear-gradient(0deg, #FFFFFF40, #FFFFFF40);
+                    .dark-theme & {
+                        background: var(--card-bg);
+                    }
                 }
 
                 &.inactive {
@@ -37,7 +44,7 @@
                     border-bottom-right-radius: 10px;
                     border: 1px solid #D6DCD8;
                     border-left: 0;
-                }                                    
+                }
             }
         }
 
