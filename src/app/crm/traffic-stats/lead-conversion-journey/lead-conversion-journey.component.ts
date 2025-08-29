@@ -3,6 +3,7 @@ import { Component, OnInit } from "@angular/core";
 @Component({
     selector: "app-lead-conversion-journey",
     templateUrl: "./lead-conversion-journey.component.html",
+    styleUrls: ['./lead-conversion-journey.component.less']
 })
 export class LeadConversionJourneyComponent implements OnInit {
     constructor() {}

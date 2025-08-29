@@ -55,10 +55,17 @@
     width: 251px;
     height: calc(~'100vh - 215px');
     border-right: 1px solid var(--border-color);
-    background-color: var(--navbar-bg);
+    border-left: 1px solid var(--border-color);
+
+    background: #fff;
+    .dark-theme & {
+      background-color: var(--navbar-bg);
+    }
 
     float: right;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
     transform: translateX(0);
     opacity: 1;
     z-index: 2;
@@ -256,7 +263,7 @@
 
 .side-switch-bottom {
   position: absolute;
-  bottom: 90px;
+  bottom: 80px;
   left: 0;
   width: 100%;
   display: flex;
@@ -271,7 +278,9 @@
     font-size: 14px;
     color: var(--muted-color);
     cursor: pointer;
-    transition: color 0.2s, font-weight 0.2s;
+    transition:
+      color 0.2s,
+      font-weight 0.2s;
     &.active {
       color: var(--primary-color);
       font-weight: 600;
