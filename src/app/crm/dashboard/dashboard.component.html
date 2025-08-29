@@ -12,21 +12,24 @@
   <calendar-button *ngIf="hasAccessibleCG"></calendar-button>
 </app-headline>
 
-<!-- Dashboard Version Tabs -->
-<div class="dashboard-version-tabs" *ngIf="hasAccessibleCG">
-  <mat-tab-group (selectedTabChange)="switchVersion($event.index === 0 ? 'v1' : 'v2')" [selectedIndex]="selectedVersion === 'v1' ? 0 : 1">
-    <mat-tab label="Dashboard V1">
-      <div>
-        <crm-left-menu [ngStyle]="{ float: menuSide }" [showIntroductionTour]="!appService.isHostTenant"
-          [currentContactGroup]="filterModelContactGroup.items.element.value" (openIntro)="openDialog()">
-        </crm-left-menu>
-        <div class="widgets-wrapper"
-          [ngClass]="{ expanded: leftMenuCollapsed$ | async, 'left-nav-menu': layoutService.showLeftBar }"
-          [ngStyle]="menuSide === 'left' ? { 'margin-left': '251px' } : { 'margin-right': '251px' }">
-          <div class="wrapper">
-            <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
-              <div class="dashboard-widgets">
-                <!-- KPI Cards Section -->
+<div *ngIf="hasAccessibleCG; else noData">
+  <!-- Left Menu - Same for both versions -->
+  <crm-left-menu [ngStyle]="{ float: menuSide }" [showIntroductionTour]="!appService.isHostTenant"
+    [currentContactGroup]="filterModelContactGroup.items.element.value" (openIntro)="openDialog()">
+  </crm-left-menu>
+  
+  <!-- Right Content Area with Version Tabs -->
+  <div class="widgets-wrapper"
+    [ngClass]="{ expanded: leftMenuCollapsed$ | async, 'left-nav-menu': layoutService.showLeftBar }"
+    [ngStyle]="menuSide === 'left' ? { 'margin-left': '251px' } : { 'margin-right': '251px' }">
+    <div class="wrapper">
+      <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
+        <div class="dashboard-widgets">
+          <!-- Dashboard Version Tabs -->
+          <div class="dashboard-version-tabs">
+            <mat-tab-group (selectedTabChange)="switchVersion($event.index === 0 ? 'v1' : 'v2')" [selectedIndex]="selectedVersion === 'v1' ? 0 : 1">
+              <mat-tab label="Dashboard V1">
+                <!-- V1 Content -->
                 <div class="kpi-cards-container">
                   <app-kpi-card *ngFor="let card of kpiCards" [cardData]="card" (currencyChange)="onCurrencyChange($event)">
                   </app-kpi-card>
@@ -59,25 +62,10 @@
                 <clients-by-region *ngIf="hasAnyCGPermission" [waitFor$]="clientsByRegionLoad.asObservable()"
                   (loadComplete)="totalsByPeriodLoad.next()">
                 </clients-by-region>
-              </div>
-            </dx-scroll-view>
-            <loading-spinner *ngIf="showLoadingSpinner"></loading-spinner>
-          </div>
-        </div>
-      </div>
-    </mat-tab>
-    
-    <mat-tab label="Dashboard V2">
-      <div>
-        <crm-left-menu [ngStyle]="{ float: menuSide }" [showIntroductionTour]="!appService.isHostTenant"
-          [currentContactGroup]="filterModelContactGroup.items.element.value" (openIntro)="openDialog()">
-        </crm-left-menu>
-        <div class="widgets-wrapper"
-          [ngClass]="{ expanded: leftMenuCollapsed$ | async, 'left-nav-menu': layoutService.showLeftBar }"
-          [ngStyle]="menuSide === 'left' ? { 'margin-left': '251px' } : { 'margin-right': '251px' }">
-          <div class="wrapper">
-            <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
-              <div class="dashboard-widgets">
+              </mat-tab>
+              
+              <mat-tab label="Dashboard V2">
+                <!-- V2 Content -->
                 <counts-and-totals
                   *ngIf="hasAnyCGPermission || isGrantedOrders"
                   (loadComplete)="clientsByRegionLoad.next()"
@@ -110,17 +98,16 @@
                   (loadComplete)="totalsByPeriodLoad.next()"
                 >
                 </clients-by-region>
-              </div>
-            </dx-scroll-view>
-            <loading-spinner *ngIf="showLoadingSpinner"></loading-spinner>
+              </mat-tab>
+            </mat-tab-group>
           </div>
         </div>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+      </dx-scroll-view>
+      <loading-spinner *ngIf="showLoadingSpinner"></loading-spinner>
+    </div>
+  </div>
 </div>
 
-<!-- No Data Template - shown when no accessible contact groups -->
-<div *ngIf="!hasAccessibleCG">
+<ng-template #noData>
   <app-no-data></app-no-data>
-</div>
+</ng-template>
