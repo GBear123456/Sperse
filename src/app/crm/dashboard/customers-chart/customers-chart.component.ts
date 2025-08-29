@@ -1,5 +1,9 @@
 import { Component, Input, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import Chart from 'chart.js';
+import { Subject } from 'rxjs';
+import { DashboardServiceProxy, GetCustomerAndLeadStatsOutput, GroupByPeriod } from '@shared/service-proxies/service-proxies';
+import { takeUntil } from 'rxjs/operators';
+import * as moment from 'moment';
 
 export interface CustomerDataPoint {
   name: string;
@@ -20,8 +24,8 @@ export interface CustomerChartData {
 export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() currentPeriodData: CustomerChartData[] = [];
   @Input() comparisonPeriodData: CustomerChartData[] = [];
-  @Input() currentPeriodTotal: number = 245;
-  @Input() percentageChange: number = 80.15;
+  @Input() currentPeriodTotal: number = 0;
+  @Input() percentageChange: number = 0;
   @Input() startDate: Date = new Date('2025-07-22');
   @Input() endDate: Date = new Date('2025-08-21');
   @Input() comparisonStartDate: Date = new Date('2025-06-21');
@@ -33,6 +37,7 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
   
   private chart: Chart | null = null;
   private chartContext: CanvasRenderingContext2D | null = null;
+  private destroy$ = new Subject<void>();
 
   // Chart configuration
   chartData: CustomerChartData[] = [];
@@ -45,9 +50,11 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
     { label: 'Year to Date', value: 'YEAR_TO_DATE' },
   ]
 
+  constructor(private dashboardServiceProxy: DashboardServiceProxy) {}
 
   ngOnInit() {
     this.initializeChartData();
+    this.loadCustomerChartData();
   }
 
   ngAfterViewInit() {
@@ -58,6 +65,8 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
     if (this.chart) {
       this.chart.destroy();
     }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private initializeChartData() {
@@ -75,12 +84,102 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
   refreshChart() {
     this.isLoading = true;
     
-    // Simulate API call or data refresh
-    setTimeout(() => {
+    // Load data from API
+    this.loadCustomerChartData();
+  }
+
+  /**
+   * Loads customer chart data from the API
+   */
+  private loadCustomerChartData(): void {
+    this.isLoading = true;
+    
+    // Convert dates to moment objects
+    const startDate = moment(this.startDate);
+    const endDate = moment(this.endDate);
+    
+    // Call the API with the required parameters
+    this.dashboardServiceProxy
+      .getContactAndLeadStats(
+        GroupByPeriod.Daily,  // GroupBy=Daily
+        30,                   // periodCount (default 30 days)
+        false,                // isCumulative=false
+        startDate,            // startDate
+        undefined,              // endDate
+        'C',                  // contactGroupId=C (Client group)
+        undefined,            // sourceContactId (not needed)
+        undefined             // sourceOrganizationUnitIds (not needed)
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: GetCustomerAndLeadStatsOutput[]) => {
+          // Transform API response to chart data format
+          this.transformApiDataToChartData(data);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading customer chart data:', error);
+          this.isLoading = false;
+          // Fallback to sample data on error
+          this.initializeChartData();
+        }
+      });
+  }
+
+  /**
+   * Transforms API response data to chart data format
+   */
+  private transformApiDataToChartData(apiData: GetCustomerAndLeadStatsOutput[]): void {
+    if (!apiData || apiData.length === 0) {
       this.initializeChartData();
-      this.initializeChart();
-      this.isLoading = false;
-    }, 1000);
+      return;
+    }
+
+    // Transform current period data
+    const currentPeriodSeries: CustomerDataPoint[] = apiData.map(item => ({
+      name: moment(item.date).format('MM/DD'),
+      value: item.customerCount || 0,
+      date: moment(item.date).toDate()
+    }));
+
+    // Calculate comparison period data (same duration before current period)
+    const periodDuration = this.endDate.getTime() - this.startDate.getTime();
+    const comparisonStartDate = new Date(this.startDate.getTime() - periodDuration);
+    const comparisonEndDate = new Date(this.startDate.getTime());
+
+    // For now, we'll use sample data for comparison period since we only have current period data
+    // In a real implementation, you might want to make another API call for comparison period
+    const comparisonPeriodSeries = this.generateSampleData(comparisonStartDate, comparisonEndDate, 'Comparison Period')[0]?.series || [];
+
+    // Update chart data
+    this.currentPeriodData = [{
+      name: 'Current Period',
+      series: currentPeriodSeries
+    }];
+
+    this.comparisonPeriodData = [{
+      name: 'Comparison Period',
+      series: comparisonPeriodSeries
+    }];
+
+    // Update total and percentage change
+    this.updateChartMetrics(currentPeriodSeries);
+
+    // Reinitialize chart with new data
+    this.initializeChartData();
+    this.initializeChart();
+  }
+
+  /**
+   * Updates chart metrics (total and percentage change)
+   */
+  private updateChartMetrics(currentPeriodSeries: CustomerDataPoint[]): void {
+    // Calculate total customers for current period
+    this.currentPeriodTotal = currentPeriodSeries.reduce((sum, point) => sum + point.value, 0);
+    
+    // Calculate percentage change (for now, using a default value)
+    // In a real implementation, you would compare with previous period data
+    this.percentageChange = 0; // This should be calculated based on comparison data
   }
 
   private initializeChart() {
@@ -243,96 +342,21 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
 
   private generateSampleData(startDate: Date, endDate: Date, periodName: string): CustomerChartData[] {
     const data: CustomerChartData[] = [];
-    const currentDate = new Date(startDate);
     const series: CustomerDataPoint[] = [];
 
-    // Generate data that matches the screenshot pattern exactly
-    if (periodName === 'Current Period') {
-      // Maroon line pattern from screenshot (upper trend with significant fluctuations)
-      const dataPoints = [
-        { date: '07/22', value: 180 },  // Start moderate
-        { date: '07/23', value: 200 },
-        { date: '07/24', value: 220 },
-        { date: '07/25', value: 280 },  // First peak
-        { date: '07/26', value: 300 },  // Peak around July 25-26
-        { date: '07/27', value: 250 },
-        { date: '07/28', value: 120 },  // Significant drop
-        { date: '07/29', value: 100 },
-        { date: '07/30', value: 350 },  // Sharp spike around July 30-31
-        { date: '07/31', value: 380 },  // Higher than first peak
-        { date: '08/01', value: 150 },
-        { date: '08/02', value: 120 },
-        { date: '08/03', value: 100 },
-        { date: '08/04', value: 80 },
-        { date: '08/05', value: 90 },
-        { date: '08/06', value: 70 },
-        { date: '08/07', value: 60 },
-        { date: '08/08', value: 80 },
-        { date: '08/09', value: 90 },
-        { date: '08/10', value: 70 },
-        { date: '08/11', value: 60 },
-        { date: '08/12', value: 80 },
-        { date: '08/13', value: 100 },
-        { date: '08/14', value: 450 },  // Very prominent peak around August 14-15
-        { date: '08/15', value: 480 },  // Highest point on chart
-        { date: '08/16', value: 300 },
-        { date: '08/17', value: 200 },
-        { date: '08/18', value: 150 },  // Decline until around August 18
-        { date: '08/19', value: 200 },
-        { date: '08/20', value: 250 },  // Small increase towards August 20-21
-        { date: '08/21', value: 280 }   // End at moderately high level
-      ];
+    // Generate data points for each day in the date range with zero values
+    const currentDate = new Date(startDate);
+    const endDateObj = new Date(endDate);
 
-      dataPoints.forEach(point => {
-        series.push({
-          name: point.date,
-          value: point.value,
-          date: new Date(point.date + '/2025')
-        });
+    while (currentDate <= endDateObj) {
+      series.push({
+        name: moment(currentDate).format('MM/DD'),
+        value: 0, // Initialize with zero values
+        date: new Date(currentDate)
       });
-    } else {
-      // Light blue line pattern from screenshot (lower trend, flatter and less volatile)
-      const dataPoints = [
-        { date: '07/22', value: 80 },   // Start low
-        { date: '07/23', value: 90 },
-        { date: '07/24', value: 100 },
-        { date: '07/25', value: 120 },  // Small peak around July 25
-        { date: '07/26', value: 110 },
-        { date: '07/27', value: 100 },
-        { date: '07/28', value: 90 },
-        { date: '07/29', value: 85 },
-        { date: '07/30', value: 95 },
-        { date: '07/31', value: 100 },
-        { date: '08/01', value: 90 },
-        { date: '08/02', value: 85 },
-        { date: '08/03', value: 80 },
-        { date: '08/04', value: 75 },
-        { date: '08/05', value: 80 },
-        { date: '08/06', value: 70 },
-        { date: '08/07', value: 65 },
-        { date: '08/08', value: 70 },
-        { date: '08/09', value: 75 },
-        { date: '08/10', value: 70 },
-        { date: '08/11', value: 65 },
-        { date: '08/12', value: 70 },
-        { date: '08/13', value: 75 },
-        { date: '08/14', value: 80 },
-        { date: '08/15', value: 85 },
-        { date: '08/16', value: 90 },
-        { date: '08/17', value: 95 },
-        { date: '08/18', value: 100 },  // Slight upward trend from August 18
-        { date: '08/19', value: 105 },
-        { date: '08/20', value: 110 },
-        { date: '08/21', value: 115 }   // Still well below maroon line
-      ];
 
-      dataPoints.forEach(point => {
-        series.push({
-          name: point.date,
-          value: point.value,
-          date: new Date(point.date + '/2025')
-        });
-      });
+      // Move to next day
+      currentDate.setDate(currentDate.getDate() + 1);
     }
 
     data.push({
@@ -363,23 +387,20 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
     // Update comparison dates based on selected range
     this.updateComparisonDates();
     
-    // Reinitialize chart with new data
-    this.initializeChartData();
-    this.initializeChart();
+    // Load data from API with new date range
+    this.loadCustomerChartData();
   }
 
   onStartDateChange(event: any) {
     this.startDate = event.value;
     this.updateComparisonDates();
-    this.initializeChartData();
-    this.initializeChart();
+    this.loadCustomerChartData();
   }
 
   onEndDateChange(event: any) {
     this.endDate = event.value;
     this.updateComparisonDates();
-    this.initializeChartData();
-    this.initializeChart();
+    this.loadCustomerChartData();
   }
 
   private updateComparisonDates() {
@@ -392,6 +413,9 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
       // Handle other date range types
       this.updateComparisonDatesForRange();
     }
+    
+    // Note: We don't call loadCustomerChartData() here to avoid double API calls
+    // The calling method (onStartDateChange, onEndDateChange, onDateRangeChange) will handle it
   }
 
   private updateComparisonDatesForRange() {
@@ -425,5 +449,7 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
     const periodDuration = endDate.getTime() - startDate.getTime();
     this.comparisonStartDate = new Date(startDate.getTime() - periodDuration);
     this.comparisonEndDate = new Date(startDate.getTime());
+    
+    // Note: The calling method will handle loading data from API
   }
 }
