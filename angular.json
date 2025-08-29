@@ -155,7 +155,10 @@
                   "maximumWarning": "2048kb"
                 }
               ],
-              "optimization": true,
+              "optimization":  {
+                "scripts": true,
+                "styles": { "minify": false, "inlineCritical": true }
+              },
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
@@ -201,7 +204,10 @@
                   "maximumWarning": "2048kb"
                 }
               ],
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": { "minify": false, "inlineCritical": true }
+              },
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,

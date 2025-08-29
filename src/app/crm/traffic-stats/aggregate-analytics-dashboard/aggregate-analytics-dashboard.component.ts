@@ -3,7 +3,7 @@ import { Component, OnInit } from "@angular/core";
 @Component({
     selector: "app-aggregate-analytics-dashboard",
     templateUrl: "./aggregate-analytics-dashboard.component.html",
-    styleUrls: ["./aggregate-analytics-dashboard.component.less"],
+    styleUrls: ['./aggregate-analytics-dashboard.component.less'],
 })
 export class AggregateAnalyticsDashboardComponent implements OnInit {
     currentDateTime: string;

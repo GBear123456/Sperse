@@ -22,9 +22,9 @@
                        (onValueChanged)="navigateToCoupons($event)">
         </dx-select-box>
     </ng-template>
-    <app-toolbar 
-        [config]="toolbarConfig" 
-        [titleTemplate]="titleTemplate" 
+    <app-toolbar
+        [config]="toolbarConfig"
+        [titleTemplate]="titleTemplate"
         [hidden]="appService.toolbarIsHidden$ | async">
     </app-toolbar>
     <div class="main-wrapper">
@@ -111,8 +111,8 @@
                     </div>
                     <div *dxTemplate="let cell of 'shareTemplate'" class="share">
                         <ng-container *ngIf="cell.data.PublicName">
-                            <img src="assets/common/icons/share-black.svg" (click)="openProductPage($event, cell.data)" />
-                            <img src="assets/common/icons/copy-black.svg" (click)="showShareDialog($event, cell.data)" />
+                            <img src="assets/common/icons/share-black.svg" (click)="openProductPage($event, cell.data)" class="share-icon"/>
+                            <img src="assets/common/icons/copy-black.svg" (click)="showShareDialog($event, cell.data)" class="share-icon"/>
                         </ng-container>
                     </div>
                     <div *dxTemplate="let cell of 'actionTemplate'"
