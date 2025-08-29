@@ -2,6 +2,36 @@
   display: block;
   position: relative;
 
+  // Dashboard Version Tabs
+  .dashboard-version-tabs {
+    margin-bottom: 16px;
+    
+    ::ng-deep .mat-tab-group {
+      .mat-tab-header {
+        border-bottom: 1px solid var(--border-color, #e0e0e0);
+        
+        .mat-tab-label {
+          min-width: 120px;
+          padding: 12px 24px;
+          font-weight: 500;
+          color: var(--text-color, #333);
+          
+          &.mat-tab-label-active {
+            color: var(--primary-color, #1976d2);
+          }
+        }
+        
+        .mat-ink-bar {
+          background-color: var(--primary-color, #1976d2);
+        }
+      }
+      
+      .mat-tab-body-content {
+        padding: 16px 0;
+      }
+    }
+  }
+
   .wrapper {
     max-width: 100% !important;
     height: 100%;

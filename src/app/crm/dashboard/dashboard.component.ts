@@ -159,10 +159,10 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   menuSide: 'left' | 'right' = 'left';
 
   // KPI Cards Data
-  grossEarnings = 148491.48;
-  totalCustomers = 11844;
-  activeSubscriptions = 850;
-  pendingCancels = 240;
+  grossEarnings = 0;
+  totalCustomers = 0;
+  activeSubscriptions = 0;
+  pendingCancels = 0;
   selectedCurrency: any = null;
   availableCurrencies: any[] = [];
   currencySearchTerm = '';
@@ -201,6 +201,9 @@ export class DashboardComponent implements AfterViewInit, OnInit {
       cardType: 'cancels'
     }
   ];
+
+  // Dashboard version selector
+  selectedVersion: 'v1' | 'v2' = 'v1';
 
   // Date range for charts
   chartStartDate = new Date('2025-07-22');
@@ -247,6 +250,24 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     // Load currencies
     this.loadCurrencies();
 
+    // Subscribe to dashboard totals data
+    this.subscribeToDashboardTotals();
+
+    // Set initial contact group filter
+    if (this.filterModelContactGroup.items.element.value) {
+      this.dashboardWidgetsService.setGroupIdForTotals(
+        this.filterModelContactGroup.items.element.value
+      );
+    }
+
+    // Set initial organization unit filters if available
+    if (this.filterModelOrgUnit.items.element.value && 
+        this.filterModelOrgUnit.items.element.value.length > 0) {
+      this.dashboardWidgetsService.setOrgUnitIdsForTotals(
+        this.filterModelOrgUnit.items.element.value
+      );
+    }
+
     const introAcceptedCache = this.cacheService.get(this.introAcceptedCacheKey);
     /** Show crm wizard if there is no cache for it */
     if (!introAcceptedCache || introAcceptedCache === 'false') {
@@ -269,6 +290,10 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         const defaultCurrency = currencies.find(c => c.id === 'USD') || currencies[0];
         this.selectedCurrency = defaultCurrency;
         console.log('Default currency set to:', this.selectedCurrency);
+        
+        // Update dashboard widgets service with default currency
+        this.dashboardWidgetsService.setCurrencyIdForTotals(defaultCurrency.id);
+        
         this.updateGrossEarningsForCurrency();
         this.updateKpiCards();
       } else {
@@ -362,6 +387,9 @@ export class DashboardComponent implements AfterViewInit, OnInit {
       // Update the gross earnings value based on currency
       this.updateGrossEarningsForCurrency();
       this.updateKpiCards();
+      
+      // Update dashboard widgets service with new currency
+      this.dashboardWidgetsService.setCurrencyIdForTotals(currency.id);
       
       // Show notification
       this.showCurrencyChangeNotification(previousCurrency, currency);
@@ -469,14 +497,30 @@ export class DashboardComponent implements AfterViewInit, OnInit {
    * Updates the KPI cards with new currency and value data
    */
   private updateKpiCards(): void {
-    // Update the gross earnings card with new currency
+    // Update all KPI cards with current values
     this.kpiCards = this.kpiCards.map(card => {
       if (card.cardType === 'gross-earnings') {
         return {
           ...card,
+          value: this.grossEarnings,
           selectedCurrency: this.selectedCurrency,
           availableCurrencies: this.availableCurrencies,
           convertedValue: this.grossEarnings
+        };
+      } else if (card.cardType === 'customers') {
+        return {
+          ...card,
+          value: this.totalCustomers
+        };
+      } else if (card.cardType === 'subscriptions') {
+        return {
+          ...card,
+          value: this.activeSubscriptions
+        };
+      } else if (card.cardType === 'cancels') {
+        return {
+          ...card,
+          value: this.pendingCancels
         };
       }
       return card;
@@ -612,6 +656,9 @@ export class DashboardComponent implements AfterViewInit, OnInit {
       this.refreshClientsByRegion();
       this.refreshTotalsBySource();
       this.initFilterConfig();
+      
+      // Refresh dashboard totals data
+      this.dashboardWidgetsService.refresh();
     } else {
       this.showLoadingSpinner = false;
     }
@@ -657,5 +704,68 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     this.lifeCycleSubject.deactivate.next();
     this.filtersService.unsubscribe();
     this.dialog.closeAll();
+  }
+
+  /**
+   * Subscribes to dashboard totals data and updates KPI cards
+   */
+  private subscribeToDashboardTotals(): void {
+    // Configure dashboard widgets service with required filters
+    this.configureDashboardWidgetsService();
+    
+    this.dashboardWidgetsService.totalsData$
+      .pipe(
+        takeUntil(this.lifeCycleSubject.deactivate$)
+      )
+      .subscribe((totalsData: any) => {
+        if (totalsData) {
+          // Update KPI card values from API response
+          this.grossEarnings = totalsData.newOrderAmount || 0;
+          this.totalCustomers = totalsData.newClientCount || 0;
+          
+          // Note: activeSubscriptions and pendingCancels are not available in the current API response
+          // this.activeSubscriptions = totalsData.activeSubscriptions || 0;
+          // this.pendingCancels = totalsData.pendingCancels || 0;
+          
+          // Update KPI cards with new values
+          this.updateKpiCards();
+          
+          // Trigger change detection
+          this.changeDetectorRef.markForCheck();
+        }
+      });
+  }
+
+  /**
+   * Configures the dashboard widgets service with required filters
+   */
+  private configureDashboardWidgetsService(): void {
+    // Set contact group filter
+    if (this.filterModelContactGroup.items.element.value) {
+      this.dashboardWidgetsService.setGroupIdForTotals(
+        this.filterModelContactGroup.items.element.value
+      );
+    }
+
+    // Set currency filter
+    if (this.selectedCurrency) {
+      this.dashboardWidgetsService.setCurrencyIdForTotals(this.selectedCurrency.id);
+    }
+
+    // Set organization unit filters if available
+    if (this.filterModelOrgUnit.items.element.value && 
+        this.filterModelOrgUnit.items.element.value.length > 0) {
+      this.dashboardWidgetsService.setOrgUnitIdsForTotals(
+        this.filterModelOrgUnit.items.element.value
+      );
+    }
+  }
+
+  /**
+   * Switches between dashboard versions
+   */
+  switchVersion(version: 'v1' | 'v2'): void {
+    this.selectedVersion = version;
+    this.changeDetectorRef.markForCheck();
   }
 }

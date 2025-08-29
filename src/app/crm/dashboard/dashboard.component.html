@@ -1,56 +1,126 @@
-<app-headline>
+<app-headline
+  [names]="[ls.ls(localization, 'Dashboard')]"
+  [text]="ls.ls(localization, 'statistics and reports')"
+  icon="globe"
+  [showReloadButton]="ui.showReload && hasAccessibleCG"
+  [showToggleLeftMenuButton]="true"
+  [showToggleFilterMenuButton]="hasAccessibleCG"
+  (onToggleLeftMenu)="repaint()"
+  (onReload)="refresh()"
+>
+  <import-progress-bar *ngIf="hasAccessibleCG"></import-progress-bar>
   <calendar-button *ngIf="hasAccessibleCG"></calendar-button>
 </app-headline>
 
-<div>
-  <crm-left-menu [ngStyle]="{ float: menuSide }" [showIntroductionTour]="!appService.isHostTenant"
-    [currentContactGroup]="filterModelContactGroup.items.element.value" (openIntro)="openDialog()">
-  </crm-left-menu>
-  <div *ngIf="hasAccessibleCG; else noData" class="widgets-wrapper"
-    [ngClass]="{ expanded: leftMenuCollapsed$ | async, 'left-nav-menu': layoutService.showLeftBar }"
-    [ngStyle]="menuSide === 'left' ? { 'margin-left': '251px' } : { 'margin-right': '251px' }">
-    <div class="wrapper">
-      <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
-        <div class="dashboard-widgets">
-          <!-- KPI Cards Section -->
-          <div class="kpi-cards-container">
-            <app-kpi-card *ngFor="let card of kpiCards" [cardData]="card" (currencyChange)="onCurrencyChange($event)">
-            </app-kpi-card>
-          </div>
+<!-- Dashboard Version Tabs -->
+<div class="dashboard-version-tabs" *ngIf="hasAccessibleCG">
+  <mat-tab-group (selectedTabChange)="switchVersion($event.index === 0 ? 'v1' : 'v2')" [selectedIndex]="selectedVersion === 'v1' ? 0 : 1">
+    <mat-tab label="Dashboard V1">
+      <div>
+        <crm-left-menu [ngStyle]="{ float: menuSide }" [showIntroductionTour]="!appService.isHostTenant"
+          [currentContactGroup]="filterModelContactGroup.items.element.value" (openIntro)="openDialog()">
+        </crm-left-menu>
+        <div class="widgets-wrapper"
+          [ngClass]="{ expanded: leftMenuCollapsed$ | async, 'left-nav-menu': layoutService.showLeftBar }"
+          [ngStyle]="menuSide === 'left' ? { 'margin-left': '251px' } : { 'margin-right': '251px' }">
+          <div class="wrapper">
+            <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
+              <div class="dashboard-widgets">
+                <!-- KPI Cards Section -->
+                <div class="kpi-cards-container">
+                  <app-kpi-card *ngFor="let card of kpiCards" [cardData]="card" (currencyChange)="onCurrencyChange($event)">
+                  </app-kpi-card>
+                </div>
 
-          <div class="d-flex flex-column chart-container">
-            <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
-              [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
-              [comparisonEndDate]="chartComparisonEndDate" [title]="'Gross Earnings'" [icon]="'attach_money'">
-            </app-customers-chart>
+                <div class="d-flex flex-column chart-container">
+                  <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
+                    [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
+                    [comparisonEndDate]="chartComparisonEndDate" [title]="'Gross Earnings'" [icon]="'attach_money'">
+                  </app-customers-chart>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
+                      [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
+                      [comparisonEndDate]="chartComparisonEndDate" [title]="'Customers'" [icon]="'people'">
+                    </app-customers-chart>
+                    <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
+                      [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
+                      [comparisonEndDate]="chartComparisonEndDate" [title]="'Upgrades'" [icon]="'show_chart'">
+                    </app-customers-chart>
+                    <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
+                      [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
+                      [comparisonEndDate]="chartComparisonEndDate" [title]="'SHOP ORDERS'" [icon]="'shopping_cart'">
+                    </app-customers-chart>
+                    <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
+                      [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
+                      [comparisonEndDate]="chartComparisonEndDate" [title]="'CANCELLED'" [icon]="'trending_down'">
+                    </app-customers-chart>
+                </div>
+                <clients-by-region *ngIf="hasAnyCGPermission" [waitFor$]="clientsByRegionLoad.asObservable()"
+                  (loadComplete)="totalsByPeriodLoad.next()">
+                </clients-by-region>
+              </div>
+            </dx-scroll-view>
+            <loading-spinner *ngIf="showLoadingSpinner"></loading-spinner>
           </div>
-          <div class="grid grid-cols-2 gap-2">
-              <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
-                [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
-                [comparisonEndDate]="chartComparisonEndDate" [title]="'Customers'" [icon]="'people'">
-              </app-customers-chart>
-              <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
-                [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
-                [comparisonEndDate]="chartComparisonEndDate" [title]="'Upgrades'" [icon]="'show_chart'">
-              </app-customers-chart>
-              <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
-                [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
-                [comparisonEndDate]="chartComparisonEndDate" [title]="'SHOP ORDERS'" [icon]="'shopping_cart'">
-              </app-customers-chart>
-              <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
-                [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
-                [comparisonEndDate]="chartComparisonEndDate" [title]="'CANCELLED'" [icon]="'trending_down'">
-              </app-customers-chart>
-          </div>
-          <clients-by-region *ngIf="hasAnyCGPermission" [waitFor$]="clientsByRegionLoad.asObservable()"
-            (loadComplete)="totalsByPeriodLoad.next()">
-          </clients-by-region>
         </div>
-      </dx-scroll-view>
-      <loading-spinner *ngIf="showLoadingSpinner"></loading-spinner>
-    </div>
-  </div>
-  <ng-template #noData>
-    <app-no-data> </app-no-data>
-  </ng-template>
+      </div>
+    </mat-tab>
+    
+    <mat-tab label="Dashboard V2">
+      <div>
+        <crm-left-menu [ngStyle]="{ float: menuSide }" [showIntroductionTour]="!appService.isHostTenant"
+          [currentContactGroup]="filterModelContactGroup.items.element.value" (openIntro)="openDialog()">
+        </crm-left-menu>
+        <div class="widgets-wrapper"
+          [ngClass]="{ expanded: leftMenuCollapsed$ | async, 'left-nav-menu': layoutService.showLeftBar }"
+          [ngStyle]="menuSide === 'left' ? { 'margin-left': '251px' } : { 'margin-right': '251px' }">
+          <div class="wrapper">
+            <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
+              <div class="dashboard-widgets">
+                <counts-and-totals
+                  *ngIf="hasAnyCGPermission || isGrantedOrders"
+                  (loadComplete)="clientsByRegionLoad.next()"
+                >
+                </counts-and-totals>
+                <div class="analytics-wrap">
+                  <div class="left-side col-xl-4">
+                    <new-items-totals *ngIf="hasAnyCGPermission || isGrantedOrders"></new-items-totals>
+                    <totals-by-source
+                      *ngIf="hasAnyCGPermission"
+                      [waitFor$]="totalsBySourceLoad.asObservable()"
+                      (loadComplete)="recentClientsLoad.next()"
+                    >
+                    </totals-by-source>
+                  </div>
+                  <div class="right-side col-xl-8">
+                    <ng-container *ngIf="hasAnyCGPermission">
+                      <totals-by-period
+                        [waitFor$]="totalsByPeriodLoad.asObservable()"
+                        (loadComplete)="totalsBySourceLoad.next()"
+                      >
+                      </totals-by-period>
+                      <recent-clients [waitFor$]="recentClientsLoad.asObservable()"> </recent-clients>
+                    </ng-container>
+                  </div>
+                </div>
+                <clients-by-region
+                  *ngIf="hasAnyCGPermission"
+                  [waitFor$]="clientsByRegionLoad.asObservable()"
+                  (loadComplete)="totalsByPeriodLoad.next()"
+                >
+                </clients-by-region>
+              </div>
+            </dx-scroll-view>
+            <loading-spinner *ngIf="showLoadingSpinner"></loading-spinner>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+
+<!-- No Data Template - shown when no accessible contact groups -->
+<div *ngIf="!hasAccessibleCG">
+  <app-no-data></app-no-data>
 </div>
