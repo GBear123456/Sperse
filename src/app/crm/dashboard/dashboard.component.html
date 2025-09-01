@@ -42,9 +42,10 @@
                   </app-customers-chart>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
+                    <app-customers-chart [currentPeriodTotal]="totalCustomers" [percentageChange]="0" [startDate]="chartStartDate"
                       [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
-                      [comparisonEndDate]="chartComparisonEndDate" [title]="'Customers'" [icon]="'people'">
+                      [comparisonEndDate]="chartComparisonEndDate" [title]="'Customers'" [icon]="'people'"
+                      [customerStatsData]="customerStatsData">
                     </app-customers-chart>
                     <app-customers-chart [currentPeriodTotal]="245" [percentageChange]="80.15" [startDate]="chartStartDate"
                       [endDate]="chartEndDate" [comparisonStartDate]="chartComparisonStartDate"
