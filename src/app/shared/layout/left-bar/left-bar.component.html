@@ -1,4 +1,4 @@
-<div class="total-wrapper" [style.max-height]="totalWrapperMaxHeight">
+<div class="total-wrapper" [style.height]="totalWrapperMaxHeight">
   <div class="top-wrapper">
     <a class="top-home-dark" (click)="onHomeClick($event)" (mouseover)="showPlatformSelect()">
       <platform-select></platform-select>
@@ -69,77 +69,79 @@
       </dx-accordion>
     </div>
   </div>
-  <user-management-list>
-    <app-theme-toggle></app-theme-toggle>
-    <li
-      *ngIf="userManagementService.notificationEnabled && layoutService.showNotificationsButton"
-      class="{{
-        layoutService.showTopBar
-          ? 'm-dropdown--align-right'
-          : 'm-dropdown--align-left m-dropdown--up'
-      }} m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-right m-dropdown--mobile-full-width"
-      id="popupButton"
-      (click)="openPopup()"
-      style="margin-top: 20px; margin-bottom: 10px"
-    >
-      <lucide-icon name="bell-dot" class="cursor-pointer"></lucide-icon>
-    </li>
-    <dx-popup
-      width="auto"
-      height="auto"
-      [dragEnabled]="false"
-      [showTitle]="false"
-      [closeOnOutsideClick]="true"
-      [(visible)]="popupVisible"
-      container=".dx-viewport"
-      class="notification-popup"
-    >
-      <dxo-position at="top" my="left bottom" of="#popupButton" collision="fit">
-        <dxo-offset [x]="-30" [y]="-20"></dxo-offset
-      ></dxo-position>
-      <leftbar-notifications></leftbar-notifications>
-    </dx-popup>
-
-    <li
-      *ngIf="isChatEnabled && !isChatConnected && layoutService.showChatButton"
-      class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width"
-    >
-      <a href="javascript:;" class="m-nav__link">
-        <span class="m-nav__link-icon">
-          <img
-            *ngIf="!isChatConnected"
-            src="./assets/common/images/loading.gif"
-            style="width: 23px"
-            [tooltip]="ls.l('ChatIsConnecting')"
-            placement="left"
-          />
-        </span>
-      </a>
-    </li>
-    <li
-      *ngIf="isChatEnabled && isChatConnected && layoutService.showChatButton"
-      (click)="quickSideBarChat.toggle()"
-      class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width"
-    >
-      <a href="javascript:;" class="m-nav__link m-dropdown__toggle">
-        <span class="m-nav__link-icon">
-          <img
-            [src]="
-              './assets/common/icons/feedback' +
-              (customLayoutType ? '-' + customLayoutType : '2') +
-              '.svg'
-            "
-          />
-        </span>
-        <span
-          class="m-badge m-badge--danger"
-          [ngClass]="{ 'd-none': !unreadChatMessageCount }"
-          id="UnreadChatMessageCount"
-          >{{ unreadChatMessageCount }}</span
+  <div class="user-wrapper">
+      <user-management-list>
+        <app-theme-toggle></app-theme-toggle>
+        <li
+          *ngIf="userManagementService.notificationEnabled && layoutService.showNotificationsButton"
+          class="{{
+            layoutService.showTopBar
+              ? 'm-dropdown--align-right'
+              : 'm-dropdown--align-left m-dropdown--up'
+          }} m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-right m-dropdown--mobile-full-width"
+          id="popupButton"
+          (click)="openPopup()"
+          style="margin-top: 20px; margin-bottom: 10px"
         >
-      </a>
-    </li>
-  </user-management-list>
+          <lucide-icon name="bell-dot" class="cursor-pointer"></lucide-icon>
+        </li>
+        <dx-popup
+          width="auto"
+          height="auto"
+          [dragEnabled]="false"
+          [showTitle]="false"
+          [closeOnOutsideClick]="true"
+          [(visible)]="popupVisible"
+          container=".dx-viewport"
+          class="notification-popup"
+        >
+          <dxo-position at="top" my="left bottom" of="#popupButton" collision="fit">
+            <dxo-offset [x]="-30" [y]="-20"></dxo-offset
+          ></dxo-position>
+          <leftbar-notifications></leftbar-notifications>
+        </dx-popup>
+
+        <li
+          *ngIf="isChatEnabled && !isChatConnected && layoutService.showChatButton"
+          class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width"
+        >
+          <a href="javascript:;" class="m-nav__link">
+            <span class="m-nav__link-icon">
+              <img
+                *ngIf="!isChatConnected"
+                src="./assets/common/images/loading.gif"
+                style="width: 23px"
+                [tooltip]="ls.l('ChatIsConnecting')"
+                placement="left"
+              />
+            </span>
+          </a>
+        </li>
+        <li
+          *ngIf="isChatEnabled && isChatConnected && layoutService.showChatButton"
+          (click)="quickSideBarChat.toggle()"
+          class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width"
+        >
+          <a href="javascript:;" class="m-nav__link m-dropdown__toggle">
+            <span class="m-nav__link-icon">
+              <img
+                [src]="
+                  './assets/common/icons/feedback' +
+                  (customLayoutType ? '-' + customLayoutType : '2') +
+                  '.svg'
+                "
+              />
+            </span>
+            <span
+              class="m-badge m-badge--danger"
+              [ngClass]="{ 'd-none': !unreadChatMessageCount }"
+              id="UnreadChatMessageCount"
+              >{{ unreadChatMessageCount }}</span
+            >
+          </a>
+        </li>
+      </user-management-list>
+  </div>
 </div>
 <user-dropdown-menu
   *ngIf="layoutService.showUserProfileMenu"

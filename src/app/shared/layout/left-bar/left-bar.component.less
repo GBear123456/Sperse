@@ -259,16 +259,23 @@
   }
 }
 
-.top-wrapper {
-  min-height: 675px;
-}
+:host {
+    .total-wrapper {
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-.total-wrapper {
-  overflow-y: auto;
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+    .user-wrapper {
+        margin-top: auto;
+        flex: 0 0 auto;
+    }
+
+    .top-wrapper {
+        margin-bottom: 10px;
+    }
 }
 
 :host {

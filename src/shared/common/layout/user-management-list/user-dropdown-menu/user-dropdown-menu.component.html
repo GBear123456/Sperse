@@ -12,7 +12,7 @@
     </action-menu>
 
     <a href="javascript:;" class="m-nav__link m-dropdown__toggle">
-        <span class="m-topbar__userpic">            
+        <span class="m-topbar__userpic">
             <img alt="" *ngIf="appSession?.user?.profileThumbnailId; else stub"
                  class="header-profile-picture m--img-rounded m--marginless m--img-centered"
                  [ngClass]="{square: showSquareIcon}"
@@ -52,9 +52,9 @@
                             <div *ngIf="subtitle" class="user-info tenantName">
                                 {{ subtitle }}
                             </div>
-                        </div>                        
+                        </div>
                     </div>
-                         
+
                     <div class="subscription">
                         <div class="box" *ngIf="!appService.isHostTenant" (click)="openPaymentWizardDialog()">
                             <div class="group">
@@ -69,13 +69,13 @@
 
                     <div class="login">
                         <div class="box" *ngIf="false">
-                            <div class="group"> 
-                                <div class="overlap-group"> 
-                                    <div class="text-wrapper">Login To CRM</div> 
-                                    <img class="vuesax-linear" src="./assets/common/icons/sidebar-right.svg" /> 
-                                    <div class="div">Access advanced features</div> 
-                                </div> 
-                            </div> 
+                            <div class="group">
+                                <div class="overlap-group">
+                                    <div class="text-wrapper">Login To CRM</div>
+                                    <img class="vuesax-linear" src="./assets/common/icons/sidebar-right.svg" />
+                                    <div class="div">Access advanced features</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
                                         <div class="logo">{{getUserNameFirstLatters(item.tenantName || item.userFullName || item.username)}}</div>
                                         <div class="name">
                                             <span class="company" [title]="item.tenantName || item.userFullName">{{item.tenantName || item.userFullName}}</span>
-                                            <span class="user-line" [title]="getShownLinkedUserName(item)">{{getShownLinkedUserName(item)}}</span>                                            
+                                            <span class="user-line" [title]="getShownLinkedUserName(item)">{{getShownLinkedUserName(item)}}</span>
                                         </div>
                                         <div [ngClass]="{active: actionEvent?.id == item?.id}" class="gear" (click)="openLinkedAccountMenu($event, item)"></div>
                                     </div>
@@ -105,14 +105,14 @@
                     <div class="user-menu-left">
                         <div class="box">
                             <div class="group">
-                                <div class="div">                                        
-                                    <div class="text-link" [ngClass]="{disabled: !appMemberPortalUrl}" (click)="openLink(appMemberPortalUrl)"><img class="img" src="./assets/common/icons/3dcube.svg" /> Customer Portal</div>                                    
-                                    <div class="text-link" [ngClass]="{disabled: !permissionChecker.isGranted(appPermissions.CRMProducts)}" (click)="router.navigateByUrl('app/crm/coupons');close()"><img class="img" src="./assets/common/icons/ticket.svg" /> Coupons</div>                                    
-                                    <div class="text-link disabled"><img class="img" src="./assets/common/icons/element-3.png" /> Integrations</div>                                    
-                                    <div class="text-link disabled"><img class="img" src="./assets/common/icons/magicpen.svg" /> Themes</div>                                    
+                                <div class="div">
+                                    <div class="text-link" [ngClass]="{disabled: !appMemberPortalUrl}" (click)="openLink(appMemberPortalUrl)"><img class="img" src="./assets/common/icons/3dcube.svg" /> Customer Portal</div>
+                                    <div class="text-link" [ngClass]="{disabled: !permissionChecker.isGranted(appPermissions.CRMProducts)}" (click)="router.navigateByUrl('app/crm/coupons');close()"><img class="img" src="./assets/common/icons/ticket.svg" /> Coupons</div>
+                                    <div class="text-link disabled"><img class="img" src="./assets/common/icons/element-3.png" /> Integrations</div>
+                                    <div class="text-link disabled"><img class="img" src="./assets/common/icons/magicpen.svg" /> Themes</div>
                                     <div class="text-link" (click)="router.navigateByUrl('app/admin/settings');close()" [ngClass]="{disabled: !isAccountSettingsEnabled}"><img class="img" src="./assets/common/icons/setting-2.svg" /> Account Settings</div>
                                     <div class="text-link" (click)="userNotificationHelper.openSettingsModal($event);close()"><img class="img" src="./assets/common/icons/notification-bing.png" /> Notifications</div>
-                                    <div class="text-link" [ngClass]="{disabled: !userManagementService.helpLink}" (click)="openLink(userManagementService.helpLink)"><img class="img" src="./assets/common/icons/lifebuoy.svg" /> Help Center</div>                                    
+                                    <div class="text-link" [ngClass]="{disabled: !userManagementService.helpLink}" (click)="openLink(userManagementService.helpLink)"><img class="img" src="./assets/common/icons/lifebuoy.svg" /> Help Center</div>
                                 </div>
                             </div>
                         </div>
@@ -132,7 +132,7 @@
                                             <div class="text-link" (click)="userManagementService.showLoginAttempts($event);close()"><img class="img" src="./assets/common/icons/clipboard-text.svg" /> My Login Activity</div>
                                             <div class="text-link" (click)="openLink('https://calendly.com/' + calendlyUri)" [ngClass]="{disabled: !calendlyUri}"><img class="img" src="./assets/common/icons/calendar4.svg" /> Book a Meeting</div>
                                         </div>
-                                    </div>                                                                        
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -140,13 +140,13 @@
                 </div>
                 <div class="bottom-row">
                     <div class="add-account">
-                        <div class="box"> 
-                            <div class="group" (click)="manageLinkedAccounts()"> 
-                                <div class="text-wrapper">Add a New Account</div> 
-                                <p class="div">({{linkedAccountsCount}} accounts linked)</p> 
-                                <img class="vuesax-linear-add" src="./assets/common/icons/add-circle.svg" /> 
-                            </div> 
-                        </div>                    
+                        <div class="box">
+                            <div class="group" (click)="manageLinkedAccounts()">
+                                <div class="text-wrapper">Add a New Account</div>
+                                <p class="div">({{linkedAccountsCount}} accounts linked)</p>
+                                <img class="vuesax-linear-add" src="./assets/common/icons/add-circle.svg" />
+                            </div>
+                        </div>
                     </div>
 
                     <div class="logout">
@@ -167,7 +167,7 @@
                     </div>
                 </div>
             </div>
-    
+
         </div>
     </div>
 
@@ -205,7 +205,7 @@
                             <bank-code-letters [(bankCode)]="bankCode"
                                                [allowAdd]="true"
                                                [allowEdit]="true"
-                                               [showDialogOnBottom]="true" 
+                                               [showDialogOnBottom]="true"
                                                [editDialogPosition]="{ x: 400 }"
                                                [showDescriptionsOnHover]="true"
                                                (bankCodeChange)="bankCodeChange()">

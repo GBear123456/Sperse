@@ -123,7 +123,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     const windowHeight = window.innerHeight;
-    this.totalWrapperMaxHeight = windowHeight < 900 ? `${windowHeight - 150}px` : '807px';
+    this.totalWrapperMaxHeight = `${windowHeight - 150}px`;
     this.changeDetectorRef.detectChanges();
   }
 
