@@ -259,6 +259,19 @@
     }
   }
 
+  ::ng-deep .mat-expansion-panel {
+    border-radius: 0px !important;
+  }
+
+  ::ng-deep .mat-expansion-indicator {
+    &::after {
+        .dark-theme & {
+            filter: brightness(0) invert(1);
+        }
+    }
+
+  }
+
   .close {
     position: absolute;
     z-index: 2;
