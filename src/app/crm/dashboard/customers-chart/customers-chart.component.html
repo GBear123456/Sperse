@@ -1,0 +1,21 @@
+<div class="customers-chart-widget">
+  <!-- Header Section -->
+  <div class="chart-header">
+    <div class="header-left">
+      <h3 class="chart-title">{{title}} </h3>
+      <div class="main-metric">
+        <span class="metric-value">{{ currentPeriodTotal }}</span>
+        <span class="percentage-change" [ngClass]="{ 'positive': isPositiveChange, 'negative': !isPositiveChange }">
+          {{ isPositiveChange ? '+' : '' }}{{ percentageChange }}%
+        </span>
+      </div>
+    </div>
+    
+    <!--  -->
+  </div>
+
+  <!-- Chart Section -->
+  <div class="chart-container">
+    <canvas #chartCanvas></canvas>
+  </div>
+</div>

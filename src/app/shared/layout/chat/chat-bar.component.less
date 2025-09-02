@@ -67,7 +67,10 @@ span.contact-status2 {
 
 .m-quick-sidebar {
     overflow-y: hidden !important;
-    background-color: var(--sidebar-bg);
+    background: #fff;
+    .dark-theme & {
+        background-color: var(--sidebar-bg);
+    }
 }
 
 ::ng-deep {

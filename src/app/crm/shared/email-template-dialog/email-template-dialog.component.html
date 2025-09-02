@@ -1,244 +1,719 @@
-<modal-dialog [title]="data.title"
+<modal-dialog [title]=""
               [titleClearButton]="false"
               [buttons]="buttons"
               [editTitle]="false"
+              class="email-template-dialog"
               (onContextItemChanged)="save()">
     <ng-container headerContent>
-        <dx-select-box #templateSelector
-            name="template"
-            width="380px"
-            height="40px"
-            displayExpr="name"
-            valueExpr="id"
-            [placeholder]="ls.l(data.addMode ? 'TemplateName' : 'SelectTemplate')"            
-            [disabled]="templateEditMode && isManageUnallowed || onTemplateCreate.observers.length && !(data.contact || data.contactIds)"
-            [value]="data.templateId"
-            [showClearButton]="!data.addMode && templateEditMode"
-            [dataSource]="templates$ | async"
-            [acceptCustomValue]="templateEditMode && !isManageUnallowed"
-            [openOnFieldClick]="!data.addMode"
-            [showDropDownButton]="!data.addMode"
-            itemTemplate="itemTemplate"
-            (onOptionChanged)="onTemplateOptionChanged($event)"
-            (onCustomItemCreating)="onNewTemplate($event)"
-            (onValueChanged)="onTemplateChanged($event)">
-            <dx-validator (onInitialized)="extendDefaultValidator($event)">
-                <dxi-validation-rule type="required" [message]="ls.l('RequiredField', ls.l('Template'))"></dxi-validation-rule>
-            </dx-validator>
-            <div *dxTemplate="let item of 'itemTemplate'" class="email-templates-select-box">
-                {{ item.name }}
-                <i *ngIf="!isManageUnallowed" class="delete fa fa-times" [title]="ls.l('DeleteTemplate')" (click)="deleteTemplate($event, item, templateSelector)"></i>
+        <div class="header">
+            <div class="header-div">
+                <div class="email-container">
+                    <span class="icon">
+                        <img src="assets/common/icons/group.png">
+                    </span>
+                    <span class="email-sub-txt"> {{title}}</span>
+                </div>
+                <div class="header-content">
+                    {{abbrTitle(data.subject)}}
+                </div>
+
             </div>
-        </dx-select-box>
-        <div class="buttons" *ngIf="!data.addMode && !isManageUnallowed && data.contact && onTemplateCreate.observers.length">
-            <i class="create-template" [title]="ls.l('CreateTemplate')" (click)="createTemplate()"></i>
-            <i *ngIf="data.templateId" [title]="ls.l('EditTemplate')" class="edit-template fa fa-pencil" (click)="editTemplate(data)"></i>
+            <div class="right">
+                <div class="actions">
+
+                    <span class="tab new-email" (click)="showTabs('new-email')"
+                        [class.selected-tab]="selectedTab === 'new-email'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="#003366" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2" ry="2" fill="none" stroke="#003366"></rect>
+                            <path d="M22 6l-10 7L2 6" fill="none" stroke="#003366"></path>
+                        </svg>
+                        New Email
+                    </span>
+                    <span class="tab html-editor" (click)="showTabs('html-editor')"
+                        [class.selected-tab]="selectedTab === 'html-editor'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="#5A6782" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5l4 4L7 21H3v-4L16.5 3.5z" />
+                        </svg>
+
+                        HTML Editor
+                    </span>
+                    <span class="tab templates" (click)="showTabs('template')"
+                        [class.selected-tab]="selectedTab === 'template'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="#5A6782" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7" rx="1" />
+                            <rect x="14" y="3" width="7" height="7" rx="1" />
+                            <rect x="3" y="14" width="7" height="7" rx="1" />
+                            <rect x="14" y="14" width="7" height="7" rx="1" />
+                        </svg>
+                        Templates
+                    </span>
+                </div>
+            </div>
         </div>
+        <!-- <div class="buttons" *ngIf="!data.addMode && !isManageUnallowed && data.contact && onTemplateCreate.observers.length">
+            <i class="create-template" [title]="ls.l('CreateTemplate')" (click)="createTemplate()"></i>
+            <i *ngIf="data.templateId" [title]="ls.l('EditTemplate')" class="edit-template fa fa-pencil"
+                (click)="editTemplate(data)"></i>
+        </div>  -->
+
+        <!-- <dx-context-menu
+            *ngIf="addSendEmailMenuItems && addSendEmailMenuItems.length"
+            [selectByClick]="true"
+            selectionMode="single"
+            [dataSource]="addSendEmailMenuItems"
+            [position]="{ my: 'top right', at: 'bottom right', offset: '1 0' }"
+            target="#saveTemplateOptions"
+            cssClass="custom-context-menu"
+            [width]="200"
+
+        >
+        </dx-context-menu> -->
+
     </ng-container>
     <div class="form-content">
-        <dx-scroll-view showScrollbar="onHover" #scrollView>
-            <dx-validation-group>
-                <div class="row">
-                    <div class="field-area from">
-                        <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('From')}}:</label>            
-                        <dx-select-box *ngIf="fromDataSource?.length || templateEditMode; else configure"
-                            name="from"
-                            width="calc(50% - 52px)"
-                            height="40px"
-                            placeholder=""
-                            [(value)]="data.emailSettingsSource"
-                            valueExpr="emailSettingsSource"
-                            displayExpr="emailAddress"
-                            [dataSource]="fromDataSource"
-                            itemTemplate="itemTemplate"
-                            fieldTemplate="fieldTemplate"
-                            [disabled]="templateEditMode"
-                            (onValueChanged)="onFromChanged($event)">
-                            <div *dxTemplate="let item of 'itemTemplate'" class="from-item-select-box" [title]="item?.emailAddress">
-                                {{ item?.emailAddress }}
+        <div class="content-wrapper" [class.with-ai-prompt]="showAIPrompt">
+            <div class="main-content">
+                <dx-scroll-view showScrollbar="onHover" #scrollView>
+                    <dx-validation-group (onInitialized)="onValidationGroupInitialized($event)">
+                        <div class="email-content" [class.scroll]="data.attachments && data.attachments.length" *ngIf="showNewEmailTab">
+
+                            <div class="field-area from row--subdiv">
+                                <div class="w-48">
+                                    <label class="caption"
+                                        [ngClass]="{disabled: templateEditMode}">{{ls.l('From')}}:</label>
+                                    <dx-select-box *ngIf="fromDataSource?.length || templateEditMode; else configure"
+                                        name="from"
+                                        height="40px"
+                                        placeholder=""
+                                        [(value)]="data.emailSettingsSource"
+                                        placeholder=""
+                                        [(value)]="data.emailSettingsSource"
+                                        valueExpr="emailSettingsSource"
+                                        displayExpr="emailAddress"
+                                        displayExpr="emailAddress"
+                                        [dataSource]="fromDataSource"
+                                        itemTemplate="itemTemplate"
+                                        itemTemplate="itemTemplate"
+                                        fieldTemplate="fieldTemplate"
+                                        [disabled]="templateEditMode"
+                                        class="from-item-selet"
+                                        (onValueChanged)="onFromChanged($event)">
+                                        <div *dxTemplate="let item of 'itemTemplate'" class="from-item-select-box" [title]="item?.emailAddress">
+                                            {{ item?.emailAddress }}
+                                        </div>
+                                        <div *dxTemplate="let item of 'fieldTemplate'" class="from-field-select-box">
+                                            <dx-text-box
+                                                height="40px"
+                                                [readOnly]="true"
+                                                [value]="item?.emailAddress"
+                                                [hint]="item?.emailAddress"
+                                                class='from-text-box'
+                                                >
+                                            </dx-text-box>
+                                        </div>
+                                        <dx-validator (onInitialized)="extendDefaultValidator($event)">
+                                            <dxi-validation-rule
+                                                type="required"
+                                                [message]="ls.l('MailerSettingsAreNotConfigured', ls.l('SMTP'))">
+                                            </dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-select-box>
+                                    <ng-template #configure>
+                                        <a class="config-link" (click)="close()" [routerLink]="'app/admin/settings'"
+                                            [queryParams]="{tab: 'smtp'}" [ngClass]="{disabled: !isSettingsAllowed}">
+                                            {{ls.l('MailerSettingsAreNotConfigured',ls.l('SMTP'))}}&nbsp;
+                                        </a>
+                                    </ng-template>
+                                </div>
+                                <div class="w-48">
+                                    <label class="caption disabled">{{ls.l('ReplyTo')}}:</label>
+                                    <dx-tag-box #ReplyToElement
+                                                name="replyTo"
+                                                noDataText=""
+                                                placeholder=""
+                                                 [multiline]="false"
+                                                [acceptCustomValue]="true"
+                                                class="reply-tag-box"
+                                                [(value)]="data.replyTo"
+                                                [disabled]="true"
+                                                (onKeyUp)="onKeyUp($event)"
+                                                (onInitialized)="onTagBoxInitialized($event)"
+                                                (onFocusOut)="emailInputFocusOut($event)"
+                                                (onCustomItemCreating)="onCustomItemCreating($event)">
+                                        <dx-validator (onInitialized)="extendDefaultValidator($event)">
+                                            <dxi-validation-rule type="custom"
+                                                [message]="ls.l('InvalidField', ls.l('ReplyTo'))"
+                                                [validationCallback]="validateEmailList(ReplyToElement)">
+                                            </dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-tag-box>
+                                </div>
                             </div>
-                            <div *dxTemplate="let item of 'fieldTemplate'" class="from-field-select-box">
-                                <dx-text-box
-                                    width="320px"
-                                    height="40px"
-                                    [readOnly]="true"
-                                    [value]="item?.emailAddress"
-                                    [hint]="item?.emailAddress">
+
+                            <div class="field-area">
+                                <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('To')}}:</label>
+                                <dx-tag-box #ToElement
+                                            name="to"
+                                            width="calc(100% - 31px)"
+                                            noDataText=""
+                                            placeholder=""
+                                            [dataSource]="data.suggestionEmails"
+                                            [multiline]="false"
+                                            [acceptCustomValue]="true"
+                                            [(value)]="data.to"
+                                            (onKeyUp)="onKeyUp($event)"
+                                            (onInitialized)="onTagBoxInitialized($event)"
+                                            (onFocusOut)="emailInputFocusOut($event)"
+                                            (onCustomItemCreating)="onCustomItemCreating($event)">
+                                    <dx-validator (onInitialized)="extendDefaultValidator($event)">
+                                        <dxi-validation-rule type="custom"
+                                                            [message]="ls.l('InvalidField', ls.l('To'))"
+                                            [validationCallback]="validateEmailList(ToElement)">
+                                        </dxi-validation-rule>
+                                        <dxi-validation-rule type="required"
+                                            [message]="ls.l('RequiredField', ls.l('To'))"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-tag-box>
+                                <div class="bcc-links">
+                                    <span (click)="showInputField(CCElement, 'showCC')" [ngClass]="{disabled: showCC}">{{ls.l('CC')}}</span>
+                                    <span (click)="showInputField(BCCElement, 'showBCC')" [ngClass]="{disabled: showBCC}">{{ls.l('BCC')}}</span>
+                                </div>
+                            </div>
+
+                            <div class="field-area from row--subdiv row">
+                                <div class="col-md-6 sub-div" [hidden]="!showCC">
+                                    <label class="caption">{{ls.l('CC')}}:</label>
+                                    <dx-tag-box #CCElement
+                                                name="cc"
+                                                width="calc(100% - 35px)"
+                                                placeholder=""
+                                                noDataText=""
+                                                [multiline]="false"
+                                                [acceptCustomValue]="true"
+                                                [(value)]="data.cc"
+                                                (onKeyUp)="onKeyUp($event)"
+                                                (onInitialized)="onTagBoxInitialized($event)"
+                                                (onFocusOut)="emailInputFocusOut($event, true)"
+                                                (onCustomItemCreating)="onCustomItemCreating($event)"
+                                                (onValueChanged)="onValueChanged($event, 'showCC')"
+                                                >
+                                        <dx-validator (onInitialized)="extendDefaultValidator($event)">
+                                            <dxi-validation-rule type="custom"
+                                                [message]="ls.l('InvalidField', ls.l('CC'))"
+                                                [validationCallback]="validateEmailList(CCElement)">
+                                            </dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-tag-box>
+                                </div>
+
+                                <div class="col-md-6 sub-div" [hidden]="!showBCC">
+                                    <label class="caption">{{ls.l('BCC')}}:</label>
+                                    <dx-tag-box #BCCElement
+                                        name="bcc"
+                                        width="calc(100% - 46px)"
+                                        noDataText=""
+                                        placeholder=""
+                                        [multiline]="false"
+                                        [acceptCustomValue]="true"
+                                        (onValueChanged)="onValueChanged($event, 'showBCC')"
+                                        [(value)]="data.bcc"
+                                        (onKeyUp)="onKeyUp($event)"
+                                        (onInitialized)="onTagBoxInitialized($event)"
+                                        (onFocusOut)="emailInputFocusOut($event, true)"
+                                        (onCustomItemCreating)="onCustomItemCreating($event)">
+                                        <dx-validator (onInitialized)="extendDefaultValidator($event)">
+                                            <dxi-validation-rule type="custom"
+                                                [message]="ls.l('InvalidField', ls.l('BCC'))"
+                                                [validationCallback]="validateEmailList(BCCElement)">
+                                            </dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-tag-box>
+                                </div>
+                            </div>
+
+                            <div class="field-area subject">
+                                <label class="caption">{{ls.l('Subject')}}:</label>
+                                <dx-text-box #subjectField
+                                    name="subject"
+                                    width="100%"
+                                    placeholder=""
+                                    [(value)]="data.subject"
+                                    (onFocusIn)="onFieldFocus('subject', $event)"
+                                    (onFocusOut)="onFieldBlur('subject', $event)">
+                                    <dx-validator (onInitialized)="extendDefaultValidator($event)">
+                                        <dxi-validation-rule type="required"
+                                            [message]="ls.l('RequiredField', ls.l('Subject'))"></dxi-validation-rule>
+                                    </dx-validator>
                                 </dx-text-box>
+                                <div #subjectTagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField === 'subject'" [style.right.px]="tooltipButtonRight" [style.top.px]="tooltipButtonTop">
+                                    <span #subjectTagsButton [class]="'tags-button subject-tags-button id' + uniqId">
+                                        <a (click)="onTagButtonClick($event)">Add a Tag</a>
+                                    </span>
+                                </div>
+                                <dx-tooltip [width]="250"
+                                            [position]="tooltipPosition"
+                                            [visible]="isTagsTooltipVisible && currentFocusedField === 'subject'"
+                                            [target]="'.subject-tags-button.id' + uniqId">
+                                    <div *dxTemplate="let data of 'content'" class="tags-container">
+                                        <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
+                                        <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
+                                            [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
+                                            <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
+                                             [class]="{disabled:  !getTagValue(data)}">
+                                                {{ getTagText(data) }}
+                                            </div>
+                                        </dx-list>
+                                    </div>
+                                </dx-tooltip>
                             </div>
-                            <dx-validator>
-                                <dxi-validation-rule
-                                    type="required" 
-                                    [message]="ls.l('MailerSettingsAreNotConfigured', ls.l('SMTP'))">
-                                </dxi-validation-rule>
-                            </dx-validator>
-                        </dx-select-box>
-                        <ng-template #configure>
-                            <a class="config-link" (click)="close()" 
-                                [routerLink]="'app/admin/settings'" 
-                                [queryParams]="{tab: 'smtp'}" 
-                                [ngClass]="{disabled: !isSettingsAllowed}">{{ls.l('MailerSettingsAreNotConfigured', ls.l('SMTP'))}}&nbsp;</a>
-                        </ng-template>
-                        <label class="caption disabled">{{ls.l('ReplyTo')}}:</label>
-                        <dx-tag-box #ReplyToElement
-                            name="replyTo"
-                            width="calc(50% - 62px)"
-                            noDataText=""
-                            placeholder=""
-                            [multiline]="false"
-                            [acceptCustomValue]="true"
-                            [(value)]="data.replyTo"
-                            [disabled]="true"
-                            (onKeyUp)="onKeyUp($event)"
-                            (onInitialized)="onTagBoxInitialized($event)"
-                            (onFocusOut)="emailInputFocusOut($event)"
-                            (onCustomItemCreating)="onCustomItemCreating($event)">
-                            <dx-validator>
-                                <dxi-validation-rule type="custom" 
-                                    [message]="ls.l('InvalidField', ls.l('ReplyTo'))" 
-                                    [validationCallback]="validateEmailList(ReplyToElement)">
-                                </dxi-validation-rule>
-                            </dx-validator>
-                        </dx-tag-box>
-                    </div>
-                    <div class="field-area to">
-                        <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('To')}}:</label>
-                        <dx-tag-box #ToElement
-                            name="to"
-                            width="calc(100% - 31px)"
-                            noDataText=""
-                            placeholder=""
-                            [dataSource]="data.suggestionEmails"
-                            [multiline]="false"
-                            [acceptCustomValue]="true"
-                            [(value)]="data.to"
-                            [disabled]="templateEditMode"
-                            (onKeyUp)="onKeyUp($event)"
-                            (onInitialized)="onTagBoxInitialized($event)"
-                            (onFocusOut)="emailInputFocusOut($event)"
-                            (onCustomItemCreating)="onCustomItemCreating($event)">
-                            <dx-validator>
-                                <dxi-validation-rule type="custom" 
-                                    [message]="ls.l('InvalidField', ls.l('To'))" 
-                                    [validationCallback]="validateEmailList(ToElement)">
-                                </dxi-validation-rule>
-                                <dxi-validation-rule type="required" [message]="ls.l('RequiredField', ls.l('To'))"></dxi-validation-rule>
-                            </dx-validator>
-                        </dx-tag-box>
-                        <div class="bcc-links">
-                            <span (click)="showInputField(CCElement, 'showCC')" [ngClass]="{disabled: showCC}">{{ls.l('CC')}}</span>
-                            <span (click)="showInputField(BCCElement, 'showBCC')" [ngClass]="{disabled: showBCC}">{{ls.l('BCC')}}</span>
-                        </div>
-                    </div>
-                    <div class="field-area" [hidden]="!showCC">
-                        <label class="caption">{{ls.l('CC')}}:</label>
-                        <dx-tag-box #CCElement
-                            name="cc"
-                            width="calc(100% - 35px)"
-                            placeholder=""
-                            noDataText=""
-                            [multiline]="false"
-                            [acceptCustomValue]="true"
-                            [(value)]="data.cc"
-                            (onKeyUp)="onKeyUp($event)"
-                            (onInitialized)="onTagBoxInitialized($event)"
-                            (onFocusOut)="emailInputFocusOut($event, true)"
-                            (onCustomItemCreating)="onCustomItemCreating($event)">
-                            <dx-validator>
-                                <dxi-validation-rule type="custom" 
-                                    [message]="ls.l('InvalidField', ls.l('CC'))" 
-                                    [validationCallback]="validateEmailList(CCElement)">
-                                </dxi-validation-rule>
-                            </dx-validator>
-                        </dx-tag-box>
-                    </div>
-                    <div class="field-area" [hidden]="!showBCC">
-                        <label class="caption">{{ls.l('BCC')}}:</label>
-                        <dx-tag-box #BCCElement
-                            name="bcc"
-                            width="calc(100% - 46px)"
-                            noDataText=""
-                            placeholder=""
-                            [multiline]="false"
-                            [acceptCustomValue]="true"
-                            [(value)]="data.bcc"
-                            (onKeyUp)="onKeyUp($event)"
-                            (onInitialized)="onTagBoxInitialized($event)"
-                            (onFocusOut)="emailInputFocusOut($event, true)"
-                            (onCustomItemCreating)="onCustomItemCreating($event)">
-                            <dx-validator>
-                                <dxi-validation-rule type="custom" 
-                                    [message]="ls.l('InvalidField', ls.l('BCC'))" 
-                                    [validationCallback]="validateEmailList(BCCElement)">
-                                </dxi-validation-rule>
-                            </dx-validator>
-                        </dx-tag-box>
-                    </div>
-                    <div class="field-area subject">
-                        <label class="caption">{{ls.l('Subject')}}:</label>
-                        <dx-text-box
-                            name="subject"
-                            width="calc(100% - 69px)"
-                            height="40px"
-                            placeholder=""
-                            [(value)]="data.subject">
-                            <dx-validator>
-                                <dxi-validation-rule type="required" [message]="ls.l('RequiredField', ls.l('Subject'))"></dxi-validation-rule>
-                            </dx-validator>
-                        </dx-text-box>
-                    </div>
-                    <div class="field-area preview-text">
-                        <label class="caption">{{ls.l('PreviewText')}}:</label>
-                        <dx-text-box
-                            name="previewText"
-                            width="calc(100% - 102px)"
-                            height="40px"
-                            placeholder=""
-                            [(value)]="data.previewText">
-                        </dx-text-box>
-                    </div>                                    
-                    <div class="field-area ckeditor">
-                        <dx-tooltip [width]="250"
-                             position="bottom"
-                             [(visible)]="tagsTooltipVisible"
-                             [target]="'.tags-button.id' + uniqId">
-                            <div *dxTemplate="let data of 'content'" class="tags-container">
-                                <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
-                                <dx-list
-                                    height="calc(100% - 40px)"
-                                    [selectionMode]="'single'"
-                                    [dataSource]="tagsList"
-                                    [itemTemplate]="'tagTemplate'"
-                                    (onItemClick)="onTagClick($event)">
-                                    <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item" [ngClass]="{disabled: !templateEditMode && !getTagValue(data)}">
-                                        {{ getTagText(data) }}
-                                    </div>                
-                                </dx-list>
+
+                            <div class="field-area preview-text">
+                                <label class="caption">{{ls.l('PreviewText')}}:</label>
+                                <dx-text-box #PreviewTextElement
+                                            name="previewText"
+                                            width="100%"
+                                            height="40px"
+                                            placeholder=""
+                                            [(value)]="data.previewText"
+                                            (onFocusIn)="onFieldFocus('preview', $event)"
+                                            (onFocusOut)="onFieldBlur('preview', $event)">
+                                </dx-text-box>
+                                <div #previewTagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField === 'preview'" [style.right.px]="tooltipButtonRight" [style.top.px]="tooltipButtonTop">
+                                    <span #previewTagsButton [class]="'tags-button preview-tags-button id' + uniqId">
+                                        <a (click)="onTagButtonClick($event)">Add a Tag</a>
+                                    </span>
+                                </div>
+                                <dx-tooltip [width]="250"
+                                            [position]="tooltipPosition"
+                                            [visible]="isTagsTooltipVisible && currentFocusedField === 'preview'"
+                                            [target]="'.preview-tags-button.id' + uniqId">
+                                    <div *dxTemplate="let data of 'content'" class="tags-container">
+                                        <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
+                                        <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
+                                            [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
+                                            <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
+                                             [class]="{disabled:  !getTagValue(data)}">
+                                                {{ getTagText(data) }}
+                                            </div>
+                                        </dx-list>
+                                    </div>
+                                </dx-tooltip>
                             </div>
-                        </dx-tooltip>
-                        <span #tagsButton [class]="'cke_toolgroup tags-button id' + uniqId" *ngIf="tagsList.length">
-                            <a (click)="tagsTooltipVisible = true">Tags</a>
-                        </span>
-                        <ckeditor *ngIf="ckConfig.height && templateLoaded" [config]="ckConfig" [(data)]="data.body" (ready)="onCKReady($event)" (change)="updateDataLength()"></ckeditor>
-                        <p class="char-count">{{charCount}}</p>
-                        <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)">
-                            <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector" >
-                                <a href="javascript:void(0);" class="attach-link" (click)="openDocuments()"><img src="assets/common/icons/attach.svg">{{ls.l('Add attachment')}}</a>
-                                <dx-check-box *ngIf="!templateEditMode && attachments && attachments.length" class="saveToDocs" [(value)]="data.saveAttachmentsToDocuments" [rtlEnabled]="true" [text]="ls.l('Save to Documents')"></dx-check-box>
-                            </ng-template>
-                        </ngx-file-drop>
-                    </div>
-                    <div class="field-area attachments">
-                        <div *ngFor="let attachment of attachments; let i = index" class="attachment" [ngClass]="{'progress': !!attachment.loader}" [ngStyle]="{'background-size': (attachment.progress || 0) + '%'}">
-                            <a target="_blank" [download]="attachment.name" [href]="attachment.url" (click)="attachmentClick($event, attachment)" class="name">{{attachment.name}}</a>&nbsp;<span class="size">({{attachment.size | filesize}})</span><i (click)="removeAttachment(attachment, i)" aria-hidden="true" class="delete fa fa-times"></i>
+
+                            <div class="field-area ckeditor bt-none" (keydown.escape)="onESC($event)">
+                                <ckeditor
+                                    *ngIf="ckConfig.height && templateLoaded"
+                                    [config]="ckConfig"
+                                    [(data)]="data.body"
+                                    (ready)="onCKReady($event)"
+                                    (change)="updateDataLength()"
+                                    (focus)="onCKEditorManualFocus($event)"
+                                    (blur)="onFieldBlur('ckeditor', $event)"
+                                    (click)="onCKEditorClick($event)"
+                                    [style.width]="'100%'"
+                                    >
+                                </ckeditor>
+                                <div #tagsButtonContainer class="tags-button-container" *ngIf="tagsList.length && currentFocusedField === 'ckeditor'" [style.right.px]="tooltipButtonRight" [style.top.px]="tooltipButtonTop">
+                                    <span #tagsButton [class]="'tags-button id' + uniqId">
+                                        <a (click)="onTagButtonClick($event)">Add a Tag</a>
+                                    </span>
+                                </div>
+                                <dx-tooltip [width]="250"
+                                            [position]="tooltipPosition"
+                                            [visible]="isTagsTooltipVisible && currentFocusedField === 'ckeditor'"
+                                            [target]="'.tags-button.id' + uniqId">
+                                    <div *dxTemplate="let data of 'content'" class="tags-container">
+                                        <p class="tags-note">{{ls.l('EmailTemplate_SupportedTags')}}</p>
+                                        <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="tagsList"
+                                            [itemTemplate]="'tagTemplate'" (onItemClick)="onTagClick($event)">
+                                            <div *dxTemplate="let data of 'tagTemplate'" class="tags-list-item"
+                                             [class]="{disabled:  !getTagValue(data)}">
+                                                {{ getTagText(data) }}
+                                            </div>
+                                        </dx-list>
+                                    </div>
+                                </dx-tooltip>
+                            </div>
+
+                            <div class="attachment-div">
+                                <div class="attachment-field-area">
+                                    <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)">
+                                        <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                                            <a href="javascript:void(0);" class="attach-link" (click)="openDocuments()">
+                                                <img src="assets/common/icons/attach.svg">{{ ls.l('Add attachment') }}
+                                            </a>
+
+                                        </ng-template>
+                                    </ngx-file-drop>
+                                </div>
+                                <!-- <div class="attachment-field-area bottom-text-ste">Insert Widget</div> -->
+                                <div class="attachment-field-area bottom-text-ste">
+                                    {{ charCount ? charCount :0  }} chars
+                                </div>
+                            </div>
+
+                            <div class="field-area attachments">
+                                <div *ngFor="let attachment of attachments; let i = index" class="attachment"
+                                    [ngClass]="{'progress': !!attachment.loader}"
+                                    [ngStyle]="{'background-size': (attachment.progress || 0) + '%'}">
+                                    <a target="_blank" [download]="attachment.name" [href]="attachment.url"
+                                        (click)="attachmentClick($event, attachment)"
+                                        class="name">{{attachment.name}}</a>&nbsp;<span class="size">
+                                        ({{attachment.size |filesize}})
+                                    </span><i (click)="removeAttachment(attachment, i)" aria-hidden="true"
+                                        class="delete fa fa-times"></i>
+                                </div>
+                            </div>
+
+                            <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
                         </div>
+
+                        <div class="row editor-color" [hidden]="!showHtmlEditor" >
+                            <!-- <form [formGroup]="templateForm" class="editor-form">
+                                <ngx-monaco-editor
+                                #editor
+                                [options]="editorOptions"
+                                formControlName="emailContentBodyTemplate" class="editor-container">
+                                </ngx-monaco-editor>
+                            </form>                        -->
+                            <div class="d-flex setting-div"
+                                [style.backgroundColor]="editorColor"
+                            >
+                                <dx-button
+                                    icon="preferences"
+                                    type="default"
+                                    (onClick)="toggleSetting()"
+                                    class="setting-btn"
+                                >
+                                </dx-button>
+                                <div  class="d-flex" style="padding-left: 20px">
+                                    <div class="settings-item">
+                                        <label class="label">Font Size:</label>
+                                        <dx-number-box
+                                            [(value)]="editorSettings.fontSize"
+                                            [min]="12"
+                                            [max]="32"
+                                            [step]="2"
+                                            [elementAttr]="{'class':'custom-numberbox'}"
+                                            [showSpinButtons]="true"
+                                            class="setting-input"
+                                            mode="outlined"
+                                            [inputAttr]="{'style': 'padding: 4px 10px; border: 1px solid #838995 !important; color: white;border-radius: 6px;  font-size: 14px; background: ' + editorColor}"
+                                            [style.backgroundColor]="editorColor"
+                                            (onValueChanged)="updateEditorSettings()">
+                                        </dx-number-box>
+                                    </div>
+                                    <div class="settings-item">
+                                        <label class="label">Theme:</label>
+                                        <dx-select-box
+                                            [(value)]="editorSettings.theme"
+                                            [dataSource]="editorThemes"
+                                            displayExpr="name"
+                                            valueExpr="value"
+                                            class="setting-input"
+                                            [inputAttr]="{'style': 'padding: 4px 10px; border: 1px solid #838995 !important; color: white; border-radius: 4px; font-size: 14px; background: ' + editorColor}"
+                                            mode="outlined"
+                                            (onValueChanged)="updateEditorSettings()">
+                                            <div *dxTemplate="let item of 'item'" class="theme-item">
+                                                {{ item.name }}
+                                            </div>
+                                        </dx-select-box>
+                                    </div>
+                                    <div class="settings-item">
+                                        <dx-check-box
+                                            [(value)]="editorSettings.showLineNumbers"
+                                            text="Show Line Numbers"
+                                            (onValueChanged)="updateEditorSettings()"
+                                            [elementAttr]="{'class': 'custom-checkbox'}"
+                                            >
+                                        </dx-check-box>
+                                    </div>
+                                    <div class="settings-item">
+                                        <dx-check-box
+                                            [(value)]="editorSettings.showPrintMargin"
+                                            text="Show Print Margin"
+                                            [elementAttr]="{'class': 'custom-checkbox'}"
+
+                                            (onValueChanged)="updateEditorSettings()">
+                                        </dx-check-box>
+                                    </div>
+                                    <div class="settings-item">
+                                        <button (click)="formatCode()" type="button" class="format-btn">format code</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div #editor style="height: calc(100vh - 127px); width: 100%; padding-top: 15px;" class="code-editor"></div>
+                        </div>
+
+                        <div class="row  template-container " *ngIf="showTemplate">
+
+                            <div class="row">
+                                <div class="col-md-3 col-sm-4 left-template-div"  >
+                                    <div class="d-flex flex-column template-header">
+                                        <h5 style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">My Email Templates Library</h5>
+                                        <span>
+                                            Choose a template or start with a blank email to your own HTML
+                                        </span>
+                                        <dx-button
+                                            stylingMode="outlined"
+                                            text="+ Create New Template"
+                                            type="normal"
+                                            (click)="createTemplate()"
+                                            class="create-mail-template-btn"
+                                        >
+                                        </dx-button>
+                                        <dx-text-box
+                                            mode="search"
+                                            height="40px"
+                                            [placeholder]="placeholderText"
+                                            [elementAttr]="{ class: 'template-search-box' }"
+                                            (onFocusIn)="onFocusIn()"
+                                            (onFocusOut)="onFocusOut()"
+                                            (onInput)="onSearchInput($event)"
+                                        >
+
+                                        </dx-text-box>
+
+                                        <div class="badge">
+                                        {{(templates$ | async)?.length}}
+                                        </div>
+
+                                    </div>
+                                    <div class="template-list-div">
+                                        <div *ngIf="(filteredTemplates$ | async)?.length== 0" class="template-item">
+                                            No Templates
+                                        </div>
+                                        <div *ngFor="let template of filteredTemplates$ | async; let templateIndex = index" class="template-item-container"  (click)="viewDetailTemplate($event, template)">
+                                            <div class="template-item" [class.active]="template.id === curTemplateId">
+                                                 <h5 class="template-item-title" style=""
+                                                      [title]="template.name">
+                                                     {{template.name}}
+                                                 </h5>
+                                                <!-- <span>
+                                                    {{template.previewText}}
+                                                </span> -->
+                                                <div class="template-item-action-btns">
+                                                    <dx-button
+                                                        stylingMode="outlined"
+                                                        icon="edit"
+                                                        [width]="24"
+                                                        (onClick)="editTemplate($event, template.id)"
+                                                        class="template-item-btn edit-btn"
+                                                    >
+                                                    </dx-button>
+                                                    <dx-button
+                                                        stylingMode="outlined"
+                                                        icon="trash"
+                                                        [width]="24"
+                                                        (onClick)="deleteTemplate($event, template)"
+                                                        class="template-item-btn cancel-btn"
+                                                    >
+                                                    </dx-button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="col-md-9 col-sm-8 template-detail-preview">
+                                    <div class="d-flex flex-column" style="min-height:60px; padding: 0 8px;">
+                                        <div class="button-div">
+                                            <dx-button
+                                                stylingMode="outlined"
+                                                text="Use this template"
+                                                type="normal"
+                                                [disabled]="templateData.subject == ''"
+                                                (click)="setTemplate()"
+                                                class="set-template-btn"
+                                            >
+                                            </dx-button>
+                                        </div>
+                                        <div class="text-center">
+
+                                            <h4 style="white-space: nowrap; margin: 0; padding: 0 10px; word-break: break-all;" [title]="templateData.subject"> {{templateData.subject}}</h4></div>
+                                        <div class="text-center ">
+
+                                            <h6>{{templateData.previewText}}</h6>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="template-preview-content" (keydown.escape)="onESC($event)">
+                                        <ckeditor *ngIf="templateLoaded" class="template-cke" [config]="templatePreviewConfig" [(data)]="templateData.body"
+                                        ></ckeditor>
+                                        <div class="field-area attachments">
+                                            <div *ngFor="let attachment of templateData.attachments; let i = index" class="attachment"
+                                                [class]="{'progress': !!attachment.loader}"
+                                                [style]="{'background-size': (attachment.progress || 0) + '%'}">
+                                                <a target="_blank" [download]="attachment.name" [href]="attachment.url"
+                                                    (click)="attachmentClick($event, attachment)"
+                                                    class="name">{{attachment.name}}</a>&nbsp;<span class="size">
+                                                    ({{attachment.size |filesize}})
+                                                </span><i (click)="removeAttachment(attachment, i)" aria-hidden="true"
+                                                    class="delete fa fa-times"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </dx-validation-group>
+                </dx-scroll-view>
+            </div>
+            <div class="ai-prompt-widget" *ngIf="showAIPrompt">
+                    <div class="prompt-header d-flex justify-content-between align-items-center"
+                        style="margin-bottom: 20px; outline: none">
+                        <h5 class="your-prompt-title">
+                            <img src="./assets/common/icons/AI.png" class="img" />
+                            Your AI Prompt
+                        </h5>
+                        <div style="display: flex; align-items: center;">
+                            <h5 class="your-prompt-title prompt-library-title flex items-center gap-2" id="promptLibraryToggle"
+                                (click)="propmtTooltipVisible = true" [class]="'prompt-liabrary-button id' + uniqId">
+                                Your Prompt Library
+                                <img class="img" src="./assets/common/icons/down-arrow.png" />
+                            </h5>
+
+                            <dx-tooltip [width]="380" [position]="'bottom'" [(visible)]="propmtTooltipVisible"
+                                            [target]="'.prompt-liabrary-button.id' + uniqId">
+                                <div *dxTemplate="let data of 'content'" class="tags-container text-left p-2 prompt-tooltip-scroll" style="max-height: 500px; overflow-y: scroll; overflow-x: hidden; scrollbar-width: thin; -webkit-overflow-scrolling: touch; cursor: default;" tabindex="0" (wheel)="onPromptTooltipWheel($event)">
+                                    <div *ngFor="let group of groupedPromptLibrary; let groupIndex = index">
+                                        <!-- Group Title with toggle -->
+                                        <div class="group-header" (click)="toggleGroup(group)" style="cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eee;">
+                                            <strong>{{ group.category }}</strong>
+                                            <span style="float: right;">{{ group.expanded ? '▲' : '▼' }}</span>
+                                        </div>
+
+                                        <!-- Prompt list inside group -->
+                                        <div class="group-items" *ngIf="group.expanded">
+                                            <div *ngFor="let item of group.prompts; let itemIndex = index"
+                                                class="tags-list-item"
+                                                (click)="selectedPromptItem(item, groupIndex, itemIndex)"
+                                                style="cursor: pointer; padding: 8px 0; border-bottom: 1px solid #f5f5f5;">
+                                                <div class="prompt-title" style="font-weight: bold; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.title }}</div>
+                                                <div class="prompt-subtext" style="font-size: 12px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.subtext }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </dx-tooltip>
+
+                        </div>
+
                     </div>
-                    <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
-                </div>
-            </dx-validation-group>
-        </dx-scroll-view>
-        <div class="bank-decode-wrapper" *ngIf="!templateEditMode">
-            <bank-code-decode [content]="data.body" [source]="'CRMEmail'" (onDecodeStart)="startLoading()" (onDecodeFinish)="finishLoading()"></bank-code-decode>
+
+                    <dx-scroll-view showScrollbar="onHover" #scrollAIView>
+                        <div class="content-container" *ngIf="!showAIOption">
+                            <div class="html-container-div" contenteditable="true" dir="ltr" lang="en" autocomplete="off" autocorrect="off"
+                                autocapitalize="off" spellcheck="false" data-gramm="false" data-gramm_editor="false"
+                                (input)="onContentChange($event)" (paste)="onPaste($event)" #contentEditableDiv>
+                                <p>
+                                    Consectetur adipiscing elit, <strong>sed do eiusmod</strong> tempor incididunt
+                                    ut
+                                    labore
+                                    et dolore.
+                                </p>
+                                <ul class="styled-list">
+                                    <li>
+                                        <strong>Customer Name and Business:</strong>
+                                        <div class="list-content">Adam Smith, <br> Samsung International LLC</div>
+                                    </li>
+                                    <li>
+                                        <strong>Purpose of the email:</strong>
+                                        <div class="list-content">
+                                            voluptatem accusantium doloremque laudantium, totam
+                                            rem
+                                            aperiam
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <strong>Prior communications:</strong>
+                                        <div class="list-content">
+                                            Ab illo inventore veritatis et quasi architecto beatae
+                                            vitae dicta sunt explicabo.
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <strong>Tone of the email:</strong>
+                                        <div class="list-content">
+                                            Nemo enim ipsam voluptatem quia voluptas sit
+                                            aspernatur
+                                            aut odit aut fugit
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <strong>Styling Preferences:</strong>
+                                        <div class="list-content">
+                                            Sed quia consequuntur magni dolores eos qui ratione
+                                            voluptatem sequi nesciunt.
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <strong>Specific details to include:</strong>
+                                        <div class="list-content">
+                                            Neque porro quisquam est, qui dolorem ipsum quia dolor
+                                            sit
+                                            amet, consectetur.
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div>
+                                    <strong>The email must include:</strong>
+                                    <div>1. Numquam eius modi tempora incidunt</div>
+                                    <div>2. Labore et dolore magnam aliquam</div>
+                                    <div>3. Ut enim ad minima veniam, quis nostrum.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </dx-scroll-view>
+
+                    <div class="prompt-footer" style="outline: none">
+                        <div style="display: flex; align-items: center;">
+                            <div class="gpt-model-toggle" id="aiModelToggle"
+                                (click)="aiTooltipVisible = true" [class]="'ai-model-button id' + uniqId">
+                                <img class="img" src="./assets/common/icons/openai-white.png" />
+                            </div>
+                            <dx-tooltip [width]="250" [position]="'bottom'" [(visible)]="aiTooltipVisible"
+                                [target]="'.ai-model-button.id' + uniqId">
+                                <div *dxTemplate="let data of 'content'" class="tags-container">
+                                    <dx-list height="calc(100% - 40px)" [selectionMode]="'single'" [dataSource]="aiModels"
+                                        [itemTemplate]="'aiTemplate'" (onItemClick)="selectedAIItem($event)">
+                                        <div *dxTemplate="let data of 'aiTemplate'" class="tags-list-item" [class.selected]="data.id==selectedItemId">
+                                            <img [src]="'./assets/common/icons/' + data.icon" alt="icon"
+                                                class="ai-model-icon" />
+                                            {{ data.name }}
+                                        </div>
+                                    </dx-list>
+                                </div>
+                            </dx-tooltip>
+                        </div>
+                        <button class="button-generate-ai-message" (click)="generateAIMessage()">
+                            {{processing ? 'Generating..': 'Generate AI Message' }}
+                        </button>
+                        <button class="cancel-button" (click)="cancelAIMessage()">Cancel</button>
+                    </div>
+
+                    <!-- <div class="left-buttons">
+                        <div class="ai-genrate-btn" (click)="getChatGptResponse(contentEditableDiv)">
+                            <span>
+                                {{processing ? 'Generating..' :'Write with AI'}}
+                            </span>
+                        </div>
+                    </div>  -->
+            </div>
         </div>
+        <!-- <div class="bank-decode-wrapper" *ngIf=" false">
+            <bank-code-decode [content]="data.body" [source]="'CRMEmail'" (onDecodeStart)="startLoading()"
+                (onDecodeFinish)="finishLoading()"></bank-code-decode>
+        </div> -->
     </div>
 </modal-dialog>

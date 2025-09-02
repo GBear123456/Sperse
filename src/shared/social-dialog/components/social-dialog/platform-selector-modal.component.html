@@ -1,0 +1,94 @@
+<div class="platform-selector-modal" *ngIf="isVisible" [class.dark-theme]="isDark$ | async">
+  <div class="modal-overlay" (click)="closeModal()"></div>
+  <div class="modal-content">
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">Select Link Type</h2>
+      <div class="header-actions">
+       
+        <button class="view-mode-btn" (click)="toggleViewMode()" [class.active]="isGridView">
+          <div>
+            <svg *ngIf="!isGridView" class="grid-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 3h7v7H3V3zM14 3h7v7h-7V3zM3 14h7v7H3v-7zM14 14h7v7h-7v-7z" fill="currentColor"/>
+            </svg>
+            <svg *ngIf="isGridView" class="grid-icon" xmlns="http://www.w3.org/2000/svg"  width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 12h.01"></path><path d="M3 18h.01"></path><path d="M3 6h.01"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M8 6h13"></path></svg>
+            
+          </div>
+          <div class="view-mode-btn-text">{{ isGridView ? 'View as list' : 'View as icons' }}</div>
+        </button>
+        <button class="close-btn" (click)="closeModal()">
+          <svg class="close-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Search an app or platform to add your URL link"
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+      >
+      <button 
+        *ngIf="searchTerm" 
+        class="clear-search-btn" 
+        (click)="searchTerm = ''"
+        type="button"
+      >
+        <svg class="clear-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- No Search Results -->
+    <div class="no-results" *ngIf="searchTerm && filteredPlatforms.length === 0">
+      <div class="no-results-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="no-results-text">No platforms found</div>
+      <div class="no-results-suggestion">Try a different search term</div>
+    </div>
+
+    <!-- Platform List View -->
+    <div class="platform-list" *ngIf="!isGridView && filteredPlatforms.length > 0" #platformList>
+      <div 
+        *ngFor="let platform of filteredPlatforms" 
+        class="platform-item"
+        [class.selected]="platform.id === selectedPlatformId"
+        (click)="selectPlatform(platform)"
+        [attr.data-platform-id]="platform.id"
+      >
+        <div class="platform-icon">
+          <img [src]="platform.icon" [alt]="platform.name" class="icon-image">
+        </div>
+        <span class="platform-name">{{ platform.name }}</span>
+      </div>
+    </div>
+
+    <!-- Platform Icons Grid View -->
+    <div class="platform-grid" *ngIf="isGridView && filteredPlatforms.length > 0" #platformGrid>
+      <div 
+        *ngFor="let platform of filteredPlatforms" 
+        class="platform-grid-item"
+        [class.selected]="platform.id === selectedPlatformId"
+        (click)="selectPlatform(platform)"
+        [attr.data-platform-id]="platform.id"
+        [attr.data-tooltip]="platform.name"
+      >
+        <div class="platform-grid-icon" >
+          <img [src]="platform.icon" [alt]="platform.name" class="icon-image">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

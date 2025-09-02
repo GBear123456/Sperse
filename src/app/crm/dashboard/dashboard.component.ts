@@ -6,6 +6,7 @@ import {
   ViewChild,
   OnInit,
   ChangeDetectorRef,
+  HostListener,
 } from '@angular/core';
 import { RouteReuseStrategy, ActivatedRoute, Router } from '@angular/router';
 
@@ -55,6 +56,10 @@ import { LeftMenuComponent } from '../shared/common/left-menu/left-menu.componen
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service';
 import { SettingsHelper } from '../../../shared/common/settings/settings.helper';
+import { KpiCardData } from './kpi-card';
+import { CurrencyDialogComponent, CurrencyDialogData } from './currency-dialog/currency-dialog.component';
+
+// Chart data interfaces
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -153,6 +158,59 @@ export class DashboardComponent implements AfterViewInit, OnInit {
 
   menuSide: 'left' | 'right' = 'left';
 
+  // KPI Cards Data
+  grossEarnings = 0;
+  totalCustomers = 0;
+  activeSubscriptions = 0;
+  pendingCancels = 0;
+  selectedCurrency: any = null;
+  availableCurrencies: any[] = [];
+  currencySearchTerm = '';
+  filteredCurrencies: any[] = [];
+
+  // KPI Cards Configuration
+  kpiCards: KpiCardData[] = [
+    {
+      title: 'GROSS EARNINGS',
+      value: this.grossEarnings,
+      icon: 'fa fa-dollar',
+      cardType: 'gross-earnings',
+      showCurrencySelector: true,
+      currencyText: 'USD - US Dollar',
+      statusBadge: 'Active',
+      selectedCurrency: this.selectedCurrency,
+      availableCurrencies: this.availableCurrencies,
+      convertedValue: this.grossEarnings
+    },
+    {
+      title: 'CUSTOMERS',
+      value: this.totalCustomers,
+      icon: 'fa fa-users',
+      cardType: 'customers'
+    },
+    {
+      title: 'ACTIVE SUBSCRIPTIONS',
+      value: this.activeSubscriptions,
+      icon: 'fa fa-desktop',
+      cardType: 'subscriptions'
+    },
+    {
+      title: 'PENDING CANCELS',
+      value: this.pendingCancels,
+      icon: 'fa fa-bolt',
+      cardType: 'cancels'
+    }
+  ];
+
+  // Dashboard version selector
+  selectedVersion: 'v1' | 'v2' = 'v1';
+
+  // Date range for charts
+  chartStartDate = new Date('2025-07-22');
+  chartEndDate = new Date('2025-08-21');
+  chartComparisonStartDate = new Date('2025-06-21');
+  chartComparisonEndDate = new Date('2025-07-21');
+
   constructor(
     private router: Router,
     private appService: AppService,
@@ -189,12 +247,287 @@ export class DashboardComponent implements AfterViewInit, OnInit {
       this.loadStatus(true);
     }
 
+    // Load currencies
+    this.loadCurrencies();
+
+    // Subscribe to dashboard totals data
+    this.subscribeToDashboardTotals();
+
+    // Set initial contact group filter
+    if (this.filterModelContactGroup.items.element.value) {
+      this.dashboardWidgetsService.setGroupIdForTotals(
+        this.filterModelContactGroup.items.element.value
+      );
+    }
+
+    // Set initial organization unit filters if available
+    if (this.filterModelOrgUnit.items.element.value && 
+        this.filterModelOrgUnit.items.element.value.length > 0) {
+      this.dashboardWidgetsService.setOrgUnitIdsForTotals(
+        this.filterModelOrgUnit.items.element.value
+      );
+    }
+
     const introAcceptedCache = this.cacheService.get(this.introAcceptedCacheKey);
     /** Show crm wizard if there is no cache for it */
     if (!introAcceptedCache || introAcceptedCache === 'false') {
       this.cacheService.set(this.introAcceptedCacheKey, 'false');
       this.openDialog();
     }
+  }
+
+  /**
+   * Loads available currencies from the currency service
+   * Sets the default currency and updates the KPI cards
+   */
+  private loadCurrencies(): void {
+    this.currencyService.currencies$.subscribe(currencies => {
+      if (currencies && currencies.length > 0) {
+        console.log('Currencies loaded:', currencies);
+        this.availableCurrencies = currencies;
+        this.filteredCurrencies = [...currencies]; // Initialize filtered currencies
+        // Set default currency (USD if available, otherwise first currency)
+        const defaultCurrency = currencies.find(c => c.id === 'USD') || currencies[0];
+        this.selectedCurrency = defaultCurrency;
+        console.log('Default currency set to:', this.selectedCurrency);
+        
+        // Update dashboard widgets service with default currency
+        this.dashboardWidgetsService.setCurrencyIdForTotals(defaultCurrency.id);
+        
+        this.updateGrossEarningsForCurrency();
+        this.updateKpiCards();
+      } else {
+        console.warn('No currencies available');
+        // Set fallback values
+        this.availableCurrencies = [];
+        this.filteredCurrencies = [];
+        this.selectedCurrency = null;
+        this.updateKpiCards();
+      }
+    }, error => {
+      console.error('Error loading currencies:', error);
+      // Set fallback values on error
+      this.availableCurrencies = [];
+      this.filteredCurrencies = [];
+      this.selectedCurrency = null;
+      this.updateKpiCards();
+    });
+  }
+
+  /**
+   * Filters currencies based on search term
+   */
+  filterCurrencies(): void {
+    if (!this.currencySearchTerm.trim()) {
+      this.filteredCurrencies = [...this.availableCurrencies];
+    } else {
+      const searchTerm = this.currencySearchTerm.toLowerCase();
+      this.filteredCurrencies = this.availableCurrencies.filter(currency => 
+        currency.id.toLowerCase().includes(searchTerm) ||
+        currency.name.toLowerCase().includes(searchTerm) ||
+        currency.symbol.toLowerCase().includes(searchTerm)
+      );
+    }
+  }
+
+  /**
+   * TrackBy function for currency list performance
+   */
+  trackByCurrency(index: number, currency: any): string {
+    return currency.id;
+  }
+
+  /**
+   * Handles currency change events from the KPI card component
+   * @param event - Currency change event containing current and available currencies
+   */
+  onCurrencyChange(event: any): void {
+    console.log('Currency change event:', event);
+    if (event && event.availableCurrencies) {
+      // Open currency selection dialog
+      this.openCurrencyDialog();
+    }
+  }
+
+  /**
+   * Opens the currency selection dialog
+   */
+  openCurrencyDialog(): void {
+    const dialogConfig = {
+      width: '400px',
+      maxWidth: '90vw',
+      maxHeight: '80vh',
+      padding: '0px',
+      data: {
+        currencies: this.availableCurrencies,
+        selectedCurrency: this.selectedCurrency
+      } as CurrencyDialogData,
+      disableClose: false,
+      autoFocus: true
+    };
+
+    const dialogRef = this.dialog.open(CurrencyDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe((selectedCurrency: any) => {
+      if (selectedCurrency) {
+        this.selectCurrency(selectedCurrency);
+      }
+    });
+  }
+
+  /**
+   * Selects a specific currency from the dialog
+   * @param currency - The currency to select
+   */
+  selectCurrency(currency: any): void {
+    if (currency && currency.id !== this.selectedCurrency?.id) {
+      const previousCurrency = this.selectedCurrency;
+      this.selectedCurrency = currency;
+      
+      // Update the gross earnings value based on currency
+      this.updateGrossEarningsForCurrency();
+      this.updateKpiCards();
+      
+      // Update dashboard widgets service with new currency
+      this.dashboardWidgetsService.setCurrencyIdForTotals(currency.id);
+      
+      // Show notification
+      this.showCurrencyChangeNotification(previousCurrency, currency);
+      
+      // Trigger currency changed animation
+      this.setCurrencyChangedState(true);
+    }
+  }
+
+  /**
+   * Shows a notification when currency changes
+   * @param previousCurrency - The previously selected currency
+   * @param newCurrency - The newly selected currency
+   */
+  private showCurrencyChangeNotification(previousCurrency: any, newCurrency: any): void {
+    if (previousCurrency && newCurrency) {
+      console.log(`Currency changed from ${previousCurrency.id} to ${newCurrency.id}`);
+      // In a real implementation, you might want to show a toast notification here
+      // For now, we'll just log to console
+    }
+  }
+
+  /**
+   * Sets the loading state for the gross earnings KPI card
+   * @param isLoading - Whether the card is in loading state
+   */
+  private setLoadingState(isLoading: boolean): void {
+    this.kpiCards = this.kpiCards.map(card => {
+      if (card.cardType === 'gross-earnings') {
+        return {
+          ...card,
+          isLoading: isLoading
+        };
+      }
+      return card;
+    });
+    this.changeDetectorRef.markForCheck();
+  }
+
+  /**
+   * Sets the currency changed state to trigger animation
+   * @param changed - Whether the currency has changed
+   */
+  private setCurrencyChangedState(changed: boolean): void {
+    this.kpiCards = this.kpiCards.map(card => {
+      if (card.cardType === 'gross-earnings') {
+        return {
+          ...card,
+          currencyChanged: changed
+        };
+      }
+      return card;
+    });
+    
+    if (changed) {
+      // Remove the changed state after animation completes
+      setTimeout(() => {
+        this.setCurrencyChangedState(false);
+      }, 600);
+    }
+    
+    this.changeDetectorRef.markForCheck();
+  }
+
+  /**
+   * Updates the gross earnings value based on the selected currency
+   * Uses conversion rates to calculate the equivalent value
+   */
+  private updateGrossEarningsForCurrency(): void {
+    // This is a simplified currency conversion
+    // In a real implementation, you would call an API to get the actual converted amount
+    const conversionRates: { [key: string]: number } = {
+      'USD': 1.0,
+      'EUR': 0.85,
+      'GBP': 0.73,
+      'JPY': 110.0,
+      'CAD': 1.25,
+      'AUD': 1.35,
+      'CHF': 0.92,
+      'CNY': 6.45,
+      'INR': 74.5,
+      'BRL': 5.2,
+      'MXN': 20.0,
+      'KRW': 1100.0,
+      'SGD': 1.35,
+      'HKD': 7.8,
+      'SEK': 8.5,
+      'NOK': 8.8,
+      'DKK': 6.3,
+      'PLN': 3.8,
+      'CZK': 21.5,
+      'HUF': 300.0
+    };
+
+    if (this.selectedCurrency && conversionRates[this.selectedCurrency.id]) {
+      const rate = conversionRates[this.selectedCurrency.id];
+      this.grossEarnings = Math.round(148491.48 * rate * 100) / 100; // Round to 2 decimal places
+    } else {
+      // If currency not found, keep the original value
+      this.grossEarnings = 148491.48;
+    }
+  }
+
+  /**
+   * Updates the KPI cards with new currency and value data
+   */
+  private updateKpiCards(): void {
+    // Update all KPI cards with current values
+    this.kpiCards = this.kpiCards.map(card => {
+      if (card.cardType === 'gross-earnings') {
+        return {
+          ...card,
+          value: this.grossEarnings,
+          selectedCurrency: this.selectedCurrency,
+          availableCurrencies: this.availableCurrencies,
+          convertedValue: this.grossEarnings
+        };
+      } else if (card.cardType === 'customers') {
+        return {
+          ...card,
+          value: this.totalCustomers
+        };
+      } else if (card.cardType === 'subscriptions') {
+        return {
+          ...card,
+          value: this.activeSubscriptions
+        };
+      } else if (card.cardType === 'cancels') {
+        return {
+          ...card,
+          value: this.pendingCancels
+        };
+      }
+      return card;
+    });
+    
+    // Trigger change detection
+    this.changeDetectorRef.markForCheck();
   }
 
   ngAfterViewInit(): void {
@@ -323,6 +656,9 @@ export class DashboardComponent implements AfterViewInit, OnInit {
       this.refreshClientsByRegion();
       this.refreshTotalsBySource();
       this.initFilterConfig();
+      
+      // Refresh dashboard totals data
+      this.dashboardWidgetsService.refresh();
     } else {
       this.showLoadingSpinner = false;
     }
@@ -368,5 +704,68 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     this.lifeCycleSubject.deactivate.next();
     this.filtersService.unsubscribe();
     this.dialog.closeAll();
+  }
+
+  /**
+   * Subscribes to dashboard totals data and updates KPI cards
+   */
+  private subscribeToDashboardTotals(): void {
+    // Configure dashboard widgets service with required filters
+    this.configureDashboardWidgetsService();
+    
+    this.dashboardWidgetsService.totalsData$
+      .pipe(
+        takeUntil(this.lifeCycleSubject.deactivate$)
+      )
+      .subscribe((totalsData: any) => {
+        if (totalsData) {
+          // Update KPI card values from API response
+          this.grossEarnings = totalsData.newOrderAmount || 0;
+          this.totalCustomers = totalsData.newClientCount || 0;
+          
+          // Note: activeSubscriptions and pendingCancels are not available in the current API response
+          // this.activeSubscriptions = totalsData.activeSubscriptions || 0;
+          // this.pendingCancels = totalsData.pendingCancels || 0;
+          
+          // Update KPI cards with new values
+          this.updateKpiCards();
+          
+          // Trigger change detection
+          this.changeDetectorRef.markForCheck();
+        }
+      });
+  }
+
+  /**
+   * Configures the dashboard widgets service with required filters
+   */
+  private configureDashboardWidgetsService(): void {
+    // Set contact group filter
+    if (this.filterModelContactGroup.items.element.value) {
+      this.dashboardWidgetsService.setGroupIdForTotals(
+        this.filterModelContactGroup.items.element.value
+      );
+    }
+
+    // Set currency filter
+    if (this.selectedCurrency) {
+      this.dashboardWidgetsService.setCurrencyIdForTotals(this.selectedCurrency.id);
+    }
+
+    // Set organization unit filters if available
+    if (this.filterModelOrgUnit.items.element.value && 
+        this.filterModelOrgUnit.items.element.value.length > 0) {
+      this.dashboardWidgetsService.setOrgUnitIdsForTotals(
+        this.filterModelOrgUnit.items.element.value
+      );
+    }
+  }
+
+  /**
+   * Switches between dashboard versions
+   */
+  switchVersion(version: 'v1' | 'v2'): void {
+    this.selectedVersion = version;
+    this.changeDetectorRef.markForCheck();
   }
 }

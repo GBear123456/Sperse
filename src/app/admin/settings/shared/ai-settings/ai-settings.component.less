@@ -67,15 +67,16 @@
   }
 
   .form-control {
-    border: none;
+    border: none !important;
 
     .base-label {
-      .dark-theme & {
-        color: #fff;
-      }
       p {
         margin: 0;
-        color: #020817;
+        color: var(--text-color);
+      }
+
+      .dark-theme & {
+        color: #fff;
       }
 
       p:nth-child(2) {
@@ -99,7 +100,7 @@
       .dx-placeholder {
         font-family: Plus Jakarta Sans;
         letter-spacing: 0em;
-        color: #10213a;
+        color: var(--input-placeholder);
         font-size: 0.875rem;
         line-height: 1.25rem;
         font-weight: 500;
@@ -112,7 +113,7 @@
 
       input {
         border: 1px solid hsl(var(--border));
-        border-radius: 10px;
+        border-radius: 4px;
       }
     }
   }
@@ -121,8 +122,8 @@
   .stable-diffusion,
   .eleven-labs {
     .personal-api {
-      background-color: rgb(0 0 0);
-      color: rgb(255 255 255);
+      background-color: var(--sidebar-bg);
+      color: var(--text-color);
       border-radius: 0.5rem;
       padding: 1.25rem;
       margin: 1.5rem 0;
@@ -132,12 +133,16 @@
         align-items: center;
         justify-content: space-between;
         background: transparent;
-        color: rgb(255 255 255);
+        color: var(--text-color);
 
         .base-label {
           p {
             font-size: 1rem;
-            color: white;
+            color: var(--text-color);
+          }
+
+          .dark-theme & {
+            color: #fff;
           }
 
           .base-icon-button {
@@ -202,5 +207,10 @@
         color: rgb(31 142 232);
       }
     }
+  }
+
+  ::ng-deep .dx-item-content,
+  .dx-scrollview-content {
+    background-color: var(--card-bg) !important;
   }
 }

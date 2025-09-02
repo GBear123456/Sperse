@@ -45,6 +45,15 @@ import { DxChartModule, DxFileManagerModule } from 'devextreme-angular';
 import { DxPieChartModule } from 'devextreme-angular';
 import { FileUploadModule } from 'ng2-file-upload';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
+import { NgxFileDropModule } from 'ngx-file-drop';
+import { CKEditorModule } from 'ckeditor4-angular';
+
+// Chart modules for analytics dashboard
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { KpiCardModule } from './dashboard/kpi-card';
+import { CustomersChartModule } from './dashboard/customers-chart';
+
+
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
@@ -89,6 +98,7 @@ import { SliceModule } from '@app/shared/common/slice/slice.module';
 import { MapModule } from '@app/shared/common/slice/map/map.module';
 import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
+import { CurrencyDialogComponent } from './dashboard/currency-dialog/currency-dialog.component';
 import { InvoiceGridMenuModule } from '@app/crm/invoices/invoice-grid-menu/invoice-grid-menu.module';
 import { ReportsComponent } from '@app/crm/reports/reports.component';
 import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dropdown.component';
@@ -118,6 +128,7 @@ import { CrmContactGroupGuard } from './crm-contact-group-guard';
 import { ZapierModule } from '@shared/common/zapier/zapier.module';
 import { LeadConversionJourneyComponent } from './traffic-stats/lead-conversion-journey/lead-conversion-journey.component';
 import { AggregateAnalyticsDashboardComponent } from './traffic-stats/aggregate-analytics-dashboard/aggregate-analytics-dashboard.component';
+import { SocialDialogModule } from '@shared/social-dialog';
 
 import {
   LucideAngularModule,
@@ -206,6 +217,8 @@ import { LocationNetworkCardComponent } from './traffic-stats/lead-conversion-jo
 import { DeviceSessionPanelComponent } from './traffic-stats/lead-conversion-journey/components/device-session-panel/device-session-panel.component';
 import { CustomFieldsTrackingComponent } from './traffic-stats/lead-conversion-journey/components/custom-fields-tracking/custom-fields-tracking.component';
 import { UrlAgentPanelComponent } from './traffic-stats/lead-conversion-journey/components/url-agent-panel/url-agent-panel.component';
+import {CreateMailTemplateModalComponent} from './shared/create-mail-template-modal/create-mail-template-modal.component'
+
 
 @NgModule({
   imports: [
@@ -279,6 +292,8 @@ import { UrlAgentPanelComponent } from './traffic-stats/lead-conversion-journey/
     LeftMenuModule,
     ZapierModule,
     EditTenantModule,
+    CKEditorModule,
+    SocialDialogModule,
     LucideAngularModule.pick({
       House,
       Users,
@@ -330,6 +345,10 @@ import { UrlAgentPanelComponent } from './traffic-stats/lead-conversion-journey/
       ArrowLeft,
       ArrowRight,
     }),
+    NgxFileDropModule,
+    NgxChartsModule,
+    KpiCardModule,
+    CustomersChartModule,
   ],
   declarations: [
     ClientsComponent,
@@ -399,6 +418,8 @@ import { UrlAgentPanelComponent } from './traffic-stats/lead-conversion-journey/
     DeviceSessionPanelComponent,
     CustomFieldsTrackingComponent,
     UrlAgentPanelComponent,
+    CreateMailTemplateModalComponent,
+    CurrencyDialogComponent
   ],
   providers: [
     ImportServiceProxy,
@@ -422,6 +443,7 @@ import { UrlAgentPanelComponent } from './traffic-stats/lead-conversion-journey/
     UpdateCommissionableDialogComponent,
     UpdateCommissionRateDialogComponent,
     EditTypeItemDialogComponent,
+    CurrencyDialogComponent,
   ],
 })
 export class CrmModule {

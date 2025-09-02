@@ -266,7 +266,10 @@
       }
       .outgoing-field,
       .ingoing-field {
-        background: var(--card-bg);
+        background: #f8fafc;
+        .dark-theme & {
+            background: var(--card-bg);
+        }
         height: 53px;
         margin-top: 34px;
         font-family: var(--app-font-family);
@@ -278,6 +281,8 @@
         padding: 15px;
         border-radius: 10px;
         color: var(--text-color);
+        display: flex;
+        align-items: center;
       }
       .ingoing-field {
         ::ng-deep dx-switch {

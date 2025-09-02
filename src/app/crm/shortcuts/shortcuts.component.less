@@ -3,7 +3,15 @@
   position: relative;
   padding: 55px 5px 0px 25px;
 
-  background: var(--sidebar-bg);
+  background: rgba(214, 238, 255, 0.6);
+  background-image: url(../../../assets/common/images/bg-shortcuts.svg);
+  background-size: cover;
+
+  .dark-theme & {
+    background: var(--sidebar-bg);
+    background-image: none;
+  }
+
   min-height: calc(100vh - 75px);
   width: 100%;
 
@@ -72,7 +80,10 @@
       height: 269px;
       margin-right: 15px;
       border-radius: 14px;
-      background: var(--navbar-bg);
+      background: rgba(255, 255, 255, 0.65);
+      .dark-theme & {
+        background: var(--navbar-bg);
+      }
       display: inline-block;
       position: relative;
       cursor: pointer;
@@ -81,7 +92,10 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background: var(--sidebar-bg);
+        background: #fff;
+        .dark-theme & {
+          background: var(--sidebar-bg);
+        }
         border-radius: 10px;
         height: 177px;
         margin: 8px 8px 0;
@@ -120,6 +134,9 @@
           border-radius: 10px;
           margin-bottom: 5px;
           background: var(--card-bg);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
 
           &:last-child {
             margin-bottom: 0;
@@ -143,8 +160,8 @@
             gap: 8px;
             width: 65px;
             float: right;
-            text-align: center;
             border-radius: 7px;
+            padding: 0 10px;
             border: 0;
             height: 29px;
             margin: 5px;
@@ -255,6 +272,24 @@
           }
         }
         ::ng-deep dx-data-grid {
+          .dx-data-row {
+            background: #fff;
+            .dark-theme & {
+              background: var(--navbar-bg);
+            }
+          }
+          .dx-datagrid-headers {
+            background: #fff;
+            .dark-theme & {
+              background: var(--navbar-bg);
+            }
+          }
+          .dx-datagrid-scroll-container {
+            background: #fff;
+            .dark-theme & {
+              background: var(--navbar-bg);
+            }
+          }
           &#gridContainer .dx-datagrid-headers .dx-column-lines td,
           &#gridContainer .dx-datagrid-headers .dx-datagrid-table td {
             height: 48px !important;
@@ -312,8 +347,6 @@
           border-bottom: 1px solid transparent !important;
         }
         .dx-datagrid-headers {
-          border: none;
-
           .dx-column-indicators {
             float: none !important;
             margin: 0 10px 0 0 !important;
@@ -433,28 +466,46 @@
   }
 
   ::ng-deep .dx-data-row {
-    background-color: var(--navbar-bg);
+    background: transparent;
+    .dark-theme & {
+      background-color: var(--navbar-bg);
+    }
   }
   ::ng-deep .dx-datagrid-headers {
-    background: var(--navbar-bg);
+    background: transparent;
+    .dark-theme & {
+      background: var(--navbar-bg);
+    }
   }
-  .grid-wrapper {
-    background: var(--navbar-bg);
+  ::ng-deep .grid-wrapper {
+    background: #fff;
+    .dark-theme & {
+      background: var(--navbar-bg);
+    }
   }
   ::ng-deep .dx-datagrid {
-    background: var(--navbar-bg);
+    background: transparent;
+    .dark-theme & {
+      background: var(--navbar-bg);
+    }
   }
   ::ng-deep .dx-freespace-row {
-    background: var(--navbar-bg);
+    background: transparent;
+    .dark-theme & {
+      background: var(--navbar-bg);
+    }
   }
 
   ::ng-deep .dx-texteditor-input {
-    background-color: var(--sidebar-bg) !important;
+    background-color: transparent !important;
   }
 
   ::ng-deep .sales-grid {
     .wrapper {
-      background: var(--navbar-bg) !important;
+      background: transparent;
+      .dark-theme & {
+        background: var(--navbar-bg) !important;
+      }
     }
   }
 }

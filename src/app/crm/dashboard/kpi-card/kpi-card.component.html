@@ -1,0 +1,24 @@
+<div class="kpi-card" [ngClass]="cardData.cardType">
+  <div class="card-header">
+    <div class="d-flex flex-column">
+        <div class="card-title">
+          {{ cardData.title }}
+        </div>
+        <div class="card-value">{{ formattedValue }}</div>
+    </div>
+    <div class="card-icon">
+      <i [class]="cardData.icon"></i>
+    </div>
+  </div>
+  
+  
+  <div class="currency-selector" *ngIf="showCurrencySelector" 
+       [ngClass]="{ 'loading': isLoading, 'currency-changed': currencyChanged }" 
+       (click)="onCurrencyClick()"
+       title="Click to change currency">
+    <span>{{ currentCurrencyText }}</span>
+    <span class="status-badge active" *ngIf="showStatusBadge">{{ cardData.statusBadge }}</span>
+    <div class="flex-1"></div>
+    <mat-icon>expand_more</mat-icon>
+  </div>
+</div>
