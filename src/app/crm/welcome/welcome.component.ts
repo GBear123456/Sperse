@@ -105,10 +105,6 @@ export class WelcomeComponent implements OnInit {
         public layoutService: LayoutService,
         public dialog: MatDialog
     ) {
-        if (this.appService.isHostTenant)
-            this.router.navigate(['app/crm/dashboard']);
-
-
         if (this.isZendeskEnabled)
             this.ngxZendeskWebwidgetService.initZendesk();
     }
@@ -274,9 +270,6 @@ export class WelcomeComponent implements OnInit {
     }
 
     activate() {
-        if (this.appService.isHostTenant)
-            return this.router.navigate(['app/crm/dashboard']);
-
         this.lifeCycleSubject.activate.next();
         this.ui.overflowHidden(true);
         this.appService.isClientSearchDisabled = true;
