@@ -41,6 +41,7 @@ import { SearchTooltipModule } from "@shared/common/dialogs/search-tooltip/searc
 import { EmailSmtpSettingsService } from "@shared/common/settings/email-smtp-settings.service";
 import { ToolbarService } from "@app/shared/common/toolbar/toolbar.service";
 import { CurrencyCRMService } from "store/currencies-crm-store/currency.service";
+import { AiChatbotModule } from "./shared/components/ai-chatbot/ai-chatbot.module";
 
 export class ZendeskConfig extends NgxZendeskWebwidgetConfig {
     override lazyLoad = true;
@@ -66,6 +67,7 @@ export class ZendeskConfig extends NgxZendeskWebwidgetConfig {
         AppStoreModule,
         SearchTooltipModule,
         SharedModule,
+        AiChatbotModule,
     ],
     providers: [
         AppService,

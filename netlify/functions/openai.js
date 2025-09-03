@@ -5,28 +5,65 @@ const openai = new OpenAI({
 });
 
 exports.handler = async (event) => {
+  // Handle CORS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+      },
+      body: ''
+    };
+  }
+
   try {
-    const { model, prompt, system } = JSON.parse(event.body);
+    const requestBody = JSON.parse(event.body);
+    const { model, messages, max_tokens, temperature } = requestBody;
+
+    // Validate required fields
+    if (!messages || !Array.isArray(messages)) {
+      return {
+        statusCode: 400,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ error: 'Messages array is required' })
+      };
+    }
 
     const completion = await openai.chat.completions.create({
       model: model || 'gpt-3.5-turbo',
-      messages: [
-        { role: 'system', content: system || 'You are a helpful assistant.' },
-        { role: 'user', content: prompt }
-      ],
-      max_tokens: 4096,
-      temperature: 0.5,
-      top_p: 1,
+      messages: messages,
+      max_tokens: max_tokens || 1000,
+      temperature: temperature || 0.7,
     });
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ response: completion.choices[0].message.content })
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 
+        response: completion.choices[0].message.content,
+        usage: completion.usage
+      })
     };
   } catch (err) {
+    console.error('OpenAI API Error:', err);
+    
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: err.message })
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 
+        error: err.message || 'An error occurred while processing your request'
+      })
     };
   }
 };
