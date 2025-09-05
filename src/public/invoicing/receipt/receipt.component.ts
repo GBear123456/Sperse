@@ -1,10 +1,14 @@
 /** Core imports */
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, HostListener, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
     GetInvoiceReceiptInfoOutput, InvoiceEventInfo, InvoiceStatus,
     UserInvoiceServiceProxy,
-    TenantHostServiceProxy
+    TenantHostServiceProxy,
+    GetExternalUserDataInput,
+    ExternalUserDataServiceProxy,
+    GetExternalUserDataOutput,
+    SetDiscordForContactInput
 } from '@root/shared/service-proxies/service-proxies';
 
 /** Third party imports */
@@ -18,6 +22,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { AppConsts } from '@shared/AppConsts';
 import { EventDurationHelper } from '@shared/crm/helpers/event-duration-types.enum';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'public-receipt',
@@ -27,7 +32,7 @@ import { EventDurationHelper } from '@shared/crm/helpers/event-duration-types.en
         './receipt.component.less'
     ],
     encapsulation: ViewEncapsulation.None,
-    providers: [TenantHostServiceProxy]
+    providers: [TenantHostServiceProxy, ExternalUserDataServiceProxy]
 })
 export class ReceiptComponent implements OnInit {
     loading: boolean = true;
@@ -49,6 +54,12 @@ export class ReceiptComponent implements OnInit {
     preventRedirect: boolean = Boolean(this.activatedRoute.snapshot.queryParamMap.get('preventRedirect'));
     usePortal = !!this.activatedRoute.snapshot.queryParamMap.get('usePortal');
 
+    discordPopup: Window;
+    discordUserId: string;
+    discordUserName: string;
+    discordUserUpdated: boolean;
+    discordUserUpdating: boolean;
+
     constructor(
         private router: Router,
         private activatedRoute: ActivatedRoute,
@@ -56,7 +67,8 @@ export class ReceiptComponent implements OnInit {
         private userInvoiceService: UserInvoiceServiceProxy,
         private tenantHostService: TenantHostServiceProxy,
         private clipboardService: ClipboardService,
-        public conditionsModalService: ConditionsModalService
+        private externalUserDataService: ExternalUserDataServiceProxy,
+        public conditionsModalService: ConditionsModalService,
     ) {
     }
 
@@ -186,7 +198,7 @@ export class ReceiptComponent implements OnInit {
     initEventsInfo() {
         if (!this.invoiceInfo.events)
             return;
-            
+
         for (let event of this.invoiceInfo.events) {
             if (event.time) {
                 let baseDateMomentUtc = event.date ? moment(new Date(event.date)).utc() : moment().utc();
@@ -237,5 +249,84 @@ export class ReceiptComponent implements OnInit {
             return '';
         }
         return `${displayName}: ${value}\n`;
+    }
+
+    discordOAuth() {
+        let scopes = ['email', 'identify', 'guilds.join'];
+        let scopesString = scopes.join('%20');
+        let redirectUrl = `${AppConsts.remoteServiceBaseUrl}/account/oauth-redirect?provider=discord`;
+        let popupUrl = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + this.invoiceInfo.discordInfo.discordAppId +
+            `&redirect_uri=${redirectUrl}&state=${this.tenantId}&scope=${scopesString}&prompt=none`;
+
+        this.discordPopup = window.open(popupUrl, 'discordOAuth', 'width=500,height=600');
+        if (!this.discordPopup) {
+            abp.notify.error('Please allow popups to authorize in Discord');
+            return;
+        }
+
+        const popupCheckInterval = setInterval(() => {
+            if (this.discordPopup.closed) {
+                this.discordPopup = null;
+                clearInterval(popupCheckInterval);
+                window.removeEventListener('message', messageHandler);
+            }
+        }, 500);
+
+        const messageHandler = (event: MessageEvent) => {
+            if (event.origin !== AppConsts.remoteServiceBaseUrl)
+                return;
+
+            if (event.data.code) {
+                const authCode = event.data.code;
+                this.externalUserDataService.getUserData(new GetExternalUserDataInput({
+                    tenantId: 0,
+                    provider: 'Discord',
+                    exchangeCode: authCode,
+                    loginReturnUrl: redirectUrl,
+                    options: null,
+                    vault: true
+                })).subscribe(res => {
+                    this.discordUserId = res.additionalData["Id"];
+                    this.discordUserName = res.additionalData["Username"];
+                });
+            } else {
+                abp.notify.error(event.data.error || 'Failed to get ');
+            }
+
+            clearInterval(popupCheckInterval);
+            window.removeEventListener('message', messageHandler);
+            this.discordPopup.close();
+            this.discordPopup = null;
+        };
+
+        window.addEventListener('message', messageHandler);
+    }
+
+    confirmDiscord() {
+        if (!this.discordUserId)
+            return;
+
+        this.discordUserUpdating = true;
+        this.userInvoiceService.setDiscordForContact(new SetDiscordForContactInput({
+            tenantId: this.tenantId,
+            publicId: this.publicId,
+            discordUserId: this.discordUserId,
+            discordUserName: this.discordUserName
+        })).pipe(finalize(() => {
+            this.discordUserUpdating = false;
+        })).subscribe(() => {
+            this.discordUserUpdated = true;
+        });
+    }
+
+    @HostListener('window:beforeunload', ['$event'])
+    unloadNotification($event: any) {
+        if (this.invoiceInfo.discordInfo?.showDiscordAuthButton && !this.discordUserUpdated) {
+            $event.returnValue = true;
+            if (!this.discordUserId)
+                return 'Please connect your Discord account';
+            else
+                return 'Please confirm your Discord account';
+        }
     }
 }
