@@ -1000,7 +1000,7 @@ export class SingleProductComponent implements OnInit {
     discordOAuth() {
         let scopes = ['email', 'identify', 'guilds.join'];
         let scopesString = scopes.join('%20');
-        let redirectUrl = `${AppConsts.remoteServiceBaseUrl}/account/oauth-redirect?provider=discord`;
+        let redirectUrl = `${AppConsts.appConfigOrigin.remoteServiceBaseUrl}/account/oauth-redirect?provider=discord`;
         let popupUrl = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + this.productInfo.data.discordAppId +
             `&redirect_uri=${redirectUrl}&state=${this.tenantId}&scope=${scopesString}&prompt=none`;
 
