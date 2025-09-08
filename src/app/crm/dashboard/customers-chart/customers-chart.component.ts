@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import Chart from 'chart.js';
 import { Subject } from 'rxjs';
 import { DashboardServiceProxy, GetCustomerAndLeadStatsOutput, GroupByPeriod } from '@shared/service-proxies/service-proxies';
@@ -21,7 +21,7 @@ export interface CustomerChartData {
   templateUrl: './customers-chart.component.html',
   styleUrls: ['./customers-chart.component.less']
 })
-export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit {
+export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
   @Input() currentPeriodData: CustomerChartData[] = [];
   @Input() comparisonPeriodData: CustomerChartData[] = [];
   @Input() currentPeriodTotal: number = 0;
@@ -32,6 +32,7 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
   @Input() comparisonEndDate: Date = new Date('2025-07-21');
   @Input() title: string = 'CUSTOMERS';
   @Input() icon: string = 'people';
+  @Input() customerStatsData: any[] = [];
 
   @ViewChild('chartCanvas', { static: false }) chartCanvas!: ElementRef<HTMLCanvasElement>;
   
@@ -55,6 +56,13 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
   ngOnInit() {
     this.initializeChartData();
     this.loadCustomerChartData();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // When customerStatsData changes, update the chart
+    if (changes['customerStatsData'] && this.customerStatsData && this.customerStatsData.length > 0) {
+      this.transformApiDataToChartData(this.customerStatsData);
+    }
   }
 
   ngAfterViewInit() {
@@ -94,9 +102,8 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
   private loadCustomerChartData(): void {
     this.isLoading = true;
     
-    // Convert dates to moment objects
+    // Convert start date to moment object
     const startDate = moment(this.startDate);
-    const endDate = moment(this.endDate);
     
     // Call the API with the required parameters
     this.dashboardServiceProxy
@@ -105,7 +112,7 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
         30,                   // periodCount (default 30 days)
         false,                // isCumulative=false
         startDate,            // startDate
-        undefined,              // endDate
+        undefined,            // endDate (not needed when periodCount is provided)
         'C',                  // contactGroupId=C (Client group)
         undefined,            // sourceContactId (not needed)
         undefined             // sourceOrganizationUnitIds (not needed)
