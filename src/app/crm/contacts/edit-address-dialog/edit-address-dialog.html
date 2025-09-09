@@ -1,59 +1,75 @@
-<h2 mat-dialog-title (mousedown)="mouseDown($event)">
-    {{ data.editDialogTitle || ls.l('ContactInfoDialogTitle', ls.l(action), ls.l('Address'))}}
-</h2>
-<dx-scroll-view showScrollbar="always">
-    <mat-dialog-content>
-        <dx-validation-group (onInitialized)="initValidationGroup($event)">
-            <div *ngIf="data.showType">
-                <label>{{ls.l('Type')}}</label>
-                <dx-select-box
-                    name="usageType"
-                    [dataSource]="types"
-                    displayExpr="name"
-                    valueExpr="id"
-                    [disabled]="!isEditAllowed"
-                    [(value)]="data.usageTypeId"
-                    itemTemplate="itemTemplate"
-                    fieldTemplate="fieldTemplate">
-                    <div *dxTemplate="let item of 'fieldTemplate'">
-                        <div class="type-item-wrapper ">
-                            <dx-text-box class="addressType type-{{item?.id}}"
-                                         [value]="item?.name"
-                                         [readOnly]="true"
-                                         [hint]="getUsageTypeHint(item)">
-                            </dx-text-box>
-                        </div>
-                    </div>
-                    <div *dxTemplate="let item of 'itemTemplate'">
-                        <div [title]="getUsageTypeHint(item)">{{item.name}}</div>
-                    </div>
-                    <dx-validator>
-                        <dxi-validation-rule type="required" [message]="ls.l('TypeRequired')"></dxi-validation-rule>
-                    </dx-validator>
-                </dx-select-box>
+<!-- Modern Address Dialog UI -->
+<div class="address-dialog-container" (mousedown)="mouseDown($event)">
+    <!-- Header Section -->
+    <div class="dialog-header">
+        <div class="header-content">
+            <div class="icon-container">
+                <div class="address-icon">
+                    <i class="fa fa-home"></i>
+                </div>
             </div>
-            <div style="position:relative;">
-                <label class="address">{{ls.l('Address')}}</label>
+            <div class="title-section">
+                <h2 class="dialog-title">{{action === 'Edit' ? 'Edit Address' : 'Add Address'}}</h2>
+                <p class="dialog-subtitle">{{action === 'Edit' ? 'Edit the address details' : 'Add a new address'}}</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button mat-button mat-dialog-close class="cancel-btn">{{ls.l('Cancel')}}</button>
+            <button *ngIf="isEditAllowed" mat-button class="save-btn" (click)="onSave()">
+                {{action == 'Edit' ? ls.l('Update') : 'Save'}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="dialog-content">
+        <dx-validation-group (onInitialized)="initValidationGroup($event)">
+            
+            <!-- Address Type Selection Tabs -->
+            <div *ngIf="data.showType" class="type-selection">
+                <div class="type-tabs">
+                    <div class="type-tab" 
+                         [class.active]="getAddressType() === 'Home'"
+                         (click)="setAddressType('Home')">
+                        <i class="fa fa-home"></i>
+                        <span>Home</span>
+                    </div>
+                    <div class="type-tab" 
+                         [class.active]="getAddressType() === 'Work'"
+                         (click)="setAddressType('Work')">
+                        <i class="fa fa-briefcase"></i>
+                        <span>Work</span>
+                    </div>
+                    <div class="type-tab" 
+                         [class.active]="getAddressType() === 'Other'"
+                         (click)="setAddressType('Other')">
+                        <i class="fa fa-map-marker"></i>
+                        <span>Other</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Street Address Field -->
+            <div class="field-group">
                 <input *ngIf="!googleAutoComplete"
                        type="text"
                        name="Address"
-                       placeholder=""
+                       placeholder="Street address"
                        [(ngModel)]="address"
-                       class="dx-texteditor-input"
+                       class="form-control"
                        [disabled]="!isEditAllowed"/>
                 <input *ngIf="googleAutoComplete"
                        #addressInput
                        type="text"
                        name="Address"
-                       placeholder=""
+                       placeholder="Street address"
                        [(ngModel)]="address"
-                       class="dx-texteditor-input"
+                       class="form-control"
                        [disabled]="!isEditAllowed"
                        (onAddressChange)="onAddressChanged($event)"
                        ngx-google-places-autocomplete/>
             </div>
-            <div>
-                <label>{{ls.l('Country')}}</label>
+            <!-- Country Field -->
+            <div class="field-group">
                 <dx-select-box
                     [dataSource]="countries"
                     displayExpr="name"
@@ -63,7 +79,8 @@
                     [searchEnabled]="true"
                     [(value)]="data.countryName"
                     fieldTemplate="field"
-                    (onValueChanged)="onCountryChange($event)">
+                    (onValueChanged)="onCountryChange($event)"
+                    placeholder="Country">
                     <div *dxTemplate="let data of 'field'">
                         <div class="custom-item">
                             <dx-text-box class="state"
@@ -75,89 +92,103 @@
                 </dx-select-box>
             </div>
 
-            <div>
-                <label>{{ls.l('State')}}</label>
-                <dx-select-box
-                    [acceptCustomValue]="true"
-                    [dataSource]="getCountryStates() | async"
-                    displayExpr="name"
-                    valueExpr="name"
-                    name="state"
-                    [disabled]="!isEditAllowed"
-                    [searchEnabled]="true"
-                    [(value)]="data.stateName"
-                    fieldTemplate="field"
-                    (onValueChanged)="stateChanged($event)"
-                    (onCustomItemCreating)="onCustomStateCreate($event)">
-                    <div *dxTemplate="let data of 'field'">
-                        <div class="custom-item">
-                            <dx-text-box class="state" [value]="data?.name"></dx-text-box>
+            <!-- State and City Row -->
+            <div class="field-row">
+                <div class="field-group state-field">
+                    <dx-select-box
+                        [acceptCustomValue]="true"
+                        [dataSource]="getCountryStates() | async"
+                        displayExpr="name"
+                        valueExpr="name"
+                        name="state"
+                        [disabled]="!isEditAllowed"
+                        [searchEnabled]="true"
+                        [(value)]="data.stateName"
+                        fieldTemplate="field"
+                        (onValueChanged)="stateChanged($event)"
+                        (onCustomItemCreating)="onCustomStateCreate($event)"
+                        placeholder="State"
+                        [showClearButton]="false">
+                        <div *dxTemplate="let data of 'field'">
+                            <div class="custom-item">
+                                <dx-text-box class="state" [value]="data?.name" placeholder="State"></dx-text-box>
+                            </div>
                         </div>
-                    </div>
-                </dx-select-box>
-            </div>
+                    </dx-select-box>
+                </div>
 
-            <div>
-                <label>{{ls.l('City')}}</label>
-                <dx-text-box
-                    name="city"
-                    [disabled]="!isEditAllowed"
-                    maxLength="50"
-                    [(value)]="data.city">
-                </dx-text-box>
+                <div class="field-group city-field">
+                    <input
+                        type="text"
+                        name="city"
+                        class="form-control"
+                        [disabled]="!isEditAllowed"
+                        maxlength="50"
+                        [(ngModel)]="data.city"
+                        placeholder="City">
+                </div>
             </div>
-            <div *ngIf="data.showNeighborhood">
-                <label>{{ls.l('Neighborhood')}}</label>
-                <dx-text-box
+            <!-- Neighborhood Field (if enabled) -->
+            <div *ngIf="data.showNeighborhood" class="field-group">
+                <input
+                    type="text"
                     name="neighborhood"
+                    class="form-control"
                     [disabled]="!isEditAllowed"
-                    maxLength="128"
-                    [(value)]="data.neighborhood">
-                </dx-text-box>
+                    maxlength="128"
+                    [(ngModel)]="data.neighborhood"
+                    placeholder="Neighborhood">
             </div>
-            <div>
-                <label>{{ls.l('ZipCode')}}</label>
-                <dx-text-box
+
+            <!-- Zip Code Field -->
+            <div class="field-group">
+                <input
+                    type="text"
                     name="zip"
+                    class="form-control"
                     [disabled]="!isEditAllowed"
-                    maxLength="10"
-                    [(value)]="data.zip">
-                </dx-text-box>
+                    maxlength="10"
+                    [(ngModel)]="data.zip"
+                    placeholder="Zip code">
             </div>
 
-            <div *ngIf="!data.hideComment">
-                <label>{{ls.l('Comment')}}</label>
-                <dx-text-box
+            <!-- Comment Field -->
+            <div *ngIf="!data.hideComment" class="field-group comment-field">
+                <textarea
                     name="comment"
+                    class="form-control"
                     [disabled]="!isEditAllowed"
-                    [(value)]="data.comment">
-                </dx-text-box>
+                    [(ngModel)]="data.comment"
+                    placeholder="Note about this address (optional)"
+                    rows="3">
+                </textarea>
             </div>
 
-            <p *ngIf="!data.hideCheckboxes">
-                <dx-check-box
-                    text="{{ls.l('ActiveContact')}}"
-                    [disabled]="!isEditAllowed"
-                    [(value)]="data.isActive">
-                </dx-check-box>
-                <dx-check-box
-                    [text]="contactsService.getConfirmedContactText(data)"
-                    [disabled]="!isEditAllowed"
-                    [(value)]="data.isConfirmed">
-                </dx-check-box>
-            </p>
+            <!-- Status Checkboxes -->
+            <div *ngIf="!data.hideCheckboxes" class="status-checkboxes">
+                <div class="checkbox-item">
+                    <dx-check-box
+                        text="Active"
+                        [disabled]="!isEditAllowed"
+                        [(value)]="data.isActive">
+                    </dx-check-box>
+                </div>
+                <div class="checkbox-item">
+                    <dx-check-box
+                        text="Confirmed"
+                        [disabled]="!isEditAllowed"
+                        [(value)]="data.isConfirmed">
+                    </dx-check-box>
+                </div>
+            </div>
         </dx-validation-group>
-    </mat-dialog-content>
-</dx-scroll-view>
-<mat-dialog-actions>
-    <button *ngIf="isEditAllowed && data.isDeleteAllowed && data.deleteItem && action === 'Edit'"
-            mat-button
-            class="button-layout button-clean-red"
-            (click)="data.deleteItem($event)">
-        <i class="delete fa fa-times" aria-hidden="true"></i>{{ls.l('Delete')}}
-    </button>
-    <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
-    <button *ngIf="isEditAllowed" mat-button class="button-layout button-primary" (click)="onSave()">
-        {{action == 'Edit' ? ls.l('Update'): action}}
-    </button>
-</mat-dialog-actions>
+    </div>
+
+    <!-- Delete Button (for edit mode) -->
+    <div *ngIf="isEditAllowed && data.isDeleteAllowed && data.deleteItem && action === 'Edit'" class="delete-section">
+        <button mat-button class="delete-btn" (click)="data.deleteItem($event)">
+            <i class="fa fa-trash"></i>
+            {{ls.l('Delete')}}
+        </button>
+    </div>
+</div>
