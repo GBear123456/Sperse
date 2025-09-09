@@ -446,6 +446,43 @@ export class AppearanceSettingsComponent extends SettingsComponentBase implement
         this.portalMenuItems.splice(event.toIndex, 0, event.itemData);
     }
 
+    onFontChange(event, fontType: 'fontName' | 'tabularFont') {
+        if (this.selectedFeatureType === AppFeatures.Admin && event.value) {
+            this.someColorChanged = true;
+            this.applyFontChangesImmediately(event.value, fontType);
+        }
+    }
+
+    private applyFontChangesImmediately(fontName: string, fontType: 'fontName' | 'tabularFont') {
+        const rootStyle = (document.querySelector(':root') as HTMLElement).style;
+        
+        if (fontType === 'fontName') {
+            // Load the font if it's a Google font
+            if (this.fontService.supportedCustomFonts.includes(fontName)) {
+                // Load custom font
+                DomHelper.addStyleSheet('custom-font-' + Date.now(), './assets/fonts/fonts-' + fontName.toLowerCase() + '.css');
+            } else {
+                // Load Google font
+                DomHelper.addStyleSheet('googleapis-' + Date.now(), 'https://fonts.googleapis.com/css?family=' + fontName);
+            }
+            
+            // Apply the font to CSS variable
+            rootStyle.setProperty('--app-font-family', fontName);
+        } else if (fontType === 'tabularFont') {
+            // Load the tabular font if it's a Google font
+            if (this.fontService.supportedCustomFonts.includes(fontName)) {
+                // Load custom font
+                DomHelper.addStyleSheet('custom-font-' + Date.now(), './assets/fonts/fonts-' + fontName.toLowerCase() + '.css');
+            } else {
+                // Load Google font
+                DomHelper.addStyleSheet('googleapis-' + Date.now(), 'https://fonts.googleapis.com/css?family=' + fontName);
+            }
+            
+            // Apply the tabular font to CSS variable
+            rootStyle.setProperty('--app-tabular-font-family', fontName);
+        }
+    }
+
     private applyColorChangesImmediately() {
         const rootStyle = (document.querySelector(':root') as HTMLElement).style;
         
