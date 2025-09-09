@@ -356,7 +356,8 @@
                         [(value)]="colorSettings.fontName"
                         [searchEnabled]="true"
                         [readOnly]="selectedFeatureType === featureTypeList[0].type"
-                        [dataSource]="fontFamilyList">
+                        [dataSource]="fontFamilyList"
+                        (onValueChanged)="onFontChange($event, 'fontName')">
                         <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
                             {{ data }}
                         </div>
@@ -371,7 +372,8 @@
                         [(value)]="colorSettings.tabularFont"
                         [searchEnabled]="true"
                         [readOnly]="selectedFeatureType === featureTypeList[0].type"
-                        [dataSource]="tabularFontFamilyList">
+                        [dataSource]="tabularFontFamilyList"
+                        (onValueChanged)="onFontChange($event, 'tabularFont')">
                         <div *dxTemplate="let data of 'item'" style="font-family: {{data}}!important">
                             {{ data }}
                         </div>
