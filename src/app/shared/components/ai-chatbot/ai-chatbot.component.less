@@ -21,8 +21,11 @@
   }
 
   .chatbot-icon {
-    color: white;
-    font-size: 24px;
+    .chatbot-icon-img {
+      width: 24px;
+      height: 24px;
+      filter: brightness(0) invert(1); // Make the icon white
+    }
   }
 
   .chatbot-badge {
@@ -92,8 +95,10 @@
       font-weight: 600;
       font-size: 16px;
 
-      i {
-        font-size: 18px;
+      .chatbot-title-icon {
+        width: 18px;
+        height: 18px;
+        filter: brightness(0) invert(1); // Make the icon white
       }
     }
 
@@ -118,8 +123,10 @@
           background: rgba(255, 255, 255, 0.3);
         }
 
-        i {
-          font-size: 12px;
+        .control-icon {
+          width: 12px;
+          height: 12px;
+          filter: brightness(0) invert(1); // Make the icon white
         }
       }
     }
@@ -187,8 +194,10 @@
           justify-content: center;
           flex-shrink: 0;
 
-          i {
-            font-size: 14px;
+          .avatar-icon {
+            width: 16px;
+            height: 16px;
+            filter: brightness(0) invert(1); // Make the icon white
           }
         }
 
@@ -333,8 +342,10 @@
             cursor: not-allowed;
           }
 
-          i {
-            font-size: 14px;
+          .send-icon {
+            width: 14px;
+            height: 14px;
+            filter: brightness(0) invert(1); // Make the icon white
           }
         }
       }
@@ -362,8 +373,10 @@
             color: var(--text-color);
           }
 
-          i {
-            font-size: 12px;
+          .action-icon {
+            width: 12px;
+            height: 12px;
+            filter: brightness(0) saturate(100%) invert(50%); // Make the icon gray
           }
         }
       }

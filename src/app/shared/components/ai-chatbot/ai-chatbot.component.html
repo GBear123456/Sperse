@@ -1,7 +1,7 @@
 <!-- AI Chatbot Toggle Button -->
 <div class="ai-chatbot-toggle" *ngIf="!isOpen" (click)="toggleChatbot()">
   <div class="chatbot-icon">
-    <i class="fas fa-robot"></i>
+    <img src="assets/common/icons/AI.png" alt="AI Assistant" class="chatbot-icon-img">
   </div>
   <div class="chatbot-badge" *ngIf="isTyping">
     <div class="typing-indicator">
@@ -17,18 +17,18 @@
   <!-- Header -->
   <div class="chatbot-header">
     <div class="chatbot-title">
-      <i class="fas fa-robot"></i>
+      <img src="assets/common/icons/AI.png" alt="AI Assistant" class="chatbot-title-icon">
       <span>AI Assistant</span>
     </div>
     <div class="chatbot-controls">
       <button class="control-btn minimize-btn" (click)="minimizeChatbot()" *ngIf="!isMinimized" title="Minimize">
-        <i class="fas fa-minus"></i>
+        <img src="assets/common/icons/arrow-down.svg" alt="Minimize" class="control-icon">
       </button>
       <button class="control-btn maximize-btn" (click)="maximizeChatbot()" *ngIf="isMinimized" title="Maximize">
-        <i class="fas fa-plus"></i>
+        <img src="assets/common/icons/maximize.svg" alt="Maximize" class="control-icon">
       </button>
       <button class="control-btn close-btn" (click)="toggleChatbot()" title="Close">
-        <i class="fas fa-times"></i>
+        <img src="assets/common/icons/close.svg" alt="Close" class="control-icon">
       </button>
     </div>
   </div>
@@ -39,7 +39,8 @@
     <div class="messages-container" #messageContainer>
       <div class="message" *ngFor="let message of messages" [ngClass]="message.role">
         <div class="message-avatar">
-          <i class="fas" [ngClass]="message.role === 'user' ? 'fa-user' : 'fa-robot'"></i>
+          <img *ngIf="message.role === 'user'" src="assets/common/icons/person.svg" alt="User" class="avatar-icon">
+          <img *ngIf="message.role === 'assistant'" src="assets/common/icons/AI.png" alt="AI Assistant" class="avatar-icon">
         </div>
         <div class="message-content">
           <div class="message-text" [innerHTML]="formatMessage(message.content)"></div>
@@ -50,7 +51,7 @@
       <!-- Typing Indicator -->
       <div class="message assistant typing" *ngIf="isTyping">
         <div class="message-avatar">
-          <i class="fas fa-robot"></i>
+          <img src="assets/common/icons/AI.png" alt="AI Assistant" class="avatar-icon">
         </div>
         <div class="message-content">
           <div class="typing-indicator">
@@ -92,12 +93,12 @@
           (click)="sendMessage()" 
           [disabled]="!currentMessage.trim() || isTyping"
           title="Send message">
-          <i class="fas fa-paper-plane"></i>
+          <img src="assets/common/icons/send.svg" alt="Send" class="send-icon">
         </button>
       </div>
       <div class="input-actions">
         <button class="action-btn" (click)="clearConversation()" title="Clear conversation">
-          <i class="fas fa-trash"></i>
+          <img src="assets/common/icons/trash.svg" alt="Clear" class="action-icon">
         </button>
       </div>
     </div>
