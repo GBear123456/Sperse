@@ -71,7 +71,8 @@ export class EditAddressDialog {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: EditAddressDialogData
     ) {
-        if (this.validateAddress(data)) {
+        // Check if this is an existing address by looking for an ID
+        if (data.id) {
             this.action = 'Edit';
             let address = data.streetAddress;
             if (this.googleAutoComplete) {
@@ -80,8 +81,9 @@ export class EditAddressDialog {
                 address += `,${data.city},${data.stateName},${data.countryName}`;
             }
             this.address = address;
-        } else
+        } else {
             this.action = 'Create';
+        }
         this.googleAutoComplete = Boolean(window['google']);
 
         this.addressTypesLoad();
@@ -225,5 +227,40 @@ export class EditAddressDialog {
 
     getUsageTypeHint(item) {
         return item ? this.ls.l('ContactInformation_AddressTypeTooltip_' + item.id) : '';
+    }
+
+    getAddressType() {
+        if (!this.data.showType) return null;
+        
+        // Map usage type to display name
+        const type = this.types.find(t => t.id === this.data.usageTypeId);
+        if (!type) return 'Home';
+        
+        const typeName = type.name.toLowerCase();
+        if (typeName.includes('home') || typeName.includes('personal')) return 'Home';
+        if (typeName.includes('work') || typeName.includes('business')) return 'Work';
+        return 'Other';
+    }
+
+    setAddressType(type: string) {
+        if (!this.data.showType) return;
+        
+        // Map display name to usage type
+        let targetType;
+        switch (type) {
+            case 'Home':
+                targetType = this.types.find(t => t.name.toLowerCase().includes('home') || t.name.toLowerCase().includes('personal'));
+                break;
+            case 'Work':
+                targetType = this.types.find(t => t.name.toLowerCase().includes('work') || t.name.toLowerCase().includes('business'));
+                break;
+            case 'Other':
+                targetType = this.types.find(t => t.name.toLowerCase().includes('other') || t.name.toLowerCase().includes('additional'));
+                break;
+        }
+        
+        if (targetType) {
+            this.data.usageTypeId = targetType.id;
+        }
     }
 }
