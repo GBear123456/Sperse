@@ -95,6 +95,8 @@ export class RootComponent implements OnInit, AfterViewInit {
                 buttonHighlightedColor = abp.setting.values['App.Appearance.ButtonHighlightedColor'] || AppConsts.defaultButtonHighlightedColor,
                 leftSideMenuColor = abp.setting.values['App.Appearance.LeftsideMenuColor'] || AppConsts.defaultLeftSideMenuColor,
                 borderRadius = abp.setting.values['App.Appearance.BorderRadius'] || AppConsts.defaultBorderRadius,
+                navBackground = abp.setting.values['App.Appearance.NavBackground'] || AppConsts.defaultHeaderBgColor,
+                navTextColor = abp.setting.values['App.Appearance.NavTextColor'] || AppConsts.defaultHeaderTextColor,
                 rootStyle = this.document.querySelector(':root').style;
 
             if (this.fontService.supportedCustomFonts.includes(fontName))
@@ -111,6 +113,9 @@ export class RootComponent implements OnInit, AfterViewInit {
             rootStyle.setProperty('--app-border-radius', borderRadius + 'px');
             rootStyle.setProperty('--app-button-context-color', 
                 abp.setting.values['App.Appearance.ButtonColor'] || '#00a0dc');
+            rootStyle.setProperty('--navbar-bg', navBackground);
+            rootStyle.setProperty('--text-color', navTextColor);
+            rootStyle.setProperty('--sidebar-bg', leftSideMenuColor);
         }
 
         //tenant specific custom css

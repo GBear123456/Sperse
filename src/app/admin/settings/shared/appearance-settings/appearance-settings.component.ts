@@ -434,10 +434,34 @@ export class AppearanceSettingsComponent extends SettingsComponentBase implement
         this.someColorChanged = this.someColorChanged || (event.value != defaultColor && this.selectedFeatureType === AppFeatures.Admin);
         if (!event.value)
             event.component.option('value', defaultColor);
+        
+        // Apply colors immediately for real-time preview
+        if (this.selectedFeatureType === AppFeatures.Admin && event.value) {
+            this.applyColorChangesImmediately();
+        }
     }
 
     onPortalMenuReordered(event) {
         this.portalMenuItems.splice(event.fromIndex, 1);
         this.portalMenuItems.splice(event.toIndex, 0, event.itemData);
+    }
+
+    private applyColorChangesImmediately() {
+        const rootStyle = (document.querySelector(':root') as HTMLElement).style;
+        
+        // Apply header background color
+        if (this.colorSettings.navBackground) {
+            rootStyle.setProperty('--navbar-bg', this.colorSettings.navBackground);
+        }
+        
+        // Apply header text color
+        if (this.colorSettings.navTextColor) {
+            rootStyle.setProperty('--text-color', this.colorSettings.navTextColor);
+        }
+        
+        // Apply left bar color
+        if (this.colorSettings.leftsideMenuColor) {
+            rootStyle.setProperty('--sidebar-bg', this.colorSettings.leftsideMenuColor);
+        }
     }
 }
