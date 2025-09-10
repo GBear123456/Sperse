@@ -1019,7 +1019,7 @@ export class SingleProductComponent implements OnInit {
         }, 500);
 
         const messageHandler = (event: MessageEvent) => {
-            if (event.origin !== AppConsts.remoteServiceBaseUrl)
+            if (event.origin !== AppConsts.appConfigOrigin.remoteServiceBaseUrl)
                 return;
 
             if (event.data.code) {
