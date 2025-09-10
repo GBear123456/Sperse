@@ -10,11 +10,48 @@
     min-width: 450px;
     max-width: 600px;
     background: var(--dialog-bg);
-    border-radius: 12px;
+    border-radius: 8px;
     box-shadow: none;
     overflow: hidden;
     color: var(--text-primary, #1a1a1a);
     transition: background-color 0.3s ease, color 0.3s ease;
+
+    // Dialog type specific styling
+    &.email-dialog {
+        background: #f2f8ff;
+        
+        .dialog-header {
+            background: #f2f8ff;
+        }
+        
+        .dialog-content {
+            background: #f2f8ff;
+        }
+    }
+    
+    &.phone-dialog {
+        background: #f1fdf4;
+        
+        .dialog-header {
+            background: #f1fdf4;
+        }
+        
+        .dialog-content {
+            background: #f1fdf4;
+        }
+    }
+    
+    &.address-dialog {
+        background: #fbf7ff;
+        
+        .dialog-header {
+            background: #fbf7ff;
+        }
+        
+        .dialog-content {
+            background: #fbf7ff;
+        }
+    }
 
     // Header Section
     .dialog-header {
@@ -36,24 +73,24 @@
                 .phone-icon, .envelope-icon, .link-icon {
                     width: 48px;
                     height: 48px;
-                    background: var(--icon-bg, #e8f5e8);
+                    background: #dcfce7; // Light green background for phone
                     border-radius: 8px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    color: var(--icon-color, #4caf50);
+                    color: #16a34a; // Green color for phone
                     font-size: 20px;
                     transition: background-color 0.3s ease, color 0.3s ease;
                 }
 
                 .envelope-icon {
-                    background: var(--icon-bg, #e3f2fd);
-                    color: var(--icon-color, #1976d2);
+                    background: #dbeafe; // Light blue background for email
+                    color: #2563eb; // Blue color for email
                 }
 
                 .link-icon {
-                    background: var(--icon-bg, #fff3e0);
-                    color: var(--icon-color, #ff9800);
+                    background: #f3e8ff; // Light purple background for address/url
+                    color: #9333ea; // Purple color for address/url
                 }
             }
 
@@ -86,13 +123,14 @@
                 background: var(--button-secondary-bg, #ffffff);
                 border: 1px solid var(--button-secondary-border, #d0d0d0);
                 color: var(--button-secondary-text, #333333);
-                padding: 8px;
+                padding: 4px 10px;
                 border-radius: 6px;
                 font-weight: 500;
                 min-width: 54px;
                 transition: all 0.2s ease;
                 font-size: 14px;
                 height: 35px;
+                outline: none;
 
                 &:hover {
                     background: var(--button-secondary-hover, #f5f5f5);
@@ -104,18 +142,19 @@
                 background: var(--button-primary-bg, #1976d2);
                 color: var(--button-primary-text, #ffffff);
                 border: none;
-                padding: 8px;
+                padding: 4px 10px;
                 border-radius: 6px;
                 font-weight: 500;
                 min-width: 54px;
                 transition: all 0.2s ease;
                 font-size: 14px;
                 height: 35px;
-
+                outline: none;
                 &:hover {
                     background: var(--button-primary-hover, #1565c0);
                 }
             }
+            
         }
     }
 
@@ -130,8 +169,8 @@
 
             .type-tabs {
                 display: flex;
-                background: var(--tabs-bg, #f8f9fa);
-                border-radius: 8px;
+                background: var(--tabs-bg, #f1f5f9);
+                border-radius: 6px;
                 padding: 4px;
                 gap: 4px;
                 transition: background-color 0.3s ease;
@@ -143,7 +182,7 @@
                     justify-content: center;
                     gap: 8px;
                     padding: 8px 16px;
-                    border-radius: 6px;
+                    border-radius: 4px;
                     cursor: pointer;
                     transition: all 0.2s ease;
                     font-weight: 500;
@@ -190,13 +229,13 @@
                 width: 100%;
                 height: 44px;
                 padding: 12px;
-                font-size: 16px;
+                font-size: 14px;
                 border: 1px solid var(--input-border, #d0d0d0);
                 border-radius: 6px;
                 background: var(--input-bg, #ffffff);
                 color: var(--input-text, #1a1a1a);
                 transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
-
+                font-weight: 400;
                 &:hover {
                     border-color: var(--input-hover-border, #1976d2);
                 }
@@ -209,7 +248,7 @@
 
                 &::placeholder {
                     color: var(--placeholder-text, #999999);
-                    font-size: 16px;
+                    font-size: 14px;
                 }
 
                 &:focus::placeholder {
@@ -240,7 +279,7 @@
                 ::ng-deep country-phone-number {
                     .phone-input-wrapper {
                         display: flex;
-                        border: 1px solid var(--input-border, #d0d0d0);
+                        // border: 1px solid var(--input-border, #d0d0d0);
                         border-radius: 6px;
                         background: var(--input-bg, #ffffff);
                         overflow: hidden;
@@ -268,10 +307,10 @@
                             flex: 1;
                             border: none;
                             padding: 12px;
-                            font-size: 16px;
+                            font-size: 14px;
                             background: transparent;
                             color: var(--input-text, #1a1a1a);
-
+                            font-weight: 400;
                             &::placeholder {
                                 color: var(--placeholder-text, #999999);
                             }
@@ -343,8 +382,8 @@
                         transition: all 0.2s ease;
 
                         &.dx-checkbox-checked {
-                            background: var(--checkbox-checked-bg, #1976d2);
-                            border-color: var(--checkbox-checked-border, #1976d2);
+                            background: #0f172a !important;
+                            border-color: #0f172a !important;
 
                             &::before {
                                 content: '✓';
@@ -375,22 +414,23 @@
             border-top: none !important;
             float: right;
             transition: border-color 0.3s ease;
-            padding:0px 10px 10px;
+            padding:0px 0px 10px;
             .delete-btn {
-                background: var(--delete-btn-bg, #ffffff);
-                border: 1px solid var(--delete-btn-border, #dc3545);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: transparent;
                 color: var(--delete-btn-text, #dc3545);
-                padding: 8px 16px;
-                border-radius: 6px;
+                padding: 4px 10px;
+                border-radius: 4px;
                 font-weight: 500;
                 transition: all 0.2s ease;
-
+                
                 i {
                     margin-right: 6px;
                 }
-
                 &:hover {
-                    background: var(--delete-btn-hover-bg, #dc3545);
+                    background: #d7727c;
                     color: var(--delete-btn-hover-text, #ffffff);
                 }
             }
@@ -469,13 +509,19 @@
 
         ::ng-deep div.input-group {
             height: 100%;
-
+            border-bottom: none !important;
             input {
                 height: 44px;
             }
 
             .dropdown {
-                margin-top: 6px;
+                
+                height: 100%;
+
+                .dropbtn {
+                    height: 100%;
+                    margin-right: 8px
+                }
             }
 
             .scrollable-menu {
@@ -485,6 +531,62 @@
             }
         }
     }
+    
+    // Dialog type specific button colors
+    &.email-dialog .header-actions .save-btn {
+        background: #2563eb !important;
+        
+        &:hover {
+            background: #1d4ed8 !important;
+        }
+    }
+    
+    &.phone-dialog .header-actions .save-btn {
+        background: #16a34a !important;
+        
+        &:hover {
+            background: #15803d !important;
+        }
+    }
+    
+    &.address-dialog .header-actions .save-btn {
+        background: #9333ea !important;
+        
+        &:hover {
+            background: #7c3aed !important;
+        }
+    }
+}
+
+// Additional specific selectors to ensure button colors are applied
+.contact-dialog-container.phone-dialog .header-actions .save-btn {
+    background: #16a34a !important;
+    
+    &:hover {
+        background: #15803d !important;
+    }
+}
+
+.contact-dialog-container.email-dialog .header-actions .save-btn {
+    background: #2563eb !important;
+    
+    &:hover {
+        background: #1d4ed8 !important;
+    }
+}
+
+.contact-dialog-container.address-dialog .header-actions .save-btn {
+    background: #9333ea !important;
+    
+    &:hover {
+        background: #7c3aed !important;
+    }
+}
+
+// Additional specific selectors for checkbox colors
+.contact-dialog-container .status-checkboxes .checkbox-item ::ng-deep .dx-checkbox .dx-checkbox-icon.dx-checkbox-checked {
+    background: #0f172a !important;
+    border-color: #0f172a !important;
 }
 
 // Dark Theme Support - Using Project's Theme Variables
@@ -524,14 +626,13 @@
     --placeholder-text: var(--input-placeholder);
     --checkbox-bg: var(--input-bg);
     --checkbox-border: var(--input-border);
-    --checkbox-checked-bg: var(--success-color);
-    --checkbox-checked-border: var(--success-color);
+    --checkbox-checked-bg: #0f172a;
+    --checkbox-checked-border: #0f172a;
     --checkbox-checked-text: var(--btn-primary-text);
     --checkbox-text: var(--text-color);
     --delete-btn-bg: var(--button-bg);
     --delete-btn-border: var(--danger-color);
     --delete-btn-text: var(--danger-color);
-    --delete-btn-hover-bg: var(--danger-color);
     --delete-btn-hover-text: var(--btn-primary-text);
     
     // Enhanced shadows for dark mode
@@ -600,8 +701,8 @@
     --placeholder-text: var(--input-placeholder);
     --checkbox-bg: var(--input-bg);
     --checkbox-border: var(--input-border);
-    --checkbox-checked-bg: var(--success-color);
-    --checkbox-checked-border: var(--success-color);
+    --checkbox-checked-bg: #0f172a;
+    --checkbox-checked-border: #0f172a;
     --checkbox-checked-text: var(--btn-primary-text);
     --checkbox-text: var(--text-color);
     --delete-btn-bg: var(--button-bg);
