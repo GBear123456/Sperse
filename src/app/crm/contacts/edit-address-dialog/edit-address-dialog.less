@@ -8,7 +8,7 @@
     display: block;
     min-width: 450px;
     max-width: 600px;
-    background: var(--dialog-bg);
+    background: #fbf7ff; // Address dialog background color
     border-radius: 12px;
     box-shadow: none;
     overflow: hidden;
@@ -22,7 +22,7 @@
         align-items: center;
         padding: 24px 24px 16px;
         border-bottom: none !important;
-        background: var(--dialog-bg);
+        background: #fbf7ff; // Address dialog background color
         min-height: 80px;
         transition: background-color 0.3s ease, border-color 0.3s ease;
 
@@ -35,12 +35,12 @@
                 .address-icon {
                     width: 48px;
                     height: 48px;
-                    background: var(--icon-bg, #f3e5f5);
+                    background: #f3e8ff; // Light purple background for address
                     border-radius: 8px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    color: var(--icon-color, #9c27b0);
+                    color: #9333ea; // Purple color for address
                     font-size: 20px;
                     transition: background-color 0.3s ease, color 0.3s ease;
                 }
@@ -75,13 +75,14 @@
                 background: var(--button-secondary-bg, #ffffff);
                 border: 1px solid var(--button-secondary-border, #d0d0d0);
                 color: var(--button-secondary-text, #333333);
-                padding: 8px;
+                padding: 4px 10px;
                 border-radius: 6px;
                 font-weight: 500;
                 min-width: 54px;
                 transition: all 0.2s ease;
                 font-size: 14px;
                 height: 35px;
+                outline: none;
 
                 &:hover {
                     background: var(--button-secondary-hover, #f5f5f5);
@@ -90,19 +91,20 @@
             }
 
             .save-btn {
-                background: var(--button-primary-bg, #9c27b0);
+                background: #9333ea; // Address dialog button color
                 color: var(--button-primary-text, #ffffff);
                 border: none;
-                padding: 8px;
+                padding: 4px 10px;
                 border-radius: 6px;
                 font-weight: 500;
                 min-width: 54px;
                 transition: all 0.2s ease;
                 font-size: 14px;
                 height: 35px;
+                outline: none;
 
                 &:hover {
-                    background: var(--button-primary-hover, #7b1fa2);
+                    background: #7c3aed; // Darker purple on hover
                 }
             }
         }
@@ -118,8 +120,8 @@
 
             .type-tabs {
                 display: flex;
-                background: var(--tabs-bg, #f8f9fa);
-                border-radius: 8px;
+                background: var(--tabs-bg, #f1f5f9);
+                border-radius: 6px;
                 padding: 4px;
                 gap: 4px;
                 transition: background-color 0.3s ease;
@@ -131,10 +133,10 @@
                     justify-content: center;
                     gap: 8px;
                     padding: 8px 16px;
-                    border-radius: 6px;
+                    border-radius: 4px;
                     cursor: pointer;
                     transition: all 0.2s ease;
-        font-weight: 500;
+                    font-weight: 500;
                     color: var(--tab-text, #666666);
                     background: transparent;
 
@@ -178,7 +180,8 @@
                 width: 100%;
                 height: 44px;
                 padding: 12px;
-                font-size: 16px;
+                font-size: 14px;
+                font-weight: 400;
                 border: 1px solid var(--input-border, #d0d0d0);
                 border-radius: 6px;
                 background: var(--input-bg, #ffffff);
@@ -197,7 +200,7 @@
 
                 &::placeholder {
                     color: var(--placeholder-text, #999999);
-                    font-size: 16px;
+                    font-size: 14px;
                 }
 
                 &:focus::placeholder {
@@ -241,7 +244,8 @@
                 .dx-texteditor-input {
                     height: 44px;
                     padding: 12px;
-                    font-size: 16px;
+                    font-size: 14px;
+                    font-weight: 400;
                     border: 1px solid var(--input-border, #d0d0d0);
                     border-radius: 6px;
                     background: var(--input-bg, #ffffff);
@@ -260,7 +264,7 @@
 
                     &::placeholder {
                         color: var(--placeholder-text, #999999);
-                        font-size: 16px;
+                        font-size: 14px;
                     }
 
                     &:focus::placeholder {
@@ -377,8 +381,8 @@
                         transition: all 0.2s ease;
 
                         &.dx-checkbox-checked {
-                            background: var(--checkbox-checked-bg, #9c27b0);
-                            border-color: var(--checkbox-checked-border, #9c27b0);
+                            background: #0f172a !important;
+                            border-color: #0f172a !important;
 
                             &::before {
                                 content: '✓';
@@ -407,8 +411,8 @@
 
     // Delete Section
     .delete-section {
-        margin-top: 20px;
-        padding-top: 20px;
+        padding:0px 0px 10px;
+
         border-top: 1px solid var(--border-color, #f0f0f0);
         float: right;
         transition: border-color 0.3s ease;
@@ -417,10 +421,13 @@
             background: var(--delete-btn-bg, #ffffff);
             border: 1px solid var(--delete-btn-border, #dc3545);
             color: var(--delete-btn-text, #dc3545);
-            padding: 8px 16px;
+            padding: 4px 10px;
             border-radius: 6px;
             font-weight: 500;
             transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
             i {
                 margin-right: 6px;
@@ -461,8 +468,8 @@
     --tab-active-shadow: var(--shadow-color);
     --checkbox-border: var(--input-border);
     --checkbox-bg: var(--input-bg);
-    --checkbox-checked-bg: var(--primary-color);
-    --checkbox-checked-border: var(--primary-color);
+    --checkbox-checked-bg: #0f172a;
+    --checkbox-checked-border: #0f172a;
     --checkbox-checked-text: var(--btn-primary-text);
     --checkbox-text: var(--text-color);
     --button-secondary-bg: var(--button-bg);
