@@ -94,7 +94,19 @@
                 </dx-select-box>
             </div>
 
-            <!-- State and City Row -->
+            <!-- City Field (Full Width) -->
+            <div class="field-group">
+                <input
+                    type="text"
+                    name="city"
+                    class="form-control"
+                    [disabled]="!isEditAllowed"
+                    maxlength="50"
+                    [(ngModel)]="data.city"
+                    placeholder="City">
+            </div>
+
+            <!-- State and Zip Code Row -->
             <div class="field-row">
                 <div class="field-group state-field">
                     <dx-select-box
@@ -119,17 +131,18 @@
                     </dx-select-box>
                 </div>
 
-                <div class="field-group city-field">
+                <div class="field-group zip-field">
                     <input
                         type="text"
-                        name="city"
+                        name="zip"
                         class="form-control"
                         [disabled]="!isEditAllowed"
-                        maxlength="50"
-                        [(ngModel)]="data.city"
-                        placeholder="City">
+                        maxlength="10"
+                        [(ngModel)]="data.zip"
+                        placeholder="Zip code">
                 </div>
             </div>
+
             <!-- Neighborhood Field (if enabled) -->
             <div *ngIf="data.showNeighborhood" class="field-group">
                 <input
@@ -140,18 +153,6 @@
                     maxlength="128"
                     [(ngModel)]="data.neighborhood"
                     placeholder="Neighborhood">
-            </div>
-
-            <!-- Zip Code Field -->
-            <div class="field-group">
-                <input
-                    type="text"
-                    name="zip"
-                    class="form-control"
-                    [disabled]="!isEditAllowed"
-                    maxlength="10"
-                    [(ngModel)]="data.zip"
-                    placeholder="Zip code">
             </div>
 
             <!-- Comment Field -->
