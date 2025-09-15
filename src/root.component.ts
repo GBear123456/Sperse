@@ -114,7 +114,7 @@ export class RootComponent implements OnInit, AfterViewInit {
             rootStyle.setProperty('--app-button-context-color', 
                 abp.setting.values['App.Appearance.ButtonColor'] || '#00a0dc');
             rootStyle.setProperty('--navbar-bg', navBackground);
-            rootStyle.setProperty('--text-color', navTextColor);
+            rootStyle.setProperty('--nav-text-color', navTextColor);
             rootStyle.setProperty('--sidebar-bg', leftSideMenuColor);
         }
 
