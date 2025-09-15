@@ -18,7 +18,7 @@
       (onEnterKey)="search($event)"
       (onValueChanged)="onSearchValueChanged($event)"
     ></dx-text-box>
-    <div *ngIf="!isSearchMode" class="flex">
+    <div *ngIf="!isSearchMode" class="flex items-center">
       <div class="icon-building"></div>
       <span class="name-role">
         <span class="name">{{ contacts[contactIds?.indexOf(currentContactId)]?.Name }}</span>
