@@ -165,10 +165,18 @@
             background-position: left 18px center;
             background-size: 20px;
             height: 45px;
+            color: #192130;
 
             &:hover,
             &:focus {
                 border-color: var(--m-blue-light);
+            }
+        }
+
+        // Dark theme text color fix
+        body.dark-theme & {
+            input {
+                color: #f1f5f9;
             }
         }
 
