@@ -491,9 +491,9 @@ export class AppearanceSettingsComponent extends SettingsComponentBase implement
             rootStyle.setProperty('--navbar-bg', this.colorSettings.navBackground);
         }
         
-        // Apply header text color
+        // Apply header text color - use specific variable for header text only
         if (this.colorSettings.navTextColor) {
-            rootStyle.setProperty('--text-color', this.colorSettings.navTextColor);
+            rootStyle.setProperty('--nav-text-color', this.colorSettings.navTextColor);
         }
         
         // Apply left bar color
