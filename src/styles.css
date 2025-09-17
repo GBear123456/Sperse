@@ -234,3 +234,7 @@ i.save-to-clipboard {
 .dx-item:hover .email-templates-select-box .fa-times {
     display: inline-block;
 }
+
+.dx-dropdownlist-popup-wrapper .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item-content.dx-selectbox-popup-horizonal-line-spec {
+    border-top: 1px solid hsl(214.3 31.8% 91.4%);
+}

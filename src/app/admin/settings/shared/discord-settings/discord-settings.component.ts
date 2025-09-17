@@ -60,6 +60,7 @@ export class DiscordSettingsComponent extends SettingsComponentBase {
             `${AppConsts.appBaseUrl}/account/login?provider=discord`,
             `${AppConsts.appBaseUrl}/account/signin?provider=discord`,
             `${AppConsts.appBaseUrl}/account/signup?provider=discord`,
+            `${AppConsts.appConfigOrigin.remoteServiceBaseUrl}/account/oauth-redirect?provider=discord`
         ];
     }
 

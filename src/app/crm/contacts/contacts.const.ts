@@ -45,7 +45,7 @@ export enum ProductEmailTags {
     ProductName = 'ProductName',
     ProductDescription = 'ProductDescription',
     ProductQuantity = 'ProductQuantity',
-    ProductSubscriptionOption = 'ProductSubscriptionOption',
+    PriceUnitName = 'PriceUnitName',
     ProductReceiptUrl = 'ProductReceiptUrl',
     ProductInvoiceUrl = 'ProductInvoiceUrl'
 }

@@ -8,7 +8,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 
 /** Application imports */
 import {
-    PayPalSettings,
+    PayPalSettingsDto,
     TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@root/shared/AppConsts';
@@ -32,9 +32,9 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
     readonly ChevronIcon = ChevronDown;
     readonly AlertIcon = AlertCircle
     readonly CreditCardIcon = CreditCard;
-
+    selectedTabIndex: number = 0;
     isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
-    paypalPaymentSettings: PayPalSettings = new PayPalSettings();
+    paypalPaymentSettings: PayPalSettingsDto = new PayPalSettingsDto();
 
     faqs = [
         {
@@ -55,6 +55,10 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
     }
 
     ngOnInit(): void {
+        this.loadSettings();
+    }
+
+    loadSettings() {
         this.startLoading();
         if (this.isPaymentsEnabled) {
             this.tenantPaymentSettingsService.getPayPalSettings()
@@ -68,6 +72,39 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
                     this.changeDetection.detectChanges();
                 })
         }
+    }
+
+    createConnectedAccount() {
+        if (this.isHost || !this.paypalPaymentSettings.isHostAccountEnabled || (this.paypalPaymentSettings && this.paypalPaymentSettings.merchantId))
+            return;
+
+        this.message.confirm('', this.l('Do you want to connect Paypal account ?'), (isConfirmed) => {
+            if (isConfirmed) {
+                this.startLoading();
+                this.tenantPaymentSettingsService.getPayPalPartnerConnectUrl().pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe((url) => {
+                    window.location.href = url;
+                });
+            }
+        });
+    }
+
+    unlinkMerchant() {
+        if (this.isHost || !this.paypalPaymentSettings.merchantId)
+            return;
+
+        this.message.confirm('', this.l('Do you want to unlink Paypal account ?'), (isConfirmed) => {
+            if (isConfirmed) {
+                this.startLoading();
+                this.tenantPaymentSettingsService.unlinkPayPalMerchant().pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe(() => {
+                    this.selectedTabIndex = 0;
+                    this.loadSettings();
+                });
+            }
+        });
     }
 
     getSaveObs(): Observable<any> {
@@ -88,22 +125,5 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
         }
     }
 
-    createConnectedAccount() {
-        // if (this.isHost || !this.stripePaymentSettings.isHostAccountEnabled || (setting && setting.isConnectedAccountSetUpCompleted))
-        //     return;
-
-        // this.message.confirm('', this.l('Do you want to connect Stripe account ?'), (isConfirmed) => {
-        //     if (isConfirmed) {
-        //         this.startLoading();
-        //         let method = setting ?
-        //             this.tenantPaymentSettingsService.connectStripeAccount(setting.id) :
-        //             this.tenantPaymentSettingsService.getConnectOAuthAuthorizeUrl();
-        //         method.pipe(
-        //             finalize(() => this.finishLoading())
-        //         ).subscribe((url) => {
-        //             window.location.href = url;
-        //         });
-        //     }
-        // });
-    }
+    
 }

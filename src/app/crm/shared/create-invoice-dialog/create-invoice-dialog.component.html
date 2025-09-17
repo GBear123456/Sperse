@@ -250,7 +250,7 @@
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>
                                 <div *dxTemplate="let cell of 'item'">
-                                    <span title="{{cell.description}}">{{cell.description}}{{cell.isInStock ? '' : ' (Out of stock)' }}</span>
+                                    <span title="{{cell.description}}">{{cell.description}}{{cell.isInStock ? '' : ' (Out of stock)' }}{{cell.hasRequiredAddOns ? ' (Requires AddOn)' : '' }}</span>
                                     <span class="tax-product" *ngIf="isTaxationEnabled && cell.isStripeTaxationEnabled">(AutoTax)</span>
                                 </div>
                             </dx-select-box>
@@ -299,11 +299,11 @@
                                 width="145px"
                                 height="32px"
                                 displayExpr="unitName"
-                                valueExpr="unitId"
+                                valueExpr="id"
                                 [showDropDownButton]="false"
                                 (onFocusIn)="onFieldFocusIn($event)"
                                 [placeholder]="ls.lr('Select')"
-                                [(value)]="cellData.data.unitId"
+                                [(value)]="cellData.data.priceOptionId"
                                 [dataSource]="cellData.data.units || invoiceUnits"
                                 [dropDownOptions]="{ width: 220 }"
                                 (onValueChanged)="onUnitChanged($event, cellData)"

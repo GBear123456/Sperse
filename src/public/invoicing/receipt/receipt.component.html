@@ -11,7 +11,7 @@
         <div class="header">
             <img src="{{invoiceInfo.tenantLogo}}">
         </div>
-        <div class="content">
+        <div class="info-section content">
             <div class="summary">
                 <div class="icon">
                     <img src="assets/common/images/success.png">
@@ -60,14 +60,29 @@
                 </div>
             </div>
         </div>
-        <div class="downloads" *ngIf="invoiceInfo.resources && invoiceInfo.resources.length">
-            <h1>Downloads</h1>
+        <div class="info-section discord-section" *ngIf="invoiceInfo.discordInfo?.showDiscordAuthButton">
+            <h1 class="info-section-header">Discord</h1>
+            <button type="button" class="btn discord-auth" (click)="discordOAuth()" [disabled]="discordPopup || discordUserUpdating || discordUserUpdated">
+                <span class="discord-icon">Authorize Discord</span>
+            </button>
+            <p *ngIf="discordUserId" class="discord-user-info">
+                <span class="gray">Authorized Discord user:</span><br />
+                <b>{{discordUserName}}</b>&nbsp;<i>({{discordUserId}})</i>
+            </p>
+            <button *ngIf="discordUserId && !discordUserUpdated" type="button" class="btn btn-success" (click)="confirmDiscord()"
+                    [disabled]="discordPopup || discordUserUpdating">
+                Use This Discord <i [ngClass]="{ 'fa fa-spinner fa-spin': discordUserUpdating }"></i>
+            </button>
+            <p class="discord-success-message" *ngIf="discordUserUpdated">Discord account linked successfully</p>
+        </div>
+        <div class="info-section downloads" *ngIf="invoiceInfo.resources && invoiceInfo.resources.length">
+            <h1 class="info-section-header">Downloads</h1>
             <div *ngFor="let resource of invoiceInfo.resources; let i = index" class="resource">
                 <img src="assets/common/icons/{{resource.url ? 'link.png' : 'files.svg'}}"><a target="_blank" [href]="resource.url" class="{{resource.url ? 'link' : 'file'}}">{{resource.name || resource.url}}</a><button (click)="resourceClick($event, resource)"><img src="assets/common/icons/{{resource.url ? 'copy-reciept' : 'download'}}.png">{{resource.url ? 'Copy' : 'Download'}}</button>
             </div>
         </div>
-        <div class="events" *ngIf="invoiceInfo.events && invoiceInfo.events.length">
-            <h1>Events</h1>
+        <div class="info-section events" *ngIf="invoiceInfo.events && invoiceInfo.events.length">
+            <h1 class="info-section-header">Events</h1>
             <div *ngFor="let resource of invoiceInfo.events; let i = index" class="event">
                 <div class="row header-row">
                     <div class="col-11 event-name">{{resource.productName}}</div>

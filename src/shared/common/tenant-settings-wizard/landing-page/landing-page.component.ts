@@ -72,7 +72,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
 
     metaKeywords: string[] = [];
 
-    products$: Observable<DataSource<ProductDto, number>> = this.productProxy.getProducts(undefined, undefined, false, undefined)
+    products$: Observable<DataSource<ProductDto, number>> = this.productProxy.getProducts(undefined, undefined, false, undefined, false)
         .pipe(
             map(v => {
                 let data = v.filter(p => p.isPublished == true).map(x => {
@@ -98,7 +98,7 @@ export class LandingPageComponent implements ITenantSettingsStepComponent {
             text: item
         };
     });
-    checkoutThemes = ['Default', 'Classic', 'WooCommerce'];
+    checkoutThemes = ['Default', 'Classic', 'Woo','Stripe','Shop','Virtual'];
 
     checkoutFields = [
         'FirstName', 'LastName', 'Email', 'PhoneNumber', 'Shipping', 'Billing', 'DateOfBirth', 'Company',

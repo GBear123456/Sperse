@@ -121,8 +121,8 @@ import { ExternalAuthInfoComponent } from '../shared/helpers/external-auth-info/
 // import { EpcvipEmailSettingsComponent } from './settings/shared/epcvip-email-settings/epcvip-email-settings.component';
 // import { RapidSettingsComponent } from './settings/shared/rapid-settings/rapid-settings.component';
 // import { SalesTalkSettingsComponent } from './settings/shared/sales-talk-settings/sales-talk-settings.component';
-// import { UploadSSLCertificateModalComponent } from './settings/shared/domain-settings/modals/upload-ssl-cert-modal.component';
-// import { AddOrEditSSLBindingModalComponent } from './settings/shared/domain-settings/modals/add-or-edit-ssl-binding-modal.component';
+import { UploadSSLCertificateModalComponent } from '../shared/domain-settings/modals/upload-ssl-cert-modal.component';
+import { AddOrEditSSLBindingModalComponent } from '../shared/domain-settings/modals/add-or-edit-ssl-binding-modal.component';
 import { DocumentsComponent } from '../shared/documents-settings/documents-settings.component';
 import { SettingsCardComponent } from '../shared/card/settings-card.component'
 import { SettingsItemComponent } from '../shared/general-settings/setting-item/settings-item.component'
@@ -257,7 +257,9 @@ import { CreditsSettingsComponent } from '../shared/credits-settings/credits-set
         InvoiceSettingsComponent,
         CommissionsComponent,
         OtherSettingsComponent,
-        CreditsSettingsComponent
+        CreditsSettingsComponent,
+        UploadSSLCertificateModalComponent,
+        AddOrEditSSLBindingModalComponent
     ],
     exports: [
     ],
