@@ -5,6 +5,10 @@
                 <span>{{ls.l('Total') + ' ' + ls.l(field.title)}}</span>
                 <span [ngStyle]="{'color': field.color}" *ngIf="field.type == 'currency'">
                     {{ data[field.name] | currency:currency:'symbol' }}
+                    <converted-currency-tooltip [show]="field.showDetails"
+                                                [currency]="currency"
+                                                [data]="data[field.detailsField]">
+                    </converted-currency-tooltip>
                 </span>
                 <span [ngStyle]="{'color': field.color}" *ngIf="field.type == 'number'">
                     {{ data[field.name] | number }}

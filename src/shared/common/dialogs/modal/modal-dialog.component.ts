@@ -45,6 +45,9 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
     @Input() placeholder = null;
     @Input() isTitleValid: boolean;
     @Input() buttons: IDialogButton[] = [];
+    @Input() isTabAvailable?: boolean = false;
+    @Input() tabs?: any;
+    @Input() selectedTab?: any;
     @Input() options: IDialogOption[];
     @Input() titleLabel: string;
     @Input() checkCloseAllowed: () => Promise<boolean>;

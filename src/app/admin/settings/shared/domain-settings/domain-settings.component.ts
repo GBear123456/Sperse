@@ -56,6 +56,9 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     landingSettings: GetLandingPageSettingsDto;
     defaultTenantName = AppConsts.defaultTenantName;
 
+    whitelistDomains: TenantSslBindingInfo[] = [];
+    isNewWhitelistDomainAdding = false;
+
     model: any;
     orgUnits: any[] = [{
         id: -1,
@@ -98,7 +101,8 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
     readonly APP_DOMAIN_TAB = 1;
     readonly PORTAL_DOMAIN_TAB = 2;
     readonly LANDING_DOMAIN_TAB = 3;
-    readonly SSL_CONFIG_TAB = 4;
+    readonly WHITELIST_DOMAIN_TAB = 4;
+    readonly SSL_CONFIG_TAB = 5;
 
     scrollableAreaHeight = `calc(100vh - ${this.layoutService.showTopBar ? 275 : 200}px`;
 
@@ -287,6 +291,9 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                 this.portalVercelDataSource = result.filter(item =>
                     item.hostType == TenantHostType.MemberPortal && item.hostingProvider == HostingType.Vercel
                 );
+                this.whitelistDomains = result.filter(item =>
+                    item.hostType == TenantHostType.WhiteList
+                );
                 this.portalVercelDataSource.forEach(item => item['name'] = item.hostName);
                 this.customDomainsGrid.instance.refresh();
                 this.changeDetection.detectChanges();
@@ -315,6 +322,12 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
                             return true;
                         }
                     });
+                } else if (row.data.hostType == TenantHostType.WhiteList) {
+                    this.tenantHostService.deleteWhitelistDomain(row.data.id)
+                        .subscribe(() => {
+                            this.notify.info(this.l('SavedSuccessfully'));
+                            this.refreshSSLBindingGrid();
+                        });
                 } else
                     this.tenantHostService.deleteSslBinding(row.data.id)
                         .subscribe(() => {
@@ -381,7 +394,7 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         }
     }
 
-    onLaningPageDomainChanged(event) {
+    onDomainChanged(event) {
         if (event.component.option('isValid') && (event.value.includes('http') || event.value.includes('/'))) {
             setTimeout(() => {
                 event.component.option('value', event.value.replace(
@@ -482,6 +495,8 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
             return this.PORTAL_DOMAIN_TAB;
         if (data.hostType == TenantHostType.LandingPage)
             return this.LANDING_DOMAIN_TAB;
+        if (data.hostType == TenantHostType.WhiteList)
+            return this.WHITELIST_DOMAIN_TAB;
     }
 
     onTabChange() {
@@ -619,6 +634,29 @@ export class DomainSettingsComponent extends SettingsComponentBase implements On
         let settings = LandingPageSettingsDto.fromJS(this.landingSettings);
 
         return this.landingPageProxy.updateLandingPageSettings(settings);
+    }
+
+    addWhitelistDomain(inputComponent) {
+        inputComponent.value = inputComponent.value.trim();
+        if (this.whitelistDomains.find(v => v.hostName.toLowerCase() == inputComponent.value.toLowerCase())) {
+            this.message.warn(`${inputComponent.value} is already added`);
+            return;
+        }
+
+        this.isNewWhitelistDomainAdding = true;
+        inputComponent.disabled = true;
+
+        this.tenantHostService.createWhitelistDomain(inputComponent.value)
+            .pipe(finalize(() => {
+                this.isNewWhitelistDomainAdding = false;
+                inputComponent.disabled = false;
+                this.changeDetection.detectChanges();
+            }))
+            .subscribe(() => {
+                inputComponent.value = '';
+                this.notify.info(this.l('SavedSuccessfully'));
+                this.refreshSSLBindingGrid();
+            });
     }
 
     toogleMasterDatails(cell, dataGrid) {

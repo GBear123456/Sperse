@@ -1,0 +1,152 @@
+<div [class]="fields[0].gridCols" class="deliverable-feature-fields-container">
+    <ng-container *ngFor="let field of fields; let i = index" [ngSwitch]="field.type">
+        <div class="section-content" *ngSwitchCase="'section'">
+            <div>
+                <h4>{{field.label}}</h4>
+                <p *ngIf="field.description">{{field.description}}</p>
+            </div>
+            <ng-container *ngFor="let subField of field.fields">
+                <ng-container *ngIf="subField.type === 'radio'">
+                    <dx-radio-group [dataSource]="subField.options"
+                                    [value]="data[prefix + subField.id] || ''"
+                                    valueExpr="value"
+                                    displayExpr="label"
+                                    layout="horizontal"
+                                    (onValueChanged)="handleChange(prefix + subField.id, $event.value)"
+                                    [disabled]="isReadOnly">
+                    </dx-radio-group>
+                </ng-container>
+            </ng-container>
+        </div>
+
+        <div *ngSwitchCase="'grid'" class="grid-content" [style.grid-template-columns]="'repeat(' + field.columns + ', minmax(0, 1fr))'">
+            <ng-container *ngFor="let gridField of field.fields">
+                <div class="grid-item">
+                    <h4>{{gridField.label}}</h4>
+                    <dx-select-box *ngIf="gridField.type === 'select'; else input"
+                                   height="35px"
+                                   [value]="data[prefix + gridField.id] || ''"
+                                   [dataSource]="gridField.options"
+                                   placeholder="Select..."
+                                   [valueExpr]="gridField.id === 'language' ? 'code' : 'value'"
+                                   [displayExpr]="(gridField.id === 'timezone' || gridField.id === 'language') ? 'name' : 'label'"
+                                   (onValueChanged)="handleChange(prefix + gridField.id, $event.value)"
+                                   [disabled]="isReadOnly"></dx-select-box>
+                    <ng-template #input>
+                        <input *ngIf="gridField.type !== 'url'"
+                               class="base-input"
+                               [type]="gridField.type"
+                               [value]="data[prefix + gridField.id] || ''"
+                               (input)="handleChange(prefix + gridField.id, $event.target.value)"
+                               [disabled]="isReadOnly" />
+                        <dx-text-box *ngIf="gridField.type === 'url'"
+                                     [(value)]="data[prefix + gridField.id]"
+                                     height="35px"
+                                     class="grid-url"
+                                     [placeholder]="'Add link for Zoom, Google Meet, Twitch etc.'"
+                                     [disabled]="isReadOnly">
+                            <dx-validator>
+                                <dxi-validation-rule type="pattern"
+                                                     [pattern]="urlRegexPattern"
+                                                     [message]="ls.l('InvalidFieldValue', 'Link Name')">
+                                </dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                    </ng-template>
+                </div>
+            </ng-container>
+        </div>
+
+        <div *ngSwitchCase="'address'" class="address-content">
+            <h4>{{field.label}}</h4>
+            <div class="base-input" [class.placeholder]="!eventAddress" (click)="editAddress()">
+                {{ eventAddress ? eventAddress : 'Search for venue location or address'}}
+                <i *ngIf="!isReadOnly && eventAddress" (click)="clearAddress($event)" class="fa fa-times"></i>
+            </div>
+        </div>
+
+        <div *ngSwitchCase="'duration'" class="duration-content">
+            <p>{{field.description}}</p>
+            <div class="grid-content" [style.grid-template-columns]="'repeat(' + field.columns + ', minmax(0, 1fr))'">
+                <ng-container *ngFor="let gridField of field.fields">
+                    <div class="grid-item">
+                        <h4>{{gridField.label || ''}}</h4>
+                        <dx-date-box *ngIf="gridField.type === 'date' || gridField.type === 'time'"
+                                     [(value)]="gridField.type === 'date' ? eventDate : eventTime"
+                                     [type]="gridField.type"
+                                     height="35px"
+                                     [placeholder]="gridField.type === 'date' ? 'Enter date' : 'Select...'"
+                                     [showClearButton]="true"
+                                     [disabled]="isReadOnly">
+                        </dx-date-box>
+                        <dx-number-box *ngIf="gridField.type === 'number'"
+                                       [placeholder]="'Duration'"
+                                       height="35px"
+                                       [(value)]="eventDuration"
+                                       (onValueChanged)="eventDurationType = eventDurationType || eventDurationTypes[0].value"
+                                       [disabled]="isReadOnly">
+                        </dx-number-box>
+                        <dx-select-box height="35px"
+                                       *ngIf="gridField.type === 'select'"
+                                       class="hide-placeholder"
+                                       [dataSource]="eventDurationTypes"
+                                       displayExpr="displayValue"
+                                       valueExpr="value"
+                                       [(value)]="eventDurationType"
+                                       [showClearButton]="!eventDuration"
+                                       [disabled]="isReadOnly">
+                        </dx-select-box>
+
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+
+        <ng-container *ngSwitchDefault>
+            <ng-container *ngIf="!(field.showWhen &&
+                (!data[prefix + field.showWhen] ||
+                (field.showWhenValue &&
+                    (checkArray(field.showWhenValue)
+                    ? !field.showWhenValue.includes(data[prefix + field.showWhen])
+                    : data[prefix + field.showWhen] !== field.showWhenValue))))">
+                <div class="else-container" [class]="field.className" [ngSwitch]="field.type">
+                    <h4>{{field.label}}</h4>
+                    <dx-select-box *ngSwitchCase="'select'"
+                                   height="35px"
+                                   [value]="data[prefix + field.id] || field.defaultValue"
+                                   [dataSource]="field.options"
+                                   placeholder="Select..."
+                                   valueExpr="value"
+                                   displayExpr="label"
+                                   (onValueChanged)="handleChange(prefix + field.id, $event.value)"
+                                   [disabled]="isReadOnly"></dx-select-box>
+                    <input *ngSwitchCase="'number'"
+                           class="base-input"
+                           type="number"
+                           [value]="data[prefix + field.id] || ''"
+                           min="0"
+                           (input)="handleChange(prefix + field.id, $event.target.value)"
+                           [disabled]="isReadOnly" />
+                    <dx-text-box *ngSwitchCase="'url'"
+                                 [value]="data[prefix + field.id] || ''"
+                                 class="grid-url"
+                                 (input)="handleChange(prefix + field.id, $event.target.value)"
+                                 [disabled]="isReadOnly">
+                        <dx-validator>
+                            <dxi-validation-rule type="pattern"
+                                                 [pattern]="urlRegexPattern"
+                                                 [message]="ls.l('InvalidFieldValue', 'Link Name')">
+                            </dxi-validation-rule>
+                        </dx-validator>
+                    </dx-text-box>
+                    <input *ngSwitchDefault
+                           class="base-input"
+                           [type]="field.type"
+                           [value]="data[prefix + field.id] || ''"
+                           (input)="handleChange(prefix + field.id, $event.target.value)"
+                           [disabled]="isReadOnly" />
+                </div>
+            </ng-container>
+        </ng-container>
+    </ng-container>
+</div>

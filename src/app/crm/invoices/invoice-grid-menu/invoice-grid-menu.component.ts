@@ -16,6 +16,7 @@ import {
     InvoiceSettingsDto,
     InvoiceStatus,
     PipelineDto,
+    RefundInvoiceInput,
     StageDto
 } from '@shared/service-proxies/service-proxies';
 import { InvoiceGridMenuDto } from './invoice-grid-menu.interface';
@@ -53,6 +54,7 @@ export class InvoiceGridMenuComponent {
     downloadPdfDisabled = false;
     duplicateInvoiceDisabled = false;
     markAsCancelledDisabled = false;
+    refundDisabled = true;
     deleteDisabled = false;
     previewDisabled = false;
     copyLinkDisabled = false;
@@ -105,6 +107,8 @@ export class InvoiceGridMenuComponent {
             InvoiceStatus.Final, InvoiceStatus.Canceled, InvoiceStatus.Sent
         ].indexOf(invoiceData.Status) < 0;
         this.resendInvoiceDisabled = !isSendEmailAllowed || this.markAsSendInvoiceDisabled;
+        this.refundDisabled = isOrder || !this.permission.isGranted(AppPermissions.CRMOrdersInvoicesRefund) || invoiceData.Amount <=0 ||
+            ![InvoiceStatus.PartiallyPaid, InvoiceStatus.Paid, InvoiceStatus.PartiallyRefunded].includes(invoiceData.Status);
         this.markAsCancelledDisabled = isOrder || invoiceData.Status != InvoiceStatus.Sent;
         this.deleteDisabled = isOrder || [
             InvoiceStatus.Draft, InvoiceStatus.Final, InvoiceStatus.Canceled
@@ -140,6 +144,27 @@ export class InvoiceGridMenuComponent {
 
     editInvoice() {
         this.openCreateInvoiceDialog();
+    }
+
+    refundInvoice() {
+        this.message.confirm(
+            this.l('InvoicRefundWarningMessage', this.invoiceData.Number), '',
+            isConfirmed => {
+                if (isConfirmed) {
+                    this.loadingService.startLoading();
+                    let refundInvoiceInput = new RefundInvoiceInput();
+                    refundInvoiceInput.invoiceId = this.invoiceData.Id;
+                    this.invoiceProxy.refundInvoice(refundInvoiceInput).pipe(
+                        finalize(() => this.loadingService.finishLoading())
+                    ).subscribe((res) => {
+                        if (res.errorMessages)
+                            this.message.warn(res.errorMessages.join('\n'));
+
+                        this.onRefresh.emit();
+                    });
+                }
+            }
+        );
     }
 
     deleteInvoice() {

@@ -1,9 +1,9 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, EventEmitter, Output, Injector, Input, ChangeDetectorRef, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, EventEmitter, Output, Injector, Input, ChangeDetectorRef, ElementRef, OnInit, ViewChild, NgZone } from '@angular/core';
 
 /** Third party imports */
 import { forkJoin, Observable } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { finalize, map, switchMap } from 'rxjs/operators';
 import round from 'lodash/round';
 
 /** Application imports */
@@ -30,7 +30,9 @@ import {
     PublicProductServiceProxy,
     CouponDiscountDuration,
     PublicCouponInfo,
-    RequestProductPaymentOutput
+    RequestProductPaymentOutput,
+    SpreedlyInvoiceChargeInput,
+    SpreedlyServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
@@ -40,13 +42,14 @@ import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { AppService } from '@app/app.service';
 import { PayPalComponent } from '@shared/common/paypal/paypal.component';
 import { ButtonType } from '@shared/common/paypal/button-type.enum';
+import { SpreedlyPayButtonsComponent } from '@shared/common/spreedly-pay-buttons/spreedly-pay-buttons.component';
 
 @Component({
     selector: 'payment-options',
     templateUrl: './payment-options.component.html',
     styleUrls: ['./payment-options.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TenantSubscriptionServiceProxy, PublicProductServiceProxy]
+    providers: [TenantSubscriptionServiceProxy, PublicProductServiceProxy, SpreedlyServiceProxy]
 })
 export class PaymentOptionsComponent extends AppComponentBase implements OnInit {
     private payPal: PayPalComponent;
@@ -105,6 +108,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     hasAnyPaymentSystemConfigured = false;
     payPalApplicable: boolean = false;
     stripeApplicable: boolean = false;
+    spreedlyApplicable: boolean = false;
     receiptLink: string;
 
     isPayByStripeDisabled = false;
@@ -123,6 +127,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         private publicProductService: PublicProductServiceProxy,
         private changeDetector: ChangeDetectorRef,
         private elementRef: ElementRef,
+        private spreedlyService: SpreedlyServiceProxy,
+        private ngZone: NgZone
     ) {
         super(injector);
     }
@@ -182,10 +188,11 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         ).subscribe(([settings, productPaymentInfo]) => {
             this.paymentSystemSettings = settings;
             this.productSubscriptionPreviouslyUsed = productPaymentInfo.previouslyUsed;
-            this.hasAnyPaymentSystemConfigured = !!settings.paypalClientId || settings.stripeIsEnabled;
+            this.hasAnyPaymentSystemConfigured = !!settings.paypalClientId || settings.stripeIsEnabled || (!!settings.spreedlyConfiguration && !!settings.spreedlyConfiguration.spreedlyGateways.length);
 
             this.stripeApplicable = settings.stripeIsEnabled && productPaymentInfo.applicablePaymentTypes.some(v => v == RequestPaymentType.Stripe);
             this.payPalApplicable = settings.paypalClientId && productPaymentInfo.applicablePaymentTypes.some(v => v == RequestPaymentType.PayPal);
+            this.spreedlyApplicable = settings.spreedlyConfiguration && settings.spreedlyConfiguration.spreedlyGateways.length && productPaymentInfo.applicablePaymentTypes.some(v => v == RequestPaymentType.Spreedly);
 
             if (this.payPalApplicable && !this.stripeApplicable) {
                 this.GATEWAY_PAYPAL = 0;
@@ -367,7 +374,45 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         ).toPromise();
     }
 
-    onPayPalApprove() {
+    onSpreedlyClick(event) {
+        let spreedlyComponent: SpreedlyPayButtonsComponent = event.component;
+        let displayOptions = {
+            amount: spreedlyComponent.formatAmount(this.getSubscriptionPrice(true), this.plan.currencyId),
+            company_name: this.plan.productName,
+            sidebar_top_description: "",
+            sidebar_bottom_description: "",
+            full_name: `${this.appSession.user.name} ${this.appSession.user.surname}`
+        };
+        let paymentMethodParams = {
+        };
+        spreedlyComponent.showBankCardPopup(event.providerId, displayOptions, paymentMethodParams);
+    }
+
+    onSpreedlyPaymentMethod(event) {
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+
+        this.getPaymentRequest(RequestPaymentType.Spreedly).pipe(
+            switchMap(res => {
+                this.receiptLink = res.receiptUrl;
+                return this.spreedlyService.charge(new SpreedlyInvoiceChargeInput({
+                    tenantId: 0,
+                    invoicePublicId: res.invoicePublicId,
+                    paymentGatewayTokenId: event.providerId,
+                    paymentMethodToken: event.token
+                }));
+            }),
+            finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+        ).subscribe(res => {
+            if (res.errorMessage) {
+                abp.message.error(res.errorMessage);
+            } else {
+                this.ngZone.run(() => this.redirectToReceipt());
+            }
+        });
+    }
+
+    redirectToReceipt() {
+        abp.ui.setBusy();
         location.href = this.receiptLink;
     }
 
@@ -463,7 +508,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     }
 
     anyPaymentSystemIsApplicable() {
-        return !this.isFreeSinglePayment() && (this.stripeApplicable || this.showPayPal());
+        return !this.isFreeSinglePayment() && (this.stripeApplicable || this.showPayPal() || this.spreedlyApplicable);
     }
 
     showPayPal() {

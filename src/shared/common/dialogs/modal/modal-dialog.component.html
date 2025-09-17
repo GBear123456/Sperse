@@ -1,6 +1,6 @@
 <div class="close-button" (click)="close(true)"></div>
 <div class="mat-dialog-header">
-    <div class="title-wrapper">
+    <div class="title-wrapper" [style.flex-grow]="isTabAvailable ? 0 : 1">
         <label *ngIf="titleLabel" class="title-label">{{ titleLabel }}</label>
         <dx-text-box #titleComponent
             *ngIf="title != undefined"
@@ -19,6 +19,11 @@
             </dx-validator>
         </dx-text-box>
         <ng-content select="[headerContent]"></ng-content>
+    </div>
+    <div *ngIf="isTabAvailable" class="toggle-button">
+        <button *ngFor="let tab of tabs.options" [class.is-active]="selectedTab === tab.type" (click)="tabs.toggleTab(tab.type)">
+            {{tab.name}}
+        </button>
     </div>
     <mat-dialog-actions>
         <div class="mat-dialog-options" *ngIf="options">
