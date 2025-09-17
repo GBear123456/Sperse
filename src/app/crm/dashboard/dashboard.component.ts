@@ -56,6 +56,9 @@ import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service'
 import { SettingsHelper } from '../../../shared/common/settings/settings.helper';
 import { KpiCardData } from './kpi-card';
 import { CurrencyDialogComponent, CurrencyDialogData } from './currency-dialog/currency-dialog.component';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
+import { GroupByPeriod } from '@shared/service-proxies/service-proxies';
+import * as moment from 'moment';
 
 // Chart data interfaces
 
@@ -203,35 +206,41 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   chartComparisonStartDate = new Date('2025-06-21');
   chartComparisonEndDate = new Date('2025-07-21');
 
- 
+  // Customer stats data
+  customerStatsData: any[] = [];
+  isLoadingCustomerStats = false;
 
-    constructor(
-        private router: Router,
-        private appService: AppService,
-        private appSessionService: AppSessionService,
-        public dashboardWidgetsService: DashboardWidgetsService,
-        private changeDetectorRef: ChangeDetectorRef,
-        private periodService: PeriodService,
-        private store$: Store<RootStore.State>,
-        private appStore$: Store<AppStore.State>,
-        private reuseService: RouteReuseStrategy,
-        private cacheService: CacheService,
-        private lifeCycleSubject: LifecycleSubjectsService,
-        private dashboardServiceProxy: DashboardServiceProxy,
-        private activatedRoute: ActivatedRoute,
-        private leftMenuService: LeftMenuService,
-        private filtersService: FiltersService,
-        private currencyService: CurrencyCRMService,
-        public layoutService: LayoutService,
-        public ui: AppUiCustomizationService,
-        public permission: AppPermissionService,
-        public cacheHelper: CacheHelper,
-        public ls: AppLocalizationService,
-        public dialog: MatDialog
-    ) {
-        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(AppConsts.defaultCountryCode));
-        this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
-    }
+  constructor(
+    private router: Router,
+    private appService: AppService,
+    private appSessionService: AppSessionService,
+    public dashboardWidgetsService: DashboardWidgetsService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private periodService: PeriodService,
+    private store$: Store<RootStore.State>,
+    private appStore$: Store<AppStore.State>,
+    private reuseService: RouteReuseStrategy,
+    private cacheService: CacheService,
+    private lifeCycleSubject: LifecycleSubjectsService,
+    private dashboardServiceProxy: DashboardServiceProxy,
+    private activatedRoute: ActivatedRoute,
+    private leftMenuService: LeftMenuService,
+    private filtersService: FiltersService,
+    private currencyService: CurrencyCRMService,
+    public layoutService: LayoutService,
+    public ui: AppUiCustomizationService,
+    public permission: AppPermissionService,
+    public cacheHelper: CacheHelper,
+    public ls: AppLocalizationService,
+    public dialog: MatDialog,
+    private calendarService: CalendarService
+  ) {
+    this.store$.dispatch(new StatesStoreActions.LoadRequestAction(AppConsts.defaultCountryCode));
+    this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
+    // this.layoutService.crmMenuPosition$.subscribe(side => {
+    //   this.menuSide = side;
+    // });
+  }
 
   ngOnInit() {
     if (this.hasAccessibleCG) {
@@ -258,6 +267,12 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         this.filterModelOrgUnit.items.element.value
       );
     }
+
+    // Subscribe to calendar date changes and load customer stats
+    this.subscribeToCalendarChanges();
+
+    // Load initial customer stats
+    this.loadCustomerStats();
 
     const introAcceptedCache = this.cacheService.get(this.introAcceptedCacheKey);
     /** Show crm wizard if there is no cache for it */
@@ -574,32 +589,118 @@ export class DashboardComponent implements AfterViewInit, OnInit {
                 else if (filter.caption == 'Currency')
                     this.dashboardWidgetsService.setCurrencyIdForTotals(this.currencyService.getSelectedCurrencies(filter)[0]);
             });
-
             if (this.leftMenu) {
-                this.leftMenu.initMenuItems();
+              this.leftMenu.initMenuItems();
             }
-        });
-    }
-
-    refresh(refreshLeadsAndClients = true) {
-        this.dashboardWidgetsService.refresh();
-        /** Reload status after refresh if it's showing welcome page */
-        this.showWelcomeSection$.pipe(
-            first(),
-            filter(Boolean)
-        ).subscribe(() => {
-            this.loadStatus();
-        });
-        if (refreshLeadsAndClients) {
-            /** Invalidate leads and clients */
-            (this.reuseService as CustomReuseStrategy).invalidate('leads');
-            (this.reuseService as CustomReuseStrategy).invalidate('clients');
+          });
         }
-    }
 
-    addClient() {
-        this.router.navigate(['app/crm/clients'], { queryParams: { action: 'addNew' } });
+  /**
+   * Subscribes to calendar date changes and reloads customer stats when dates change
+   */
+  private subscribeToCalendarChanges(): void {
+    this.calendarService.dateRange$
+      .pipe(takeUntil(this.lifeCycleSubject.deactivate$))
+      .subscribe((dateRange) => {
+        if (dateRange && dateRange.from.value && dateRange.to.value) {
+          this.chartStartDate = new Date(dateRange.from.value);
+          this.chartEndDate = new Date(dateRange.to.value);
+          
+          // Calculate comparison period (same duration before current period)
+          const periodDuration = this.chartEndDate.getTime() - this.chartStartDate.getTime();
+          this.chartComparisonStartDate = new Date(this.chartStartDate.getTime() - periodDuration);
+          this.chartComparisonEndDate = new Date(this.chartStartDate.getTime());
+          
+          // Reload customer stats with new date range
+          this.loadCustomerStats();
+          
+          // Trigger change detection
+          this.changeDetectorRef.markForCheck();
+        }
+      });
+  }
+
+  /**
+   * Loads customer stats data from the API
+   */
+  private loadCustomerStats(): void {
+    if (!this.hasAccessibleCG) return;
+
+    this.isLoadingCustomerStats = true;
+    
+    // Get current contact group ID
+    const contactGroupId = this.filterModelContactGroup?.items?.element?.value || 'C';
+    
+    // Convert start date to moment object
+    const startDate = moment(this.chartStartDate);
+    
+    this.dashboardServiceProxy
+      .getContactAndLeadStats(
+        GroupByPeriod.Daily,  // GroupBy=Daily
+        30,                   // periodCount (default 30 days)
+        false,                // isCumulative=false
+        startDate,            // startDate
+        undefined,            // endDate (not needed when periodCount is provided)
+        contactGroupId,       // contactGroupId
+        undefined,            // sourceContactId (not needed)
+        undefined             // sourceOrganizationUnitIds (not needed)
+      )
+      .pipe(takeUntil(this.lifeCycleSubject.deactivate$))
+      .subscribe({
+        next: (data: any[]) => {
+          this.customerStatsData = data;
+          this.isLoadingCustomerStats = false;
+          
+          // Update KPI cards with customer data
+          this.updateCustomerKpiCards(data);
+          
+          // Trigger change detection
+          this.changeDetectorRef.markForCheck();
+        },
+        error: (error) => {
+          console.error('Error loading customer stats:', error);
+          this.isLoadingCustomerStats = false;
+          this.changeDetectorRef.markForCheck();
+        }
+      });
+  }
+
+  /**
+   * Updates customer-related KPI cards with data from API
+   */
+  private updateCustomerKpiCards(customerData: any[]): void {
+    if (customerData && customerData.length > 0) {
+      // Calculate total customers for current period
+      const totalCustomers = customerData.reduce((sum, item) => sum + (item.customerCount || 0), 0);
+      this.totalCustomers = totalCustomers;
+      
+      // Update KPI cards
+      this.updateKpiCards();
     }
+  }
+
+  refresh(refreshLeadsAndClients = true) {
+    this.dashboardWidgetsService.refresh();
+    /** Reload status after refresh if it's showing welcome page */
+    this.showWelcomeSection$.pipe(first(), filter(Boolean)).subscribe(() => {
+      this.loadStatus();
+    });
+    
+    // Reload customer stats
+    this.loadCustomerStats();
+    
+    if (refreshLeadsAndClients) {
+      /** Invalidate leads and clients */
+      (this.reuseService as CustomReuseStrategy).invalidate('leads');
+      (this.reuseService as CustomReuseStrategy).invalidate('clients');
+    }
+  }
+
+  addClient() {
+    this.router.navigate(['app/crm/clients'], { queryParams: { action: 'addNew' } });
+  }
+
+  
 
     private loadStatus(initialLoad: boolean = false) {
         if (this.filterModelContactGroup.items.element.value) {
