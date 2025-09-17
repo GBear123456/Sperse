@@ -32,7 +32,7 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
     readonly ChevronIcon = ChevronDown;
     readonly AlertIcon = AlertCircle
     readonly CreditCardIcon = CreditCard;
-
+    selectedTabIndex: number = 0;
     isPaymentsEnabled: boolean = abp.features.isEnabled(AppFeatures.CRMPayments);
     paypalPaymentSettings: PayPalSettingsDto = new PayPalSettingsDto();
 
@@ -125,22 +125,5 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
         }
     }
 
-    createConnectedAccount() {
-        // if (this.isHost || !this.stripePaymentSettings.isHostAccountEnabled || (setting && setting.isConnectedAccountSetUpCompleted))
-        //     return;
-
-        // this.message.confirm('', this.l('Do you want to connect Stripe account ?'), (isConfirmed) => {
-        //     if (isConfirmed) {
-        //         this.startLoading();
-        //         let method = setting ?
-        //             this.tenantPaymentSettingsService.connectStripeAccount(setting.id) :
-        //             this.tenantPaymentSettingsService.getConnectOAuthAuthorizeUrl();
-        //         method.pipe(
-        //             finalize(() => this.finishLoading())
-        //         ).subscribe((url) => {
-        //             window.location.href = url;
-        //         });
-        //     }
-        // });
-    }
+    
 }
