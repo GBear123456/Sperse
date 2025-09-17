@@ -1,7 +1,50 @@
 :host {
     display: block;
     position: relative;
-    height: 100%;
+
+    .home-button {
+      padding: 4px 12px;
+      background-color: var(--info-color);
+      color: #fff;
+      border-radius: 4px;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 60px;
+      left: -28px;
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      background-color: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      display: none;
+    }
+
+    img {
+      filter: brightness(0) invert(1);
+    }
+  }
+
+  .left-menu {
+    width: 251px;
+    height: calc(~'100vh - 215px');
+    border-right: 1px solid var(--border-color);
+    border-left: 1px solid var(--border-color);
+
+    background: #fff;
+    .dark-theme & {
+      background-color: var(--navbar-bg);
+    }
+
+    float: right;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
+    transform: translateX(0);
+    opacity: 1;
     z-index: 2;
 
     .left-menu {

@@ -19,6 +19,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
 
 import { DxColorBoxModule } from 'devextreme-angular/ui/color-box';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
@@ -127,6 +130,9 @@ import { SpreedlyPayButtonsModule } from '@shared/common/spreedly-pay-buttons/sp
         MatSliderModule,
         MatSlideToggleModule,
         MatAutocompleteModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatIconModule,
         ReactiveFormsModule,
         NgxFileDropModule,
         PapaParseModule,
@@ -230,7 +236,10 @@ import { SpreedlyPayButtonsModule } from '@shared/common/spreedly-pay-buttons/sp
         StarsListComponent,
         LeftMenuComponent,
         CalendarButtonComponent,
-        PaymentsInfoComponent
+        PaymentsInfoComponent,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatIconModule
     ],
     providers: [
         ImportWizardService

@@ -1,0 +1,197 @@
+:host {
+  display: block;
+}
+
+.kpi-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 12px 18px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px var(--shadow-color);
+  }
+
+  &.gross-earnings {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--btn-primary-hover) 100%);
+    color: var(--btn-primary-text);
+    border-color: var(--primary-color);
+
+    .card-icon {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: var(--btn-primary-text);
+    }
+
+    .currency-selector {
+      color: rgba(255, 255, 255, 0.9);
+      
+      .status-badge.active {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: var(--btn-primary-text);
+      }
+    }
+  }
+
+  &.customers {
+    background: linear-gradient(135deg, var(--info-color) 0%, #0c7bb3 100%);
+    color: var(--btn-primary-text);
+    border-color: var(--info-color);
+
+    .card-icon {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: var(--btn-primary-text);
+    }
+  }
+
+  &.subscriptions {
+    background: linear-gradient(135deg, var(--success-color) 0%, #0d9488 100%);
+    color: var(--btn-primary-text);
+    border-color: var(--success-color);
+
+    .card-icon {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: var(--btn-primary-text);
+    }
+  }
+
+  &.cancels {
+    background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+    color: var(--text-color);
+    border-color: var(--warning-color);
+
+    .card-icon {
+      background-color: rgba(33, 37, 41, 0.2);
+      color: var(--text-color);
+    }
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+  }
+
+  .card-value {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 16px 0;
+    line-height: 1.2;
+  }
+
+  .currency-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+
+    .status-badge {
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+
+      &.active {
+        background-color: var(--success-color-bg);
+        color: var(--success-color);
+      }
+    }
+
+    i {
+      font-size: 10px;
+      margin-left: auto;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .kpi-card {
+    padding: 20px;
+
+    .card-value {
+      font-size: 24px;
+    }
+
+    .card-title {
+      font-size: 13px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .kpi-card {
+    padding: 16px;
+
+    .card-value {
+      font-size: 20px;
+    }
+
+    .card-title {
+      font-size: 12px;
+    }
+
+    .card-icon {
+      width: 32px;
+      height: 32px;
+      font-size: 14px;
+    }
+  }
+}
+
+// Dark theme support
+:host-context(.dark-theme) {
+  .kpi-card {
+    box-shadow: 0 2px 8px var(--shadow-color);
+    
+    &.gross-earnings {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
+    }
+    
+    &.customers {
+      background: linear-gradient(135deg, var(--info-color) 0%, #0369a1 100%);
+    }
+    
+    &.subscriptions {
+      background: linear-gradient(135deg, var(--success-color) 0%, #047857 100%);
+    }
+    
+    &.cancels {
+      background: linear-gradient(135deg, var(--warning-color) 0%, #b45309 100%);
+    }
+  }
+}

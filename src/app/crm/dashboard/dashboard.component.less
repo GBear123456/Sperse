@@ -3,21 +3,16 @@
     position: relative;
 
     .wrapper {
-        max-width: 100%!important;
+        max-width: 100% !important;
         height: 100%;
     }
     .widgets-wrapper {
         height: calc(~"100vh - 150px");
 
-        &.left-nav-menu {
-            height: calc(~"100vh - 75px");
-        }
-
         @media (max-width: 991px) {
             margin-left: 0;
         }
         @media (min-width: 1200px) {
-            margin-left: 341px;
             &.expanded {
                 margin-left: 0;
             }
@@ -32,6 +27,40 @@
         padding: 0 40px;
     }
 
+    // KPI Cards Section
+    .kpi-cards-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+        margin: 16px 0px;
+        margin-bottom: 16px;
+        padding: 0;
+    }
+
+    // Responsive Design for KPI Cards
+    @media (max-width: 1200px) {
+        .kpi-cards-container {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .kpi-cards-container {
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin: 16px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .kpi-cards-container {
+            margin: 12px;
+        }
+    }
+
+    // Analytics Dashboard Styles
     .left-side,
     .right-side {
         padding-left: 24px;
@@ -47,9 +76,16 @@
 
     .dashboard-widgets {
         height: calc(~"100vh - 200px");
+        padding-left: 24px;
+        padding-right: 24px;
+
         .counts-and-totals {
             border-bottom: 1px solid #e5e9ec;
+            .dark-theme & {
+                border-bottom: 1px solid var(--border-color);
+            }
         }
+
         .analytics-wrap {
             display: flex;
             flex-flow: row wrap;
@@ -58,98 +94,150 @@
 
             .right-side {
                 border-left: 1px solid #e5e9ec;
-            }
+                .dark-theme & {
+                    border-left: 1px solid var(--border-color);
+                }
 
-            .left-side > * {
-                background-color: #FFFFFF;
-                position: relative;
+                @media (max-width: 991px) {
+                    margin-left: 0;
+                }
                 @media (min-width: 1200px) {
-                    min-height: 295px;
+                    margin-left: 341px;
+                    &.expanded {
+                        margin-left: 0;
+                    }
                 }
             }
-        }
-        ::ng-deep new-items-totals .content-wrap {
-            border-bottom: 1px solid #E5E9EC;
-            padding-bottom: 30px;
-        }
-        new-items-totals,
-        totals-by-period {
-            padding-top: 25px;
-        }
 
-        totals-by-period {
-            border-bottom: 1px solid #e5e9ec;
-            padding-bottom: 30px;
-        };
+            ::ng-deep app-headline .headline-content {
+                justify-content: flex-end;
+            }
 
-        totals-by-source {
-            padding-top: 25px;
-        };
-    }
+            .add-client {
+                padding: 0 40px;
+            }
 
-    .dashboard-stub {
-        width: 100%;
-        text-align: center;
-        border: none;
-        display: flex;
-        height: 100%;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+            .left-side,
+            .right-side {
+                padding-left: 24px;
+                padding-right: 24px;
+            }
 
-        a {
-            text-decoration: underline;
+            .right-side {
+                &.recent-clients {
+                    padding-left: 14px;
+                    padding-right: 14px;
+                }
+            }
+
+            .dashboard-widgets {
+                height: calc(~"100vh - 200px");
+                .counts-and-totals {
+                    border-bottom: 1px solid #e5e9ec;
+                }
+                .analytics-wrap {
+                    display: flex;
+                    flex-flow: row wrap;
+                    justify-content: space-between;
+                    align-items: flex-start;
+
+                    .right-side {
+                        border-left: 1px solid #e5e9ec;
+                    }
+
+                    .left-side > * {
+                        background-color: #ffffff;
+                        position: relative;
+                        @media (min-width: 1200px) {
+                            min-height: 295px;
+                        }
+                    }
+                }
+                ::ng-deep new-items-totals .content-wrap {
+                    border-bottom: 1px solid #e5e9ec;
+                    padding-bottom: 30px;
+                }
+                new-items-totals,
+                totals-by-period {
+                    padding-top: 25px;
+                }
+
+                totals-by-period {
+                    border-bottom: 1px solid #e5e9ec;
+                    padding-bottom: 30px;
+                }
+
+                totals-by-source {
+                    padding-top: 25px;
+                }
+            }
+
+            .dashboard-stub {
+                width: 100%;
+                text-align: center;
+                border: none;
+                display: flex;
+                height: 100%;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                a {
+                    text-decoration: underline;
+                }
+
+                .welcome-crm {
+                    color: #202b35;
+                    font-size: 32px;
+                    font-weight: 600;
+                    margin-top: 50px;
+                }
+
+                .sperse-crm {
+                    color: #f3f6fa;
+                    font-family: var(--app-font-family);
+                    font-size: 133px;
+                    font-weight: 600;
+                    vertical-align: middle;
+                }
+
+                .second-line {
+                    color: #f3f6fa;
+                    font-family: var(--app-font-family);
+                    font-size: 44px;
+                    font-weight: bold;
+                    letter-spacing: 1.5px;
+                }
+
+                .logo-crm {
+                    height: 121px;
+                    width: 121px;
+                }
+
+                .last-line {
+                    color: #202b35;
+                    font-size: 18px;
+                    font-weight: 500;
+                }
+
+                .text-crm {
+                    margin-top: 40px;
+                }
+                .manage-crm {
+                    margin-bottom: 40px;
+                }
+                .text-crm,
+                .manage-crm {
+                    color: #677380;
+                    font-size: 16px;
+                    font-weight: 500;
+                    line-height: 22px;
+                }
+            }
+
+            app-no-data {
+                height: calc(~"100vh - 150px");
+            }
         }
-
-        .welcome-crm {
-            color: #202B35;
-            font-size: 32px;
-            font-weight: 600;
-            margin-top: 50px;
-        }
-
-        .sperse-crm {
-            color: #f3f6fa;
-            font-family: var(--app-font-family);
-            font-size: 133px;
-            font-weight: 600;
-            vertical-align: middle;
-        }
-
-        .second-line {
-            color: #f3f6fa;
-            font-family: var(--app-font-family);
-            font-size: 44px;
-            font-weight: bold;
-            letter-spacing: 1.5px;
-        }
-
-        .logo-crm {
-            height: 121px;
-            width: 121px;
-        }
-
-        .last-line {
-            color: #202B35;
-            font-size: 18px;
-            font-weight: 500;
-        }
-
-        .text-crm {
-            margin-top: 40px;
-        }
-        .manage-crm {
-            margin-bottom: 40px;
-        }
-        .text-crm, .manage-crm {
-            color: #677380;
-            font-size: 16px;
-            font-weight: 500;
-            line-height: 22px;
-        }
-    }
-
-    app-no-data {
-        height: calc(~"100vh - 150px");
     }
 }

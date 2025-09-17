@@ -1,0 +1,65 @@
+<div class="customers-chart-widget">
+  <!-- Header Section -->
+  <div class="chart-header">
+    <div class="header-left">
+      <h3 class="chart-title">{{title}} ({{dateRange.label}})</h3>
+      <div class="main-metric">
+        <span class="metric-value">{{ currentPeriodTotal }}</span>
+        <span class="percentage-change" [ngClass]="{ 'positive': isPositiveChange, 'negative': !isPositiveChange }">
+          {{ isPositiveChange ? '+' : '' }}{{ percentageChange }}%
+        </span>
+      </div>
+    </div>
+    
+    <div class="header-right d-flex flex-row align-items-center">
+      <div class="date-selector">
+        <div class="date-range d-flex flex-col align-items-start">
+          <mat-form-field appearance="outline" class="date-select-field">
+            <mat-select [(value)]="dateRange.value" (selectionChange)="onDateRangeChange($event)">
+              <mat-option *ngFor="let option of dateOptions" [value]="option.value">
+                {{ option.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          
+          <div class="date-inputs d-flex flex-col" *ngIf="dateRange.value === 'BETWEEN_DATES'">
+            <mat-form-field appearance="outline" class="date-picker-field">
+              <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" (dateChange)="onStartDateChange($event)">
+              <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+              <mat-datepicker #startPicker></mat-datepicker>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" class="date-picker-field">
+              <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" (dateChange)="onEndDateChange($event)">
+              <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+              <mat-datepicker #endPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          
+          <div class="comparison-period">
+            Compared to {{ formatDate(comparisonStartDate) }} - {{ formatDate(comparisonEndDate) }}
+          </div>
+        </div>
+      </div>
+      
+      <div class="action-buttons">
+        <!-- <button mat-icon-button 
+                class="refresh-button" 
+                (click)="refreshChart()" 
+                matTooltip="Refresh Chart"
+                [disabled]="isLoading">
+          <mat-icon>{{ isLoading ? 'hourglass_empty' : 'refresh' }}</mat-icon>
+        </button> -->
+        
+        <div class="chart-icon">
+          <mat-icon>{{icon}}</mat-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart Section -->
+  <div class="chart-container">
+    <canvas #chartCanvas></canvas>
+  </div>
+</div>

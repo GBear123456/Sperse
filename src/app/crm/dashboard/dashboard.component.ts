@@ -53,6 +53,9 @@ import { LeftMenuComponent } from '../shared/common/left-menu/left-menu.componen
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CurrencyCRMService } from 'store/currencies-crm-store/currency.service';
 import { SettingsHelper } from '../../../shared/common/settings/settings.helper';
+import { KpiCardData } from './kpi-card';
+
+// Chart data interfaces
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -99,44 +102,96 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }).filter(Boolean);
     hasAccessibleCG = this.accessilbeContactGroups.length !== 0;
 
-    filterModelContactGroup = new FilterModel({
-        caption: 'ContactGroup',
-        component: FilterRadioGroupComponent,
-        items: {
-            element: new FilterRadioGroupModel({
-                showFirstAsDefault: true,
-                value: this.permission.getFirstAvailableCG(),
-                list: this.accessilbeContactGroups
-            })
-        }
-    });
-    filterModelOrgUnit: FilterModel = new FilterModel({
-        component: FilterCheckBoxesComponent,
-        caption: 'SourceOrganizationUnitId',
-        hidden: this.appSessionService.hideUserSourceFilters,
-        field: 'SourceOrganizationUnitId',
-        items: {
-            element: new FilterCheckBoxesModel(
-                {
-                    dataSource$: this.appStore$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
-                    nameField: 'displayName',
-                    keyExpr: 'id'
-                })
-        }
-    });
-    filterModelSource: FilterModel = new FilterModel({
-        component: FilterSourceComponent,
-        caption: 'Source',
-        hidden: this.appSessionService.hideUserSourceFilters,
-        items: {
-            element: new SourceContactFilterModel({
-                ls: this.ls
-            })
-        }
-    });
-    filterCurrency = this.currencyService.getCurrencyFilter(SettingsHelper.getCurrency(), false, true);
+  filterModelContactGroup = new FilterModel({
+    caption: 'ContactGroup',
+    component: FilterRadioGroupComponent,
+    items: {
+      element: new FilterRadioGroupModel({
+        showFirstAsDefault: true,
+        value: this.permission.getFirstAvailableCG(),
+        list: this.accessilbeContactGroups,
+      }),
+    },
+  });
+  filterModelOrgUnit: FilterModel = new FilterModel({
+    component: FilterCheckBoxesComponent,
+    caption: 'SourceOrganizationUnitId',
+    hidden: this.appSessionService.hideUserSourceFilters,
+    field: 'SourceOrganizationUnitId',
+    items: {
+      element: new FilterCheckBoxesModel({
+        dataSource$: this.appStore$.pipe(
+          select(OrganizationUnitsStoreSelectors.getOrganizationUnits)
+        ),
+        nameField: 'displayName',
+        keyExpr: 'id',
+      }),
+    },
+  });
+  filterModelSource: FilterModel = new FilterModel({
+    component: FilterSourceComponent,
+    caption: 'Source',
+    hidden: this.appSessionService.hideUserSourceFilters,
+    items: {
+      element: new SourceContactFilterModel({
+        ls: this.ls,
+      }),
+    },
+  });
+  filterCurrency = this.currencyService.getCurrencyFilter(
+    SettingsHelper.getCurrency(),
+    false,
+    true
+  );
 
-    private filters: FilterModel[] = this.getFilters();
+  private filters: FilterModel[] = this.getFilters();
+
+  menuSide: 'left' | 'right' = 'left';
+
+  // KPI Cards Data
+  grossEarnings = 148491.48;
+  totalCustomers = 11844;
+  activeSubscriptions = 850;
+  pendingCancels = 240;
+
+  // KPI Cards Configuration
+  kpiCards: KpiCardData[] = [
+    {
+      title: 'GROSS EARNINGS',
+      value: this.grossEarnings,
+      icon: 'fa fa-dollar',
+      cardType: 'gross-earnings',
+      showCurrencySelector: true,
+      currencyText: 'USD - US Dollar',
+      statusBadge: 'Active'
+    },
+    {
+      title: 'CUSTOMERS',
+      value: this.totalCustomers,
+      icon: 'fa fa-users',
+      cardType: 'customers'
+    },
+    {
+      title: 'ACTIVE SUBSCRIPTIONS',
+      value: this.activeSubscriptions,
+      icon: 'fa fa-desktop',
+      cardType: 'subscriptions'
+    },
+    {
+      title: 'PENDING CANCELS',
+      value: this.pendingCancels,
+      icon: 'fa fa-bolt',
+      cardType: 'cancels'
+    }
+  ];
+
+  // Date range for charts
+  chartStartDate = new Date('2025-07-22');
+  chartEndDate = new Date('2025-08-21');
+  chartComparisonStartDate = new Date('2025-06-21');
+  chartComparisonEndDate = new Date('2025-07-21');
+
+ 
 
     constructor(
         private router: Router,
