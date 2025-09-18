@@ -19,13 +19,14 @@
             "allowedCommonJsDependencies": [
                 "underscore", "underscore.string", "lodash", "jspdf", "devextreme", "color",
                 "dragula", "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
-                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar", 
+                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar",
                 "hammerjs", "moment-timezone", "ng2-cache-service", "jquery-calendar", "@angularclass/hmr",
                 "uuid", "ng2-image-viewer", "iv-viewer", "safe-buffer", "@bugsnag/js", "buffer", "angular2-counto"
             ],
             "assets": [
               "src/assets",
               "src/favicon.ico",
+              "src/_redirects",
               "src/manifest.json",
               "src/favicon-16x16.png",
               "src/favicon-32x32.png",
@@ -154,7 +155,10 @@
                   "maximumWarning": "2048kb"
                 }
               ],
-              "optimization": true,
+              "optimization":  {
+                "scripts": true,
+                "styles": { "minify": false, "inlineCritical": true }
+              },
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
@@ -200,7 +204,10 @@
                   "maximumWarning": "2048kb"
                 }
               ],
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": { "minify": false, "inlineCritical": true }
+              },
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
@@ -381,7 +388,7 @@
             "allowedCommonJsDependencies": [
                 "underscore", "underscore.string", "lodash", "jspdf", "devextreme", "color",
                 "dragula", "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
-                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar", 
+                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar",
                 "hammerjs", "moment-timezone", "ng2-cache-service", "jquery-calendar", "@angularclass/hmr",
                 "uuid", "ng2-image-viewer", "iv-viewer", "safe-buffer", "@bugsnag/js", "buffer", "angular2-counto"
             ],
@@ -738,6 +745,7 @@
     }
   },
   "cli": {
-    "defaultCollection": "@ngrx/schematics"
+    "analytics": "10e04c52-b0b0-4cd7-bace-9612b42f324b",
+    "defaultCollection": "@schematics/angular"
   }
 }

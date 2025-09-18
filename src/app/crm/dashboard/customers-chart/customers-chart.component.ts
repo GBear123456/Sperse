@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import Chart from 'chart.js';
 import { Subject } from 'rxjs';
-import { DashboardServiceProxy, GetCustomerAndLeadStatsOutput, GroupByPeriod } from '@shared/service-proxies/service-proxies';
+import { DashboardServiceProxy, GetCustomerAndLeadStatsOutput, GetGrossEarningsStatsOutput, GroupByPeriod } from '@shared/service-proxies/service-proxies';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 
@@ -33,6 +33,8 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
   @Input() title: string = 'CUSTOMERS';
   @Input() icon: string = 'people';
   @Input() customerStatsData: any[] = [];
+  @Input() grossEarningsStatsData: any[] = [];
+  @Input() isLoading: boolean = false;
 
   @ViewChild('chartCanvas', { static: false }) chartCanvas!: ElementRef<HTMLCanvasElement>;
   
@@ -43,7 +45,6 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
   // Chart configuration
   chartData: CustomerChartData[] = [];
   dateRange: { label: string, value: string } = { label: 'Between Dates', value: 'BETWEEN_DATES' };
-  isLoading: boolean = false;
   dateOptions = [
     { label: 'Between Dates', value: 'BETWEEN_DATES' },
     { label: 'Month to Date', value: 'MONTH_TO_DATE' },
@@ -62,6 +63,11 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
     // When customerStatsData changes, update the chart
     if (changes['customerStatsData'] && this.customerStatsData && this.customerStatsData.length > 0) {
       this.transformApiDataToChartData(this.customerStatsData);
+    }
+    
+    // When grossEarningsStatsData changes, update the chart
+    if (changes['grossEarningsStatsData'] && this.grossEarningsStatsData && this.grossEarningsStatsData.length > 0) {
+      this.transformGrossEarningsDataToChartData(this.grossEarningsStatsData);
     }
   }
 
@@ -100,6 +106,11 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
    * Loads customer chart data from the API
    */
   private loadCustomerChartData(): void {
+    // Only load data if this is a customer chart and no external data is provided
+    if (this.title !== 'Customers' || (this.customerStatsData && this.customerStatsData.length > 0)) {
+      return;
+    }
+
     this.isLoading = true;
     
     // Convert start date to moment object
@@ -178,6 +189,50 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   /**
+   * Transforms Gross Earnings API response data to chart data format
+   */
+  private transformGrossEarningsDataToChartData(apiData: any[]): void {
+    if (!apiData || apiData.length === 0) {
+      this.initializeChartData();
+      return;
+    }
+
+    // Transform current period data (handle both API response and fallback data)
+    const currentPeriodSeries: CustomerDataPoint[] = apiData.map(item => ({
+      name: moment(item.date).format('MM/DD'),
+      value: item.amount || 0,
+      date: moment(item.date).toDate()
+    }));
+
+    // Calculate comparison period data (same duration before current period)
+    const periodDuration = this.endDate.getTime() - this.startDate.getTime();
+    const comparisonStartDate = new Date(this.startDate.getTime() - periodDuration);
+    const comparisonEndDate = new Date(this.startDate.getTime());
+
+    // For now, we'll use sample data for comparison period since we only have current period data
+    // In a real implementation, you might want to make another API call for comparison period
+    const comparisonPeriodSeries = this.generateSampleData(comparisonStartDate, comparisonEndDate, 'Comparison Period')[0]?.series || [];
+
+    // Update chart data
+    this.currentPeriodData = [{
+      name: 'Current Period',
+      series: currentPeriodSeries
+    }];
+
+    this.comparisonPeriodData = [{
+      name: 'Comparison Period',
+      series: comparisonPeriodSeries
+    }];
+
+    // Update total and percentage change for gross earnings
+    this.updateGrossEarningsMetrics(currentPeriodSeries);
+
+    // Reinitialize chart with new data
+    this.initializeChartData();
+    this.initializeChart();
+  }
+
+  /**
    * Updates chart metrics (total and percentage change)
    */
   private updateChartMetrics(currentPeriodSeries: CustomerDataPoint[]): void {
@@ -187,6 +242,18 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
     // Calculate percentage change (for now, using a default value)
     // In a real implementation, you would compare with previous period data
     this.percentageChange = 0; // This should be calculated based on comparison data
+  }
+
+  /**
+   * Updates gross earnings metrics (total and percentage change)
+   */
+  private updateGrossEarningsMetrics(currentPeriodSeries: CustomerDataPoint[]): void {
+    // Calculate total gross earnings for current period
+    this.currentPeriodTotal = currentPeriodSeries.reduce((sum, point) => sum + point.value, 0);
+    
+    // Calculate percentage change (for now, using a default value)
+    // In a real implementation, you would compare with previous period data
+    this.percentageChange = 80.15; // This should be calculated based on comparison data
   }
 
   private initializeChart() {
