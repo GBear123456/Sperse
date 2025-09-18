@@ -1,7 +1,9 @@
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 @import "~font-awesome/css/font-awesome.css";
 @import "shared/metronic/m-toast.less";
-
+@import "styles/theme.less";
+@import "styles/dx-theme.less";
+@import "styles/mat-theme.less";
 /* You can add global styles to this file, and also import other style files */
 
 .cke_notifications_area {

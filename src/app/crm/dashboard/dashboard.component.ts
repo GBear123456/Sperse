@@ -21,10 +21,7 @@ import { filter, first, takeUntil, map, delay, tap } from 'rxjs/operators';
 import { AppStore } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
-import {
-    OrganizationUnitsStoreActions,
-    OrganizationUnitsStoreSelectors
-} from '@app/crm/store';
+import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { ContactGroup } from '@shared/AppEnums';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -32,7 +29,12 @@ import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customizatio
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { RootStore, StatesStoreActions } from '@root/store';
-import { DashboardServiceProxy, GetCRMStatusOutput, ModuleType, LayoutType } from '@shared/service-proxies/service-proxies';
+import {
+  DashboardServiceProxy,
+  GetCRMStatusOutput,
+  ModuleType,
+  LayoutType,
+} from '@shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -63,49 +65,55 @@ import * as moment from 'moment';
 // Chart data interfaces
 
 @Component({
-    templateUrl: './dashboard.component.html',
-    styleUrls: ['./dashboard.component.less'],
-    providers: [ DashboardWidgetsService, LifecycleSubjectsService ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.less'],
+  providers: [DashboardWidgetsService, LifecycleSubjectsService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements AfterViewInit, OnInit {
-    @ViewChild(ClientsByRegionComponent) clientsByRegion: ClientsByRegionComponent;
-    @ViewChild(TotalsBySourceComponent) totalsBySource: TotalsBySourceComponent;
-    @ViewChild(LeftMenuComponent) leftMenu: LeftMenuComponent;
+  @ViewChild(ClientsByRegionComponent) clientsByRegion: ClientsByRegionComponent;
+  @ViewChild(TotalsBySourceComponent) totalsBySource: TotalsBySourceComponent;
+  @ViewChild(LeftMenuComponent) leftMenu: LeftMenuComponent;
 
-    private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
-    showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable().pipe(
-        tap((showWelcomeSection: boolean) => !this.appService.isHostTenant && showWelcomeSection 
-            ? this.router.navigate(['app/crm/' + this.layoutService.getWelcomePageUri()], {skipLocationChange: true}) : undefined
-        )
-    );
-    showDefaultSection$: Observable<boolean> = this.showWelcomeSection$.pipe(
-        map((showWelcomeSection: boolean) => showWelcomeSection === false)
-    );
-    showLoadingSpinner = true;
-    private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMIntro', 'IntroAccepted');
-    dialogConfig = new MatDialogConfig();
-    isGrantedOrders = this.permission.isGranted(AppPermissions.CRMOrders);
-    hasAnyCGPermission: boolean = !!this.permission.getFirstAvailableCG();
-    hasCustomersPermission: boolean = this.permission.isGranted(AppPermissions.CRMCustomers);
-    hasOrdersPermission: boolean = this.permission.isGranted(AppPermissions.CRMOrders);
-    hasPermissionToAddClient: boolean = this.permission.isGranted(AppPermissions.CRMCustomersManage);
-    localization = AppConsts.localization.CRMLocalizationSourceName;
-    leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
+  private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
+  showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable().pipe(
+    tap((showWelcomeSection: boolean) =>
+      !this.appService.isHostTenant && showWelcomeSection
+        ? this.router.navigate(['app/crm/' + this.layoutService.getWelcomePageUri()], {
+            skipLocationChange: true,
+          })
+        : undefined
+    )
+  );
+  showDefaultSection$: Observable<boolean> = this.showWelcomeSection$.pipe(
+    map((showWelcomeSection: boolean) => showWelcomeSection === false)
+  );
+  showLoadingSpinner = true;
+  private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMIntro', 'IntroAccepted');
+  dialogConfig = new MatDialogConfig();
+  isGrantedOrders = this.permission.isGranted(AppPermissions.CRMOrders);
+  hasAnyCGPermission: boolean = !!this.permission.getFirstAvailableCG();
+  hasCustomersPermission: boolean = this.permission.isGranted(AppPermissions.CRMCustomers);
+  hasOrdersPermission: boolean = this.permission.isGranted(AppPermissions.CRMOrders);
+  hasPermissionToAddClient: boolean = this.permission.isGranted(AppPermissions.CRMCustomersManage);
+  localization = AppConsts.localization.CRMLocalizationSourceName;
+  leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
 
-    clientsByRegionLoad: Subject<any> = new Subject<any>();
-    totalsByPeriodLoad: Subject<any> = new Subject<any>();
-    totalsBySourceLoad: Subject<any> = new Subject<any>();
-    recentClientsLoad: Subject<any> = new Subject<any>();
+  clientsByRegionLoad: Subject<any> = new Subject<any>();
+  totalsByPeriodLoad: Subject<any> = new Subject<any>();
+  totalsBySourceLoad: Subject<any> = new Subject<any>();
+  recentClientsLoad: Subject<any> = new Subject<any>();
 
-    accessilbeContactGroups = Object.keys(ContactGroup).map(item => {
-        if (this.permission.checkCGPermission([ContactGroup[item]], ''))
-            return {
-                id: ContactGroup[item],
-                name: this.ls.l('ContactGroup_' + item)
-            };
-    }).filter(Boolean);
-    hasAccessibleCG = this.accessilbeContactGroups.length !== 0;
+  accessilbeContactGroups = Object.keys(ContactGroup)
+    .map(item => {
+      if (this.permission.checkCGPermission([ContactGroup[item]], ''))
+        return {
+          id: ContactGroup[item],
+          name: this.ls.l('ContactGroup_' + item),
+        };
+    })
+    .filter(Boolean);
+  hasAccessibleCG = this.accessilbeContactGroups.length !== 0;
 
   filterModelContactGroup = new FilterModel({
     caption: 'ContactGroup',
@@ -237,9 +245,9 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   ) {
     this.store$.dispatch(new StatesStoreActions.LoadRequestAction(AppConsts.defaultCountryCode));
     this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
-    // this.layoutService.crmMenuPosition$.subscribe(side => {
-    //   this.menuSide = side;
-    // });
+    this.layoutService.crmMenuPosition$.subscribe(side => {
+      this.menuSide = side;
+    });
   }
 
   ngOnInit() {
@@ -556,44 +564,47 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     this.activate();
   }
 
-    private getFilters() {
-        return [
-            this.filterModelContactGroup,
-            this.filterModelOrgUnit,
-            this.filterModelSource,
-            this.filterCurrency
-        ];
+  private getFilters() {
+    return [
+      this.filterModelContactGroup,
+      this.filterModelOrgUnit,
+      this.filterModelSource,
+      this.filterCurrency,
+    ];
+  }
+
+  initFilterConfig() {
+    if (this.filters) {
+      this.filtersService.setup(this.filters);
+      this.filtersService.checkIfAnySelected();
+    } else {
+      this.filtersService.setup((this.filters = this.getFilters()));
     }
 
-    initFilterConfig() {
-        if (this.filters) {
-            this.filtersService.setup(this.filters);
-            this.filtersService.checkIfAnySelected();
-        } else {
-            this.filtersService.setup(
-                this.filters = this.getFilters()
+    this.filtersService.apply(filters => {
+      filters &&
+        filters.forEach(filter => {
+          if (filter.caption == 'Source')
+            this.dashboardWidgetsService.setContactIdForTotals(
+              filter.items.element.value[0].value || undefined
             );
-        }
+          else if (filter.field == 'SourceOrganizationUnitId')
+            this.dashboardWidgetsService.setOrgUnitIdsForTotals(filter.items.element.value);
+          else if (filter.caption == 'ContactGroup')
+            this.dashboardWidgetsService.setGroupIdForTotals(
+              filter.items.element.value || ContactGroup.Client
+            );
+          else if (filter.caption == 'Currency')
+            this.dashboardWidgetsService.setCurrencyIdForTotals(
+              this.currencyService.getSelectedCurrencies(filter)[0]
+            );
+        });
 
-        this.filtersService.apply(filters => {
-            filters && filters.forEach(filter => {
-                if (filter.caption == 'Source')
-                    this.dashboardWidgetsService.setContactIdForTotals(
-                        filter.items.element.value[0].value || undefined);
-                else if (filter.field == 'SourceOrganizationUnitId')
-                    this.dashboardWidgetsService.setOrgUnitIdsForTotals(
-                        filter.items.element.value);
-                else if (filter.caption == 'ContactGroup') 
-                    this.dashboardWidgetsService.setGroupIdForTotals(
-                        filter.items.element.value || ContactGroup.Client);
-                else if (filter.caption == 'Currency')
-                    this.dashboardWidgetsService.setCurrencyIdForTotals(this.currencyService.getSelectedCurrencies(filter)[0]);
-            });
-            if (this.leftMenu) {
-              this.leftMenu.initMenuItems();
-            }
-          });
-        }
+      if (this.leftMenu) {
+        this.leftMenu.initMenuItems();
+      }
+    });
+  }
 
   /**
    * Subscribes to calendar date changes and reloads customer stats when dates change
@@ -700,65 +711,67 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     this.router.navigate(['app/crm/clients'], { queryParams: { action: 'addNew' } });
   }
 
-  
-
-    private loadStatus(initialLoad: boolean = false) {
-        if (this.filterModelContactGroup.items.element.value) {
-            this.dashboardServiceProxy.getStatus(
-                this.filterModelContactGroup.items.element.value.toString(), undefined
-            ).subscribe((status: GetCRMStatusOutput) => {
-                this.showWelcomeSection.next(initialLoad ? !status.hasData : false);
-                this.showLoadingSpinner = false;
-                this.changeDetectorRef.detectChanges();
-            });
-        }
+  private loadStatus(initialLoad: boolean = false) {
+    if (this.filterModelContactGroup.items.element.value) {
+      this.dashboardServiceProxy
+        .getStatus(this.filterModelContactGroup.items.element.value.toString(), undefined)
+        .subscribe((status: GetCRMStatusOutput) => {
+          this.showWelcomeSection.next(initialLoad ? !status.hasData : false);
+          this.showLoadingSpinner = false;
+          this.changeDetectorRef.detectChanges();
+        });
     }
+  }
 
-    openDialog() {        
-        if (this.appService.isHostTenant || !this.appService.hasModuleSubscription(
-            this.appService.defaultSubscriptionModule.toLowerCase())
-        ) return;
+  openDialog() {
+    if (
+      this.appService.isHostTenant ||
+      !this.appService.hasModuleSubscription(
+        this.appService.defaultSubscriptionModule.toLowerCase()
+      )
+    )
+      return;
 
-        let tenant = this.appSessionService.tenant;
-        if (!tenant || !tenant.customLayoutType || tenant.customLayoutType == LayoutType.Default) {
-            this.dialogConfig.height = '650px';
-            this.dialogConfig.width = '900px';
-            this.dialogConfig.id = 'crm-intro';
-            this.dialogConfig.panelClass = ['crm-intro', 'setup'];
-            this.dialogConfig.data = { alreadyStarted: false };
-            this.dialog.open(CrmIntroComponent, this.dialogConfig).afterClosed().subscribe(() => {
-                /** Mark accepted cache with true when user closed intro and don't want to see it anymore) */
-                this.cacheService.set(this.introAcceptedCacheKey, 'true');
-            });
-        }
+    let tenant = this.appSessionService.tenant;
+    if (!tenant || !tenant.customLayoutType || tenant.customLayoutType == LayoutType.Default) {
+      this.dialogConfig.height = '650px';
+      this.dialogConfig.width = '900px';
+      this.dialogConfig.id = 'crm-intro';
+      this.dialogConfig.panelClass = ['crm-intro', 'setup'];
+      this.dialogConfig.data = { alreadyStarted: false };
+      this.dialog
+        .open(CrmIntroComponent, this.dialogConfig)
+        .afterClosed()
+        .subscribe(() => {
+          /** Mark accepted cache with true when user closed intro and don't want to see it anymore) */
+          this.cacheService.set(this.introAcceptedCacheKey, 'true');
+        });
     }
+  }
 
-    activate() {
-        this.lifeCycleSubject.activate.next();
+  activate() {
+    this.lifeCycleSubject.activate.next();
 
-        if (this.hasAccessibleCG) {
-            this.loadStatus();
-            this.subscribeToRefreshParam();
-            this.refreshClientsByRegion();
-            this.refreshTotalsBySource();
-            this.initFilterConfig();
-        }
-        else {
-            this.showLoadingSpinner = false;
-        }
-        this.ui.overflowHidden(true);
-        this.appService.isClientSearchDisabled = true;
-        this.appService.toolbarIsHidden.next(true);
-        this.changeDetectorRef.markForCheck()
+    if (this.hasAccessibleCG) {
+      this.loadStatus();
+      this.subscribeToRefreshParam();
+      this.refreshClientsByRegion();
+      this.refreshTotalsBySource();
+      this.initFilterConfig();
+      
+      // Refresh dashboard totals data
+      this.dashboardWidgetsService.refresh();
+      
+      // Load customer stats
+      this.loadCustomerStats();
+    } else {
+      this.showLoadingSpinner = false;
     }
-
-    
-
-    
-
-    
-
-  
+    this.ui.overflowHidden(true);
+    this.appService.isClientSearchDisabled = true;
+    this.appService.toolbarIsHidden.next(true);
+    this.changeDetectorRef.markForCheck();
+  }
 
   subscribeToRefreshParam() {
     this.activatedRoute.queryParams

@@ -1,0 +1,751 @@
+/* DevExtreme Theme Variables */
+:root {
+    /* Light Theme */
+    --dx-dropdown-bg: var(--sidebar-bg);
+    --dx-dropdown-text: var(--text-color);
+    --dx-dropdown-border: var(--border-color);
+    --dx-dropdown-hover-bg: var(--hover-bg);
+    --dx-dropdown-hover-text: var(--text-color);
+    --dx-dropdown-selected-bg: var(--primary-color);
+    --dx-dropdown-selected-text: var(--button-bg);
+    --dx-dropdown-disabled-bg: var(--disabled-bg);
+    --dx-dropdown-disabled-text: var(--disabled-color);
+    --dx-dropdown-shadow: 0 0 15px 1px rgba(64, 72, 78, 0.2);
+  }
+  
+  /* Dark Theme */
+  [data-theme='dark'] {
+    --dx-dropdown-bg: var(--sidebar-bg);
+    --dx-dropdown-text: var(--text-color);
+    --dx-dropdown-border: var(--border-color);
+    --dx-dropdown-hover-bg: var(--hover-bg);
+    --dx-dropdown-hover-text: var(--text-color);
+    --dx-dropdown-selected-bg: var(--primary-color);
+    --dx-dropdown-selected-text: var(--button-bg);
+    --dx-dropdown-disabled-bg: var(--disabled-bg);
+    --dx-dropdown-disabled-text: var(--disabled-color);
+    --dx-dropdown-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* DevExtreme Dropdown Styles */
+  .dx-dropdowneditor {
+    background-color: var(--dx-dropdown-bg);
+    color: var(--dx-dropdown-text);
+    border-color: var(--dx-dropdown-border);
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  
+    &.dx-state-hover {
+      background-color: var(--dx-dropdown-hover-bg);
+      color: var(--dx-dropdown-hover-text);
+    }
+  
+    &.dx-state-focused {
+      border-color: var(--primary-color);
+    }
+  
+    &.dx-state-disabled {
+      background-color: var(--dx-dropdown-disabled-bg);
+      color: var(--dx-dropdown-disabled-text);
+      opacity: 0.7;
+    }
+  }
+  
+  .dx-dropdownlist-popup-wrapper {
+    .dx-overlay-content {
+      background-color: var(--dx-dropdown-bg);
+      color: var(--dx-dropdown-text);
+      border-color: var(--dx-dropdown-border);
+      box-shadow: var(--dx-dropdown-shadow);
+    }
+  
+    .dx-list-item {
+      background-color: var(--dx-dropdown-bg);
+      color: var(--dx-dropdown-text);
+      transition: background-color 0.3s, color 0.3s;
+  
+      &:hover {
+        background-color: var(--dx-dropdown-hover-bg);
+        color: var(--dx-dropdown-hover-text);
+      }
+  
+      &.dx-state-selected {
+        background-color: var(--dx-dropdown-selected-bg);
+        color: var(--dx-dropdown-selected-text);
+      }
+  
+      &.dx-state-disabled {
+        background-color: var(--dx-dropdown-disabled-bg);
+        color: var(--dx-dropdown-disabled-text);
+        opacity: 0.7;
+      }
+    }
+  }
+  
+  .dx-dropdowneditor-button {
+    background-color: var(--dx-dropdown-bg);
+    color: var(--dx-dropdown-text);
+    border-color: var(--dx-dropdown-border);
+  
+    &:hover {
+      background-color: var(--dx-dropdown-hover-bg);
+      color: var(--dx-dropdown-hover-text);
+    }
+  
+    &:active {
+      background-color: var(--dx-dropdown-selected-bg);
+      color: var(--dx-dropdown-selected-text);
+    }
+  
+    &.dx-state-disabled {
+      background-color: var(--dx-dropdown-disabled-bg);
+      color: var(--dx-dropdown-disabled-text);
+      opacity: 0.7;
+    }
+  }
+  
+  .dx-datagrid {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border-color: var(--border-color);
+  
+    .dx-gridbase-container {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      border-color: var(--border-color);
+  
+      .dx-header-row {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        border-bottom: 1px solid var(--border-color);
+  
+        td {
+          background-color: var(--card-bg);
+          color: var(--text-color);
+          border-color: var(--border-color);
+        }
+      }
+  
+      .dx-data-row {
+        background-color: var(--background-color);
+        color: var(--text-color);
+        border-bottom: 1px solid var(--border-color);
+  
+        &:hover {
+          background-color: var(--hover-bg);
+        }
+  
+        &.dx-row-focused {
+          background-color: var(--hover-bg);
+        }
+  
+        &.dx-row-selected {
+          background-color: var(--primary-color-light);
+          color: var(--primary-color-contrast);
+        }
+  
+        td {
+          background-color: transparent;
+          color: var(--text-color);
+          border-color: var(--border-color);
+        }
+      }
+  
+      .dx-row-alt {
+        background-color: var(--card-bg);
+      }
+  
+      .dx-master-detail-row {
+        background-color: var(--card-bg);
+        border-color: var(--border-color);
+      }
+  
+      .dx-editor-cell {
+        background-color: var(--background-color);
+        border-color: var(--border-color);
+      }
+  
+      .dx-row-focused > td {
+        background-color: var(--hover-bg);
+      }
+  
+      .dx-row-selected > td {
+        background-color: var(--primary-color-light);
+        color: var(--primary-color-contrast);
+      }
+    }
+  
+    .dx-datagrid-pager {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      border-top: 1px solid var(--border-color);
+    }
+  
+    .dx-datagrid-headers {
+      background-color: var(--navbar-bg);
+      color: var(--text-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+  
+    .dx-datagrid-rowsview {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      border-color: var(--border-color);
+    }
+  
+    .dx-datagrid-filter-row {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border-bottom: 1px solid var(--border-color);
+  
+      td {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        border-color: var(--border-color);
+      }
+    }
+  
+    .dx-datagrid-group-panel {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+  
+    .dx-datagrid-group-opened {
+      color: var(--primary-color);
+    }
+  
+    .dx-datagrid-group-closed {
+      color: var(--primary-color);
+    }
+  
+    .dx-datagrid-total-footer {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border-top: 1px solid var(--border-color);
+    }
+  
+    .dx-datagrid-column-chooser {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-color);
+    }
+  }
+  
+  .dx-pager {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin: 0 2px;
+    min-width: 32px;
+    height: 32px;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  
+    &:hover {
+      background-color: var(--hover-bg);
+      border-color: var(--border-color-hover);
+    }
+  
+    &.dx-selection {
+      background-color: var(--primary-color);
+      color: var(--primary-color-contrast);
+      border-color: var(--primary-color);
+  
+      &:hover {
+        background-color: var(--primary-color-light);
+        border-color: var(--primary-color-light);
+      }
+    }
+  
+    &.dx-page-sizes {
+      .dx-page-size {
+        color: var(--text-color);
+        background-color: var(--background-color);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 4px 8px;
+        margin: 0 2px;
+        cursor: pointer;
+  
+        &:hover {
+          background-color: var(--hover-bg);
+          border-color: var(--border-color-hover);
+        }
+  
+        &.dx-selection {
+          background-color: var(--primary-color);
+          color: var(--primary-color-contrast);
+          border-color: var(--primary-color);
+        }
+      }
+    }
+  }
+  
+  .dx-select-box {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border-color: var(--border-color);
+  
+    .dx-texteditor-input {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      border-color: var(--border-color);
+      font-family: var(--app-font-family);
+  
+      &::placeholder {
+        color: var(--muted-color);
+      }
+    }
+  
+    .dx-placeholder {
+      color: var(--muted-color);
+    }
+  
+    &.dx-state-hover {
+      background-color: var(--hover-bg);
+      border-color: var(--border-color-hover);
+    }
+  
+    &.dx-state-focused {
+      border-color: var(--primary-color);
+    }
+  
+    &.dx-state-disabled {
+      background-color: var(--disabled-bg);
+      color: var(--disabled-color);
+      border-color: var(--border-color);
+      opacity: 0.7;
+    }
+  
+    .dx-dropdowneditor-button {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      border-color: var(--border-color);
+  
+      &:hover {
+        background-color: var(--hover-bg);
+        color: var(--text-color);
+      }
+  
+      &:active {
+        background-color: var(--primary-color);
+        color: var(--primary-color-contrast);
+      }
+  
+      &.dx-state-disabled {
+        background-color: var(--disabled-bg);
+        color: var(--disabled-color);
+        border-color: var(--border-color);
+      }
+    }
+  
+    .dx-dropdownlist-popup-wrapper {
+      .dx-overlay-content {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        border-color: var(--border-color);
+        box-shadow: var(--shadow-color);
+      }
+  
+      .dx-list-item {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        transition: background-color 0.3s, color 0.3s;
+  
+        &:hover {
+          background-color: var(--hover-bg);
+          color: var(--text-color);
+        }
+  
+        &.dx-state-selected {
+          background-color: var(--primary-color);
+          color: var(--primary-color-contrast);
+        }
+  
+        &.dx-state-disabled {
+          background-color: var(--disabled-bg);
+          color: var(--disabled-color);
+          opacity: 0.7;
+        }
+      }
+  
+      .dx-list-group-header {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        border-bottom: 1px solid var(--border-color);
+      }
+  
+      .dx-list-group {
+        border-bottom: 1px solid var(--border-color);
+      }
+    }
+  
+    .dx-dropdowneditor-icon {
+      color: var(--text-color);
+      filter: var(--icon-filter);
+    }
+  
+    .dx-dropdowneditor-button-visible {
+      .dx-texteditor-input {
+        padding-right: 32px;
+      }
+    }
+  
+    .dx-dropdowneditor-button-hidden {
+      .dx-texteditor-input {
+        padding-right: 8px;
+      }
+    }
+  
+    .dx-dropdowneditor-button-visible.dx-show-clear-button {
+      .dx-texteditor-input {
+        padding-right: 56px;
+      }
+    }
+  
+    .dx-clear-button-area {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      border-color: var(--border-color);
+  
+      &:hover {
+        background-color: var(--hover-bg);
+        color: var(--text-color);
+      }
+  
+      &:active {
+        background-color: var(--primary-color);
+        color: var(--primary-color-contrast);
+      }
+    }
+  }
+  
+  .dx-datagrid-text-content {
+    color: var(--text-color) !important;
+  }
+  
+  .dx-filemanager {
+    background-color: var(--background-color);
+    color: var(--text-color);
+  
+    // Toolbar
+    .dx-filemanager-toolbar {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      .dx-toolbar-item .dx-button {
+        background-color: var(--background-color);
+        color: var(--text-color);
+        border-color: var(--border-color);
+        &:hover {
+          background-color: var(--hover-bg);
+          border-color: var(--border-color-hover);
+        }
+        &.dx-state-focused {
+          border-color: var(--primary-color);
+        }
+      }
+    }
+  
+    // Breadcrumbs
+    .dx-filemanager-breadcrumbs {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-color);
+      .dx-breadcrumbs-item {
+        color: var(--text-color);
+        &:hover {
+          color: var(--primary-color);
+        }
+      }
+    }
+  
+    // Navigation Panel
+    .dx-filemanager-navigation-panel {
+      background-color: var(--card-bg);
+      border-right: 1px solid var(--border-color);
+      .dx-treeview .dx-treeview-node {
+        color: var(--text-color);
+        &:hover,
+        &.dx-state-focused {
+          background-color: var(--hover-bg);
+        }
+        .dx-treeview-item {
+          color: var(--text-color);
+        }
+      }
+    }
+  
+    // File View
+    .dx-filemanager-file-view {
+      background-color: var(--background-color);
+  
+      // Thumbnails View
+      .dx-filemanager-thumbnails {
+        .dx-filemanager-thumbnails-item {
+          background-color: var(--card-bg);
+          border: 1px solid var(--border-color);
+          color: var(--text-color);
+          &:hover,
+          &.dx-state-focused {
+            background-color: var(--hover-bg);
+            border-color: var(--primary-color);
+          }
+          .dx-filemanager-thumbnails-item-name {
+            color: var(--text-color);
+          }
+        }
+      }
+  
+      // Details View
+      .dx-filemanager-details {
+        .dx-datagrid-rowsview {
+          .dx-row {
+            color: var(--text-color);
+            background-color: var(--background-color);
+            &:hover,
+            &.dx-row-focused {
+              background-color: var(--hover-bg);
+            }
+          }
+          .dx-header-row {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+          }
+        }
+      }
+    }
+  
+    // Context Menu
+    .dx-context-menu {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-color);
+      .dx-menu-item {
+        color: var(--text-color);
+        &:hover,
+        &.dx-state-focused {
+          background-color: var(--hover-bg);
+        }
+      }
+    }
+  
+    // File Actions
+    .dx-filemanager-file-actions-button {
+      color: var(--text-color);
+    }
+  
+    // Status Bar
+    .dx-filemanager-status-bar {
+      background-color: var(--card-bg);
+      border-top: 1px solid var(--border-color);
+      color: var(--text-color);
+    }
+  
+    // Progress Panel
+    .dx-filemanager-progress-panel {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-color);
+      .dx-filemanager-progress-panel-title {
+        color: var(--text-color);
+      }
+      .dx-filemanager-progress-panel-text {
+        color: var(--muted-color);
+      }
+    }
+  
+    // Dialogs
+    .dx-filemanager-dialog {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-color);
+      .dx-filemanager-dialog-title,
+      .dx-filemanager-dialog-content {
+        color: var(--text-color);
+      }
+      .dx-button {
+        background-color: var(--background-color);
+        color: var(--text-color);
+        border-color: var(--border-color);
+        &:hover {
+          background-color: var(--hover-bg);
+          border-color: var(--border-color-hover);
+        }
+        &.dx-state-focused {
+          border-color: var(--primary-color);
+        }
+      }
+    }
+  }
+  
+  .dx-checkbox {
+    .dx-checkbox-container {
+      .dx-checkbox-icon {
+        background-color: var(--background-color);
+        border: 1px solid var(--border-color);
+        border-radius: 3px;
+        color: var(--text-color);
+  
+        &:hover {
+          border-color: var(--border-color-hover);
+        }
+      }
+  
+      .dx-checkbox-checked {
+        .dx-checkbox-icon {
+          background-color: var(--primary-color);
+          border-color: var(--primary-color);
+          color: var(--primary-color-contrast);
+        }
+      }
+  
+      .dx-checkbox-indeterminate {
+        .dx-checkbox-icon {
+          background-color: var(--primary-color);
+          border-color: var(--primary-color);
+          color: var(--primary-color-contrast);
+        }
+      }
+  
+      .dx-checkbox-text {
+        color: var(--text-color);
+        font-family: var(--app-font-family);
+        font-size: 1rem;
+        line-height: 1.25;
+      }
+    }
+  
+    &.dx-state-focused {
+      .dx-checkbox-container {
+        .dx-checkbox-icon {
+          border-color: var(--primary-color);
+        }
+      }
+    }
+  
+    &.dx-state-disabled {
+      .dx-checkbox-container {
+        .dx-checkbox-icon {
+          background-color: var(--disabled-bg);
+          border-color: var(--border-color);
+          color: var(--muted-color);
+        }
+  
+        .dx-checkbox-text {
+          color: var(--muted-color);
+        }
+      }
+    }
+  
+    &.dx-state-hover {
+      .dx-checkbox-container {
+        .dx-checkbox-icon {
+          border-color: var(--border-color-hover);
+        }
+      }
+    }
+  }
+  
+  .dx-treelist-table,
+  .dx-treelist-rowsview {
+    background-color: var(--background-color) !important;
+    color: var(--text-color) !important;
+  }
+  
+  .dx-submenu {
+    background-color: var(--card-bg) !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: 4px;
+  }
+  
+  .dx-treeview-item.dx-filemanager-focused-item {
+    color: var(--text-color) !important;
+  }
+  
+  .dx-button-mode-text .dx-icon {
+    color: var(--text-color) !important;
+  }
+  
+  .dx-empty-message {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+  }
+  
+  .dx-area-field-content {
+    color: var(--text-color) !important;
+  }
+  
+  .dx-overlay-wrapper {
+    background: transparent !important;
+  }
+  
+  .dx-row {
+    td {
+      color: var(--text-color) !important;
+    }
+  
+    &:hover {
+      td {
+        color: #000 !important;
+      }
+    }
+  }
+  
+  .dx-treeview-item-with-checkbox .dx-treeview-item {
+    color: var(--text-color) !important;
+  }
+  
+  .dx-button-has-text.dx-state-hover.dx-button-content {
+    span {
+      color: #000 !important;
+    }
+  }
+  
+  .dx-calendar-cell {
+    color: var(--text-color) !important;
+  }
+  
+  .dx-item-content.dx-list-item-content {
+    color: var(--text-color) !important;
+  }
+  
+  .dx-button.dx-button-mode-contained {
+    background: var(--button-bg) !important;
+  
+    .dx-icon {
+      color: var(--text-color) !important;
+    }
+  }
+  
+  .dx-tab-selected {
+    color: var(--text-color) !important;
+  }
+  
+  .dx-texteditor-input {
+    color: var(--text-color) !important;
+  }
+  
+  .dx-placeholder {
+    color: var(--input-placeholder) !important;
+  }
+  
+  .dx-filemanager-dialog-name-editor-popup {
+    .dx-overlay-content {
+      background: var(--background-color) !important;
+    }
+    .dx-toolbar-item-content {
+      color: var(--text-color) !important;
+    }
+    .dx-texteditor-input {
+      background: var(--background-color) !important;
+    }
+    .dx-button-text {
+      color: var(--text-color) !important;
+    }
+  }
+  
