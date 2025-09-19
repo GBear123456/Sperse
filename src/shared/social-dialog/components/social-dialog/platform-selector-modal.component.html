@@ -7,7 +7,7 @@
       <div class="header-actions">
        
         <button class="view-mode-btn" (click)="toggleViewMode()" [class.active]="isGridView">
-          <div>
+          <div class="d-flex">
             <svg *ngIf="!isGridView" class="grid-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M3 3h7v7H3V3zM14 3h7v7h-7V3zM3 14h7v7H3v-7zM14 14h7v7h-7v-7z" fill="currentColor"/>
             </svg>
