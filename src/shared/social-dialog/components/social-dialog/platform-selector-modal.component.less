@@ -30,6 +30,17 @@
   max-height: 630px;
   overflow: visible;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+<<<<<<< HEAD
+=======
+  
+  .dark-theme & {
+    background: var(--card-bg);
+    
+    border: 1px solid #eab30833 !important;
+    box-shadow: 0 0 #0000,  0 0 #0000, 0 0 30px -5px rgba(251, 191, 36, 0.3) !important;
+
+  }
+>>>>>>> 7bde60590 ([SC-18329] fix style of social platform modal)
 }
 
 // Header Styles
@@ -244,14 +255,15 @@
 // Platform Grid
 .platform-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+  gap: 20px;
   height: 500px;
   max-height: 500px;
   overflow-y: auto;
   overflow-x: visible;
-  padding: 30px 24px 16px 24px;
+  padding: 30px 40px 16px ;
   position: relative;
+  margin-bottom: 8px;
   
   // Custom scrollbar for dark theme
   .dark-theme & {
@@ -309,8 +321,8 @@
 }
 
 .platform-grid-icon {
-  width: 60px;
-  height: 60px;
+  width: 75px;
+  height: 75px;
   display: flex;
   align-items: center;
   justify-content: center;
