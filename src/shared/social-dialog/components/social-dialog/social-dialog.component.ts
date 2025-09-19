@@ -71,9 +71,15 @@ export class SocialDialogComponent implements OnInit {
   }
 
   onSave(): void {
-   
-    if(this.isEditMode){
+    if (this.socialForm.valid) {
       const formData = this.socialForm.value;
+      
+      // For new links, platform selection is required
+      if (!this.isEditMode && !this.selectedPlatform) {
+        console.log('Form validation failed: Platform selection required for new links');
+        return;
+      }
+      
       // Construct the full URL if it doesn't start with http
       let finalUrl = formData.url;
       if (finalUrl && !finalUrl.match(/^https?:\/\//)) {
@@ -96,53 +102,16 @@ export class SocialDialogComponent implements OnInit {
         linkTypeId: this.selectedPlatform ? this.getLinkTypeId(this.selectedPlatform.id) : (this.data?.linkTypeId || 'other'),
         isEditMode: this.isEditMode
       };
+      
       this.dialogRef.close(result);
-    }
-    else {
-
-      if (this.socialForm.valid) {
-        const formData = this.socialForm.value;
-        
-        // In edit mode, we can save even without a platform selection
-        if (!this.selectedPlatform && !this.isEditMode) {
-          console.log('Form validation failed: Platform selection required for new links');
-          return;
-        }
-        
-        // Construct the full URL if it doesn't start with http
-        let finalUrl = formData.url;
-        if (finalUrl && !finalUrl.match(/^https?:\/\//)) {
-          if (this.selectedPlatform && this.selectedPlatform.urlPrefix) {
-            finalUrl = this.selectedPlatform.urlPrefix + finalUrl;
-          } else {
-            finalUrl = 'https://' + finalUrl;
-          }
-        }
-  
-        // Create the result object with all necessary data
-        const result = {
-          id: this.data?.id, // Include ID if editing
-          platform: this.selectedPlatform ? this.selectedPlatform.name : (this.data?.platform || ''),
-          platformId: this.selectedPlatform ? this.selectedPlatform.id : '',
-          url: finalUrl,
-          comment: formData.comment,
-          isActive: formData.isActive,
-          isConfirmed: formData.isConfirmed,
-          linkTypeId: this.selectedPlatform ? this.getLinkTypeId(this.selectedPlatform.id) : (this.data?.linkTypeId || 'other'),
-          isEditMode: this.isEditMode
-        };
-        
-       
-        this.dialogRef.close(result);
-      } else {
-        console.log('Form validation failed:', {
-          formValid: this.socialForm.valid,
-          platformSelected: !!this.selectedPlatform,
-          isEditMode: this.isEditMode,
-          formErrors: this.socialForm.errors,
-          urlErrors: this.socialForm.get('url')?.errors
-        });
-      }
+    } else {
+      console.log('Form validation failed:', {
+        formValid: this.socialForm.valid,
+        platformSelected: !!this.selectedPlatform,
+        isEditMode: this.isEditMode,
+        formErrors: this.socialForm.errors,
+        urlErrors: this.socialForm.get('url')?.errors
+      });
     }
   }
 
@@ -176,9 +145,7 @@ export class SocialDialogComponent implements OnInit {
     // In edit mode, we only need the form to be valid (URL field filled)
     // In create mode, we need both form valid and platform selected
     if (this.isEditMode) {
-      const data = this.socialForm.value;
-
-      return Boolean(data.url); // Only require form validation in edit mode
+      return this.socialForm.valid; // Only require form validation in edit mode
     } else {
       return this.socialForm.valid && !!this.selectedPlatform; // Require both in create mode
     }
