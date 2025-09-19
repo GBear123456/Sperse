@@ -316,13 +316,8 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         // Update dashboard widgets service with default currency
         this.dashboardWidgetsService.setCurrencyIdForTotals(defaultCurrency.id);
         
-        // If we already have gross earnings data, recalculate with the new currency
-        if (this.grossEarningsStatsData && this.grossEarningsStatsData.length > 0) {
-          this.updateGrossEarningsKpiCards(this.grossEarningsStatsData);
-        } else {
-          this.updateGrossEarningsForCurrency();
-          this.updateKpiCards();
-        }
+        // Load gross earnings stats with new currency
+        this.loadGrossEarningsStats();
       } else {
         console.warn('No currencies available');
         // Set fallback values
@@ -414,13 +409,8 @@ export class DashboardComponent implements AfterViewInit, OnInit {
       // Update dashboard widgets service with new currency
       this.dashboardWidgetsService.setCurrencyIdForTotals(currency.id);
       
-      // If we have gross earnings data, recalculate with new currency
-      if (this.grossEarningsStatsData && this.grossEarningsStatsData.length > 0) {
-        this.updateGrossEarningsKpiCards(this.grossEarningsStatsData);
-      } else {
-        // Reload gross earnings stats with new currency
-        this.loadGrossEarningsStats();
-      }
+      // Reload gross earnings stats with new currency
+      this.loadGrossEarningsStats();
       
       // Show notification
       this.showCurrencyChangeNotification(previousCurrency, currency);
@@ -488,18 +478,8 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   /**
    * Updates the gross earnings value based on the selected currency
    * Uses conversion rates to calculate the equivalent value
-   * Only applies conversion if no real API data is available
    */
   private updateGrossEarningsForCurrency(): void {
-    // If we have real gross earnings data, don't override it with hardcoded values
-    if (this.grossEarningsStatsData && this.grossEarningsStatsData.length > 0) {
-      // Apply currency conversion to the real data sum
-      const baseAmount = this.grossEarningsStatsData.reduce((sum, item) => sum + (item.amount || 0), 0);
-      this.grossEarnings = this.convertCurrency(baseAmount, 'USD', this.selectedCurrency?.id || 'USD');
-      return;
-    }
-
-    // Fallback to hardcoded conversion for legacy behavior
     const conversionRates: { [key: string]: number } = {
       'USD': 1.0,
       'EUR': 0.85,
@@ -686,10 +666,10 @@ export class DashboardComponent implements AfterViewInit, OnInit {
           
           // Reload customer stats with new date range
           this.loadCustomerStats();
-          
+
           // Reload gross earnings stats with new date range
           this.loadGrossEarningsStats();
-          
+
           // Trigger change detection
           this.changeDetectorRef.markForCheck();
         }
@@ -773,10 +753,31 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     const startDate = moment(this.chartStartDate);
     const endDate = moment(this.chartEndDate);
     
+    // Determine groupBy based on date range duration
+    const daysDifference = Math.ceil((endDate.valueOf() - startDate.valueOf()) / (1000 * 60 * 60 * 24));
+    let groupBy = 'Monthly';
+    if (daysDifference <= 7) {
+      groupBy = 'Daily';
+    } else if (daysDifference <= 31) {
+      groupBy = 'Daily';
+    } else if (daysDifference <= 365) {
+      groupBy = 'Monthly';
+    } else {
+      groupBy = 'Yearly';
+    }
+
+    console.log('Loading gross earnings stats with params:', {
+      currencyId,
+      groupBy,
+      startDate: startDate.format('YYYY-MM-DD'),
+      endDate: endDate.format('YYYY-MM-DD'),
+      contactGroupId
+    });
+
     this.dashboardServiceProxy
       .getGrossEarningsStats(
         currencyId,              // currencyId
-        'Monthly',               // groupBy (Monthly as per the API example)
+        groupBy,                 // groupBy (Dynamic based on date range)
         startDate,               // startDate
         endDate,                 // endDate
         contactGroupId           // contactGroupId
@@ -784,6 +785,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
       .pipe(takeUntil(this.lifeCycleSubject.deactivate$))
       .subscribe({
         next: (data: GetGrossEarningsStatsOutput[]) => {
+          console.log('Gross earnings stats API response:', data);
           this.grossEarningsStatsData = data;
           this.isLoadingGrossEarningsStats = false;
           
@@ -794,11 +796,13 @@ export class DashboardComponent implements AfterViewInit, OnInit {
           this.changeDetectorRef.markForCheck();
         },
         error: (error) => {
-          console.warn('GetGrossEarningsStats API not available yet, using fallback data:', error);
+          console.error('Error loading gross earnings stats:', error);
+          console.error('Error details:', error.message, error.status);
           this.isLoadingGrossEarningsStats = false;
           
-          // Use fallback data until the backend API is implemented
-          this.generateFallbackGrossEarningsData();
+          // Keep using hardcoded values on error
+          this.updateGrossEarningsForCurrency();
+          this.updateKpiCards();
           
           // Trigger change detection
           this.changeDetectorRef.markForCheck();
@@ -807,57 +811,29 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   }
 
   /**
-   * Generates fallback gross earnings data until the backend API is implemented
-   */
-  private generateFallbackGrossEarningsData(): void {
-    // Use the sample data from the API example you provided
-    const fallbackData = [
-      { date: moment('2025-01-01'), amount: 15140.87 },
-      { date: moment('2025-02-01'), amount: 31782.04 },
-      { date: moment('2025-03-01'), amount: 70445.67 },
-      { date: moment('2025-04-01'), amount: 86513.69 },
-      { date: moment('2025-05-01'), amount: 122425.62 },
-      { date: moment('2025-06-01'), amount: 62040.2 },
-      { date: moment('2025-07-01'), amount: 50846.17 },
-      { date: moment('2025-08-01'), amount: 13406 },
-      { date: moment('2025-09-01'), amount: 5644.52 }
-    ];
-    
-    // Filter data to match the current date range if needed
-    const startDate = moment(this.chartStartDate);
-    const endDate = moment(this.chartEndDate);
-    
-    const filteredData = fallbackData.filter(item => 
-      item.date.isBetween(startDate, endDate, 'day', '[]')
-    );
-    
-    // Use all data if no data falls within the range
-    this.grossEarningsStatsData = filteredData.length > 0 ? filteredData : fallbackData;
-    
-    // Calculate and log the total for debugging
-    const total = this.grossEarningsStatsData.reduce((sum, item) => sum + (item.amount || 0), 0);
-    console.log('Fallback gross earnings data:', this.grossEarningsStatsData);
-    console.log('Total gross earnings amount:', total);
-    
-    // Update KPI cards with fallback data
-    this.updateGrossEarningsKpiCards(this.grossEarningsStatsData);
-  }
-
-  /**
    * Updates gross earnings-related KPI cards with data from API
    */
-  private updateGrossEarningsKpiCards(grossEarningsData: any[]): void {
+  private updateGrossEarningsKpiCards(grossEarningsData: GetGrossEarningsStatsOutput[]): void {
+    console.log('updateGrossEarningsKpiCards called with data:', grossEarningsData);
+    
     if (grossEarningsData && grossEarningsData.length > 0) {
-      // Calculate total gross earnings for current period (base amount in USD)
-      const baseAmount = grossEarningsData.reduce((sum, item) => sum + (item.amount || 0), 0);
+      // Calculate total gross earnings for current period (base amount in selected currency)
+      const totalAmount = grossEarningsData.reduce((sum, item) => {
+        console.log('Processing item:', item, 'amount:', item.amount);
+        return sum + (item.amount || 0);
+      }, 0);
       
-      // Apply currency conversion if a different currency is selected
-      const currentCurrency = this.selectedCurrency?.id || 'USD';
-      this.grossEarnings = this.convertCurrency(baseAmount, 'USD', currentCurrency);
+      // The API already returns data in the requested currency, so no conversion needed
+      this.grossEarnings = Math.round(totalAmount * 100) / 100; // Round to 2 decimal places
       
-      console.log(`Gross Earnings Total: ${baseAmount} USD = ${this.grossEarnings} ${currentCurrency}`);
+      console.log(`Gross Earnings Total from API: ${this.grossEarnings} ${this.selectedCurrency?.id || 'USD'}`);
       
       // Update KPI cards
+      this.updateKpiCards();
+    } else {
+      console.log('No gross earnings data received or data is empty');
+      // Fallback to hardcoded values
+      this.updateGrossEarningsForCurrency();
       this.updateKpiCards();
     }
   }
@@ -871,10 +847,10 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     
     // Reload customer stats
     this.loadCustomerStats();
-    
+
     // Reload gross earnings stats
     this.loadGrossEarningsStats();
-    
+
     if (refreshLeadsAndClients) {
       /** Invalidate leads and clients */
       (this.reuseService as CustomReuseStrategy).invalidate('leads');
@@ -939,7 +915,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
       
       // Load customer stats
       this.loadCustomerStats();
-      
+
       // Load gross earnings stats
       this.loadGrossEarningsStats();
     } else {

@@ -188,16 +188,29 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
     this.initializeChart();
   }
 
+
+  /**
+   * Updates chart metrics (total and percentage change)
+   */
+  private updateChartMetrics(currentPeriodSeries: CustomerDataPoint[]): void {
+    // Calculate total customers for current period
+    this.currentPeriodTotal = currentPeriodSeries.reduce((sum, point) => sum + point.value, 0);
+    
+    // Calculate percentage change (for now, using a default value)
+    // In a real implementation, you would compare with previous period data
+    this.percentageChange = 0; // This should be calculated based on comparison data
+  }
+
   /**
    * Transforms Gross Earnings API response data to chart data format
    */
-  private transformGrossEarningsDataToChartData(apiData: any[]): void {
+  private transformGrossEarningsDataToChartData(apiData: GetGrossEarningsStatsOutput[]): void {
     if (!apiData || apiData.length === 0) {
       this.initializeChartData();
       return;
     }
 
-    // Transform current period data (handle both API response and fallback data)
+    // Transform current period data (handle API response data)
     const currentPeriodSeries: CustomerDataPoint[] = apiData.map(item => ({
       name: moment(item.date).format('MM/DD'),
       value: item.amount || 0,
@@ -230,18 +243,6 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
     // Reinitialize chart with new data
     this.initializeChartData();
     this.initializeChart();
-  }
-
-  /**
-   * Updates chart metrics (total and percentage change)
-   */
-  private updateChartMetrics(currentPeriodSeries: CustomerDataPoint[]): void {
-    // Calculate total customers for current period
-    this.currentPeriodTotal = currentPeriodSeries.reduce((sum, point) => sum + point.value, 0);
-    
-    // Calculate percentage change (for now, using a default value)
-    // In a real implementation, you would compare with previous period data
-    this.percentageChange = 0; // This should be calculated based on comparison data
   }
 
   /**
