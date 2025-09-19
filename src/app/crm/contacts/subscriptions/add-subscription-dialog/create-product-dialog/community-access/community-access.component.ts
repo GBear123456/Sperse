@@ -259,7 +259,7 @@ export class CommunityAccessSelectorComponent implements OnInit {
     discordOAuth(deliverable: CommunicationDeliverableInfoWithOptions) {
         let scopes = ['identify', 'guilds'];
         let scopesString = scopes.join('%20');
-        let redirectUrl = `${AppConsts.remoteServiceBaseUrl}/account/oauth-redirect?provider=discord`;
+        let redirectUrl = `${AppConsts.appConfigOrigin.remoteServiceBaseUrl}/account/oauth-redirect?provider=discord`;
         let popupUrl = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + this.hostClientId +
             `&redirect_uri=${redirectUrl}&scope=${scopesString}&prompt=none`;
 
@@ -280,7 +280,7 @@ export class CommunityAccessSelectorComponent implements OnInit {
         }, 500);
 
         const messageHandler = (event: MessageEvent) => {
-            if (event.origin !== AppConsts.remoteServiceBaseUrl)
+            if (event.origin !== AppConsts.appConfigOrigin.remoteServiceBaseUrl)
                 return;
 
             if (event.data.code) {

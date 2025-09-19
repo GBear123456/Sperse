@@ -218,7 +218,9 @@ export class SingleProductComponent implements OnInit {
             this.payPal.initialize(this.productInfo.data.paypalClientId, type,
                 this.getPayPalRequest.bind(this),
                 this.getPayPalRequest.bind(this),
-                this.productInfo.currencyId
+                this.productInfo.currencyId,
+                this.productInfo.data.paypalMerchantId,
+                this.productInfo.data.paypalBNCode
             );
         }
     }
@@ -508,6 +510,7 @@ export class SingleProductComponent implements OnInit {
     }
 
     redirectToReceipt() {
+        abp.ui.setBusy();
         location.href = this.getReceiptUrl();
     }
 
@@ -997,7 +1000,7 @@ export class SingleProductComponent implements OnInit {
     discordOAuth() {
         let scopes = ['email', 'identify', 'guilds.join'];
         let scopesString = scopes.join('%20');
-        let redirectUrl = `${AppConsts.remoteServiceBaseUrl}/account/oauth-redirect?provider=discord`;
+        let redirectUrl = `${AppConsts.appConfigOrigin.remoteServiceBaseUrl}/account/oauth-redirect?provider=discord`;
         let popupUrl = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + this.productInfo.data.discordAppId +
             `&redirect_uri=${redirectUrl}&state=${this.tenantId}&scope=${scopesString}&prompt=none`;
 
@@ -1016,7 +1019,7 @@ export class SingleProductComponent implements OnInit {
         }, 500);
 
         const messageHandler = (event: MessageEvent) => {
-            if (event.origin !== AppConsts.remoteServiceBaseUrl)
+            if (event.origin !== AppConsts.appConfigOrigin.remoteServiceBaseUrl)
                 return;
 
             if (event.data.code) {
