@@ -116,7 +116,6 @@ import { AddCouponDialogComponent } from './coupons/add-coupon-dialog/add-coupon
 import { TenantReportsComponent } from './tenant-reports/tenant-reports.component';
 import { CrmContactGroupGuard } from './crm-contact-group-guard';
 import { ZapierModule } from '@shared/common/zapier/zapier.module';
-
 import { SocialDialogModule } from '@shared/social-dialog';
 
 import {
