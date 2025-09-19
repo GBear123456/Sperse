@@ -349,10 +349,7 @@ export class PlatformSelectorModalComponent {
     this.modalClosed.emit();
   }
 
-  toggleTheme(): void {
-    // Theme toggle functionality
-    console.log('Theme toggled');
-  }
+ 
 
   toggleViewMode(): void {
     this.isGridView = !this.isGridView;
