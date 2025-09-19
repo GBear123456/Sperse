@@ -1,0 +1,53 @@
+<div class="settings-wrapper">
+  <app-headline [names]="[l('Settings')]" [buttons]="headlineButtons" [showToogleButton]="true">
+  </app-headline>
+
+  <div
+    class="settings-container"
+    [style.height]="layoutService.showTopBar ? 'calc(100vh - 150px)' : 'calc(100vh - 80px)'"
+  >
+    <div
+      class="settings-sidebar"
+      [style.transform]="sidebarOpen ? 'translateX(0)' : 'translateX(-100%)'"
+    >
+      <dx-scroll-view showScrollbar="onHover">
+        <main-menu-panel
+          [items]="settingService.configuredNavs"
+          [isDarkMode]="themeService.isDarkTheme$ | async"
+          [selectedMainItem]="selectedMainItem"
+          [hasSubmenu]="settingService.hasSubmenu"
+          [(toggleTheme)]="settingService.toggleTheme"
+          [(handleMainItemClick)]="handleMainItemClick"
+          [(navigateToWelcome)]="navigateToWelcome"
+        ></main-menu-panel>
+        <sub-menu-panel
+          [selectedMenu]="selectedMenu"
+          [selectedMainItem]="selectedMainItem"
+          [isDarkMode]="settingService.isDarkMode"
+          [hasSubmenu]="settingService.hasSubmenu"
+          [(handleBackClick)]="handleBackClick"
+        ></sub-menu-panel>
+      </dx-scroll-view>
+    </div>
+
+    <div class="settings-content-wrapper">
+      <div class="settings-content">
+        <dx-scroll-view showScrollbar="onHover" [width]="'100%'">
+          <settings-header
+            *ngIf="
+              !isDashboardSettings() &&
+              !['/app/admin/settings/appearance', '/app/admin/settings/email/gmail'].includes(
+                router.url
+              )
+            "
+            [title]="title"
+            [isDarkMode]="settingService.isDarkMode"
+          ></settings-header>
+          <div class="settings-router-wrapper">
+            <router-outlet></router-outlet>
+          </div>
+        </dx-scroll-view>
+      </div>
+    </div>
+  </div>
+</div>
