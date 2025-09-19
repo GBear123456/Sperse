@@ -1,8 +1,8 @@
 <div class="social-dialog-container">
   <!-- Header -->
   <div class="dialog-header">
-    <h1 class="dialog-title">Social Link Manager</h1>
-    <p class="dialog-subtitle">Enter your website or social media link below.</p>
+    <h1 class="dialog-title">{{ isEditMode ? 'Edit Social Link' : 'Social Link Manager' }}</h1>
+    <p class="dialog-subtitle">{{ isEditMode ? 'Update your social media link below.' : 'Enter your website or social media link below.' }}</p>
     
   </div>
 
@@ -14,7 +14,7 @@
       <div class="section-header">
         <label class="section-label">Social Platform & URL</label>
         <button type="button" class="select-link" (click)="openPlatformSelector()">
-          Select
+          {{ selectedPlatform ? 'Change' : 'Select' }}
         </button>
       </div>
       <div class="platform-input-wrapper">
@@ -30,14 +30,17 @@
           formControlName="url"
           class="platform-input"
           [placeholder]="selectedPlatform ? 'Enter your URL or handle...' : 'Select platform first'"
-          [readonly]="!selectedPlatform"
+          [readonly]="!selectedPlatform && !isEditMode"
         >
-        <button type="button" class="external-link-button"  (click)="openPlatformSelector()">
+        <button type="button" class="external-link-button" (click)="openExternalLink()" [disabled]="!selectedPlatform || !socialForm.get('url')?.value">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link h-4 w-4 transition-colors text-gray-400" data-lov-id="src\pages\Index.tsx:198:22" data-lov-name="ExternalLink" data-component-path="src\pages\Index.tsx" data-component-line="198" data-component-file="Index.tsx" data-component-name="ExternalLink" data-component-content="%7B%7D"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
         </button>
       </div>
-      <div class="platform-tip" >
-        Tip: You can enter just your handle (e.g., "username") or paste the full URL
+      <div class="platform-tip" *ngIf="selectedPlatform">
+        <strong>{{ selectedPlatform.name }}:</strong> {{ getPlatformTip(selectedPlatform.id) }}
+      </div>
+      <div class="platform-tip" *ngIf="!selectedPlatform">
+        Tip: Select a platform first, then enter your handle or full URL
       </div>
     </div>
 
@@ -79,7 +82,7 @@
         Cancel
       </button>
       <button type="submit" class="save-button" [disabled]="!isFormValid" (click)="onSave()">
-        Save
+        {{ isEditMode ? 'Update' : 'Save' }}
       </button>
     </div>
   </form>
