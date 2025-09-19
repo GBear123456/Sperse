@@ -210,7 +210,9 @@ export class SocialsComponent {
                 }
             }
         });
-        event.stopPropagation();
+        if(event != null) {
+            event.stopPropagation();
+        }
     }
 
     // Handle editing existing social links

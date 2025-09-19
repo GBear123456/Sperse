@@ -25,6 +25,7 @@ export class SocialDialogComponent implements OnInit {
   showPlatformSelector: boolean = false;
   selectedPlatform: Platform | null = null;
   isEditMode: boolean = false;
+  private initialFormValues: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -41,7 +42,9 @@ export class SocialDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.isEditMode = !!(this.data && this.data.id);
-    
+    if(!this.isEditMode) {
+      this.showPlatformSelector = true;
+    }
     if (this.data) {
       if (this.data.platform) {
         this.selectedPlatform = this.platforms.find(p => p.name === this.data.platform) || null;
@@ -58,6 +61,10 @@ export class SocialDialogComponent implements OnInit {
         isConfirmed: this.data.isConfirmed || false
       });
       
+      // Store initial form values for edit mode
+      if (this.isEditMode) {
+        this.initialFormValues = this.socialForm.value;
+      }
     }
   }
 
@@ -137,13 +144,22 @@ export class SocialDialogComponent implements OnInit {
   }
 
   get isFormValid(): boolean {
-    // In edit mode, we only need the form to be valid (URL field filled)
-    // In create mode, we need both form valid and platform selected
+    // In edit mode, we need both form validation and form changes
     if (this.isEditMode) {
-      return this.socialForm.valid; // Only require form validation in edit mode
+      return this.socialForm.valid && this.hasFormChanges();
     } else {
       return this.socialForm.valid && !!this.selectedPlatform; // Require both in create mode
     }
+  }
+
+  // Check if form has changes compared to initial values
+  private hasFormChanges(): boolean {
+    if (!this.isEditMode || !this.initialFormValues) {
+      return false;
+    }
+    
+    const currentValues = this.socialForm.value;
+    return JSON.stringify(currentValues) !== JSON.stringify(this.initialFormValues);
   }
 
   // Map platform IDs to link type IDs for the CRM system
