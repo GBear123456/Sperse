@@ -1,64 +1,403 @@
-:host {
+// Modern Contact Dialog Styles
+
+::ng-deep .mat-dialog-container {
+    padding: 0px;
+    
+}
+
+.contact-dialog-container {
     display: block;
-    min-width: 340px;
+    min-width: 450px;
+    max-width: 600px;
+    background: var(--dialog-bg);
+    border-radius: 12px;
+    box-shadow: none;
+    overflow: hidden;
+    color: var(--text-primary, #1a1a1a);
+    transition: background-color 0.3s ease, color 0.3s ease;
 
-    label {
-        right: -4px;
-        width: 70px;
-        position: relative;
-        color: #BDC6C7;
-        line-height: 46px;
-        vertical-align: top;
-        border-bottom: 1px solid #dfdfdf;
-        height: 48px;
-        margin-bottom: 0px;
-        padding-bottom: 0px;
-        font-size: 12px;
-    }
+    // Header Section
+    .dialog-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px 24px 16px;
+        background: var(--dialog-bg);
+        min-height: 80px;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        border-bottom: none !important;
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
 
-    h2 {
-        font-weight: 500;
-        line-height: 1.71;
-        letter-spacing: 0.6px;
-        cursor: move;
-    }
+            .icon-container {
+                .phone-icon, .envelope-icon, .link-icon {
+                    width: 48px;
+                    height: 48px;
+                    background: var(--icon-bg, #e8f5e8);
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: var(--icon-color, #4caf50);
+                    font-size: 20px;
+                    transition: background-color 0.3s ease, color 0.3s ease;
+                }
 
-    ::ng-deep .dx-texteditor-container {
-        width: 270px;
-    }
+                .envelope-icon {
+                    background: var(--icon-bg, #e3f2fd);
+                    color: var(--icon-color, #1976d2);
+                }
 
-    dx-select-box,
-    dx-text-box,
-    dx-number-box {
-        display: inline-block;
+                .link-icon {
+                    background: var(--icon-bg, #fff3e0);
+                    color: var(--icon-color, #ff9800);
+                }
+            }
 
-        ::ng-deep input {
-            height: 48px;
+            .title-section {
+                .dialog-title {
+                    font-size: 20px;
+                    font-weight: 600;
+                    color: var(--text-primary, #1a1a1a);
+                    margin: 0;
+                    line-height: 1.2;
+                    transition: color 0.3s ease;
+                }
+
+                .dialog-subtitle {
+                    font-size: 14px;
+                    color: var(--text-secondary, #666666);
+                    margin: 4px 0 0 0;
+                    font-weight: 400;
+                    transition: color 0.3s ease;
+                }
+            }
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            flex-shrink: 0;
+
+            .cancel-btn {
+                background: var(--button-secondary-bg, #ffffff);
+                border: 1px solid var(--button-secondary-border, #d0d0d0);
+                color: var(--button-secondary-text, #333333);
+                padding: 8px;
+                border-radius: 6px;
+                font-weight: 500;
+                min-width: 54px;
+                transition: all 0.2s ease;
+                font-size: 14px;
+                height: 35px;
+
+                &:hover {
+                    background: var(--button-secondary-hover, #f5f5f5);
+                    border-color: var(--button-secondary-hover-border, #b0b0b0);
+                }
+            }
+
+            .save-btn {
+                background: var(--button-primary-bg, #1976d2);
+                color: var(--button-primary-text, #ffffff);
+                border: none;
+                padding: 8px;
+                border-radius: 6px;
+                font-weight: 500;
+                min-width: 54px;
+                transition: all 0.2s ease;
+                font-size: 14px;
+                height: 35px;
+
+                &:hover {
+                    background: var(--button-primary-hover, #1565c0);
+                }
+            }
         }
     }
 
-    position: relative;
+    // Content Section
+    .dialog-content {
+        padding: 0px 24px 24px;
 
-    &:before {
-        content: "";
-        position: absolute;
-        top: 125px;
-        left: -34px;
-        width: 0;
-        height: 0;
-        border-top: 10px solid transparent;
-        border-bottom: 10px solid transparent;
-        border-right: 10px solid #FFF;
+
+        // Type Selection Tabs
+        .type-selection {
+            margin-bottom: 16px !important;
+
+            .type-tabs {
+                display: flex;
+                background: var(--tabs-bg, #f8f9fa);
+                border-radius: 8px;
+                padding: 4px;
+                gap: 4px;
+                transition: background-color 0.3s ease;
+
+                .type-tab {
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    font-weight: 500;
+                    color: var(--tab-text, #666666);
+                    background: transparent;
+
+                    i {
+                        font-size: 16px;
+                    }
+
+                    span {
+                        font-size: 14px;
+                    }
+
+                    &:hover {
+                        background: var(--tab-hover-bg, #e9ecef);
+                        color: var(--tab-hover-text, #333333);
+                    }
+
+                    &.active {
+                        background: var(--tab-active-bg, #ffffff);
+                        color: var(--tab-active-text, #020817);
+                        box-shadow: var(--tab-active-shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
+                    }
+                }
+            }
+        }
+
+        // Field Groups
+        .field-group {
+            margin-bottom: 16px;
+
+            .field-label {
+                display: block;
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--label-text, #333333);
+                margin-bottom: 8px;
+                transition: color 0.3s ease;
+            }
+
+            // Bootstrap form control styling
+            .form-control {
+                width: 100%;
+                height: 44px;
+                padding: 12px;
+                font-size: 16px;
+                border: 1px solid var(--input-border, #d0d0d0);
+                border-radius: 6px;
+                background: var(--input-bg, #ffffff);
+                color: var(--input-text, #1a1a1a);
+                transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+
+                &:hover {
+                    border-color: var(--input-hover-border, #1976d2);
+                }
+
+                &:focus {
+                    border-color: var(--input-focus-border, #1976d2);
+                    box-shadow: var(--input-focus-shadow, 0 0 0 2px rgba(25, 118, 210, 0.1));
+                    outline: none;
+                }
+
+                &::placeholder {
+                    color: var(--placeholder-text, #999999);
+                    font-size: 16px;
+                }
+
+                &:focus::placeholder {
+                    opacity: 0;
+                }
+
+                &:disabled {
+                    background-color: var(--input-disabled-bg, #f5f5f5);
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+            }
+
+            // Textarea specific styling
+            textarea.form-control {
+                height: auto;
+                min-height: 80px;
+                resize: vertical;
+                line-height: 1.5;
+                columns: 2;
+                column-gap: 20px;
+                column-fill: auto;
+                break-inside: avoid;
+            }
+
+            // Phone input specific styling
+            .phone-input-container {
+                ::ng-deep country-phone-number {
+                    .phone-input-wrapper {
+                        display: flex;
+                        border: 1px solid var(--input-border, #d0d0d0);
+                        border-radius: 6px;
+                        background: var(--input-bg, #ffffff);
+                        overflow: hidden;
+                        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+                        &:hover {
+                            border-color: var(--input-hover-border, #1976d2);
+                        }
+
+                        &:focus-within {
+                            border-color: var(--input-focus-border, #1976d2);
+                            box-shadow: var(--input-focus-shadow, 0 0 0 2px rgba(25, 118, 210, 0.1));
+                        }
+
+                        .country-selector {
+                            background: var(--country-selector-bg, #f5f5f5);
+                            border: none;
+                            padding: 12px;
+                            font-size: 14px;
+                            color: var(--country-selector-text, #666666);
+                            min-width: 80px;
+                        }
+
+                        .phone-input {
+                            flex: 1;
+                            border: none;
+                            padding: 12px;
+                            font-size: 16px;
+                            background: transparent;
+                            color: var(--input-text, #1a1a1a);
+
+                            &::placeholder {
+                                color: var(--placeholder-text, #999999);
+                            }
+
+                            &:focus {
+                                outline: none;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Extension input specific styling
+            .extension-input {
+                width: 100%;
+                height: 44px;
+                padding: 12px;
+                font-size: 16px;
+                border: 1px solid var(--input-border, #d0d0d0);
+                border-radius: 6px;
+                background: var(--input-bg, #ffffff);
+                color: var(--input-text, #1a1a1a);
+                transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+
+                &:hover {
+                    border-color: var(--input-hover-border, #1976d2);
+                }
+
+                &:focus {
+                    border-color: var(--input-focus-border, #1976d2);
+                    box-shadow: var(--input-focus-shadow, 0 0 0 2px rgba(25, 118, 210, 0.1));
+                    outline: none;
+                }
+
+                &::placeholder {
+                    color: var(--placeholder-text, #999999);
+                    font-size: 16px;
+                }
+
+                &:focus::placeholder {
+                    opacity: 0;
+                }
+
+                &:disabled {
+                    background-color: var(--input-disabled-bg, #f5f5f5);
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+            }
+        }
+
+        // Status Checkboxes
+        .status-checkboxes {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            padding-top: 10px;
+            border-top: none !important;
+            transition: border-color 0.3s ease;
+
+            .checkbox-item {
+                ::ng-deep .dx-checkbox {
+                    .dx-checkbox-icon {
+                        width: 18px;
+                        height: 18px;
+                        border: 2px solid var(--checkbox-border, #d0d0d0);
+                        border-radius: 4px;
+                        background: var(--checkbox-bg, #ffffff);
+                        transition: all 0.2s ease;
+
+                        &.dx-checkbox-checked {
+                            background: var(--checkbox-checked-bg, #1976d2);
+                            border-color: var(--checkbox-checked-border, #1976d2);
+
+                            &::before {
+                                content: '✓';
+                                color: var(--checkbox-checked-text, #ffffff);
+                                font-size: 12px;
+                                font-weight: bold;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                width: 100%;
+                                height: 100%;
+                            }
+                        }
+                    }
+
+                    .dx-checkbox-text {
+                        font-size: 14px;
+                        color: var(--checkbox-text, #333333);
+                        margin-left: 8px;
+                        transition: color 0.3s ease;
+                    }
+                }
+            }
+        }
+
+        // Delete Section
+        .delete-section {
+            border-top: none !important;
+            float: right;
+            transition: border-color 0.3s ease;
+            padding:0px 10px 10px;
+            .delete-btn {
+                background: var(--delete-btn-bg, #ffffff);
+                border: 1px solid var(--delete-btn-border, #dc3545);
+                color: var(--delete-btn-text, #dc3545);
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-weight: 500;
+                transition: all 0.2s ease;
+
+                i {
+                    margin-right: 6px;
+                }
+
+                &:hover {
+                    background: var(--delete-btn-hover-bg, #dc3545);
+                    color: var(--delete-btn-hover-text, #ffffff);
+                }
+            }
+        }
     }
 
-    mat-dialog-actions {
-        justify-content: flex-end;
-    }
-
-    mat-dialog-content {
-        min-height: 160px;
-    }
-
+    // Legacy support for other field types
     .type-item-wrapper {
         position: relative;
         display: flex;
@@ -123,21 +462,16 @@
         }
     }
 
-    dx-check-box {
-        font-size: 12px;
-        margin-top: 11px;
-    }
-
     country-phone-number {
         ::ng-deep .wrapper {
-            width: 270px;
+            width: 100%;
         }
 
         ::ng-deep div.input-group {
             height: 100%;
 
             input {
-                height: 47px;
+                height: 44px;
             }
 
             .dropdown {
@@ -151,4 +485,128 @@
             }
         }
     }
+}
+
+// Dark Theme Support - Using Project's Theme Variables
+:host-context(.dark-theme) .contact-dialog-container,
+:host-context([data-theme="dark"]) .contact-dialog-container,
+.dark-theme .contact-dialog-container {
+    --dialog-bg: var(--card-bg);
+    --header-bg: var(--sidebar-bg);
+    --text-primary: var(--text-color);
+    --text-secondary: var(--content-text);
+    --border-color: var(--border-color);
+    --icon-bg: var(--success-color-bg);
+    --icon-color: var(--success-color);
+    --button-secondary-bg: var(--button-bg);
+    --button-secondary-border: var(--button-border);
+    --button-secondary-text: var(--text-color);
+    --button-secondary-hover: var(--hover-bg);
+    --button-secondary-hover-border: var(--border-color);
+    --button-primary-bg: var(--success-color);
+    --button-primary-text: var(--btn-primary-text);
+    --button-primary-hover: var(--success-color);
+    --tabs-bg: var(--sidebar-bg);
+    --tab-text: var(--content-text);
+    --tab-hover-bg: var(--hover-bg);
+    --tab-hover-text: var(--text-color);
+    --tab-active-bg: var(--button-bg);
+    --tab-active-text: var(--text-color);
+    --tab-active-shadow: var(--shadow-color);
+    --label-text: var(--text-color);
+    --input-bg: var(--input-bg);
+    --input-text: var(--input-text);
+    --input-border: var(--input-border);
+    --input-hover-border: var(--success-color);
+    --input-focus-border: var(--success-color);
+    --input-focus-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    --input-disabled-bg: var(--disabled-bg);
+    --placeholder-text: var(--input-placeholder);
+    --checkbox-bg: var(--input-bg);
+    --checkbox-border: var(--input-border);
+    --checkbox-checked-bg: var(--success-color);
+    --checkbox-checked-border: var(--success-color);
+    --checkbox-checked-text: var(--btn-primary-text);
+    --checkbox-text: var(--text-color);
+    --delete-btn-bg: var(--button-bg);
+    --delete-btn-border: var(--danger-color);
+    --delete-btn-text: var(--danger-color);
+    --delete-btn-hover-bg: var(--danger-color);
+    --delete-btn-hover-text: var(--btn-primary-text);
+    
+    // Enhanced shadows for dark mode
+    box-shadow: var(--shadow-color);
+    
+    .dialog-header {
+        border-bottom-color: var(--border-color);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+    
+    .type-tabs {
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+    
+    .form-control {
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        
+        &:focus {
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+    }
+    
+    .status-checkboxes {
+        border-top-color: var(--border-color);
+    }
+    
+    .delete-section {
+        border-top-color: var(--border-color);
+    }
+}
+
+// Light Theme (default) - Using Project's Theme Variables
+:host-context(.light-theme) .contact-dialog-container,
+:host-context([data-theme="light"]) .contact-dialog-container,
+.light-theme .contact-dialog-container {
+    --dialog-bg: var(--card-bg);
+    --header-bg: var(--sidebar-bg);
+    --text-primary: var(--text-color);
+    --text-secondary: var(--content-text);
+    --border-color: var(--border-color);
+    --icon-bg: var(--success-color-bg);
+    --icon-color: var(--success-color);
+    --button-secondary-bg: var(--button-bg);
+    --button-secondary-border: var(--button-border);
+    --button-secondary-text: var(--text-color);
+    --button-secondary-hover: var(--hover-bg);
+    --button-secondary-hover-border: var(--border-color);
+    --button-primary-bg: var(--success-color);
+    --button-primary-text: var(--btn-primary-text);
+    --button-primary-hover: var(--success-color);
+    --tabs-bg: var(--headline-bg);
+    --tab-text: var(--content-text);
+    --tab-hover-bg: var(--hover-bg);
+    --tab-hover-text: var(--text-color);
+    --tab-active-bg: var(--button-bg);
+    --tab-active-text: var(--text-color);
+    --tab-active-shadow: var(--shadow-color);
+    --label-text: var(--text-color);
+    --input-bg: var(--input-bg);
+    --input-text: var(--input-text);
+    --input-border: var(--input-border);
+    --input-hover-border: var(--success-color);
+    --input-focus-border: var(--success-color);
+    --input-focus-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+    --input-disabled-bg: var(--disabled-bg);
+    --placeholder-text: var(--input-placeholder);
+    --checkbox-bg: var(--input-bg);
+    --checkbox-border: var(--input-border);
+    --checkbox-checked-bg: var(--success-color);
+    --checkbox-checked-border: var(--success-color);
+    --checkbox-checked-text: var(--btn-primary-text);
+    --checkbox-text: var(--text-color);
+    --delete-btn-bg: var(--button-bg);
+    --delete-btn-border: var(--danger-color);
+    --delete-btn-text: var(--danger-color);
+    --delete-btn-hover-bg: var(--danger-color);
+    --delete-btn-hover-text: var(--btn-primary-text);
 }
