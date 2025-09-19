@@ -1,10 +1,18 @@
 <div class="socials">
     <div class="social">
         <div class="social-icon-group">
-            <button
+            <!-- Original code commented out -->
+            <!-- <button
                 class="social-add"
                 aria-label="Social action"
                 (click)="showEditDialog(null, $event)"
+            > -->
+            
+            <!-- New button that opens social dialog modal -->
+            <button
+                class="social-add"
+                aria-label="Social action"
+                (click)="openSocialDialog($event)"
             >
                 <img
                     src="./assets/common/icons/contact/plus.svg"
