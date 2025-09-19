@@ -1,111 +1,196 @@
-<h2 mat-dialog-title (mousedown)="mouseDown($event)">{{ls.l('ContactInfoDialogTitle',  ls.l(action), data.name)}}</h2>
-<mat-dialog-content>
-    <dx-validation-group (onInitialized)="initValidationGroup($event)">
-        <label>{{ls.l('Type')}}</label>
-        <dx-select-box
-            name="usageType"
-            [dataSource]="types"
-            displayExpr="name"
-            valueExpr="id"
-            [disabled]="!isEditAllowed"
-            [(value)]="data.usageTypeId"
-            (onValueChanged)="onTypeChanged($event)"
-            fieldTemplate="fieldTemplate"
-            itemTemplate="itemTemplate">
-            <div *dxTemplate="let item of 'fieldTemplate'">
-                <div class="type-item-wrapper">
-                    <img *ngIf="data.field == 'url'"
-                         class="socialIcon"
-                         src="./assets/common/icons/social/{{trim(item.name) || 'OtherLink'}}.svg"
-                            onError="this.src='./assets/common/icons/social/OtherLink.svg';"
-                         width="25px"
-                         height="25px">
-                    <dx-text-box class="{{data.field}} type-{{item?.id}}"
-                                 [value]="item?.name"
-                                 [readOnly]="true"
-                                 [hint]="getUsageTypeHint(item)">
-                    </dx-text-box>
+<!-- Modern Contact Dialog UI -->
+<div class="contact-dialog-container" (mousedown)="mouseDown($event)">
+    <!-- Header Section -->
+    <div class="dialog-header">
+        <div class="header-content">
+            <div class="icon-container">
+                <div class="phone-icon" *ngIf="data.field === 'phoneNumber'">
+                    <i class="fa fa-phone"></i>
+                </div>
+                <div class="envelope-icon" *ngIf="data.field === 'emailAddress'">
+                    <i class="fa fa-envelope"></i>
+                </div>
+                <div class="link-icon" *ngIf="data.field === 'url'">
+                    <i class="fa fa-link"></i>
                 </div>
             </div>
-            <div *dxTemplate="let item of 'itemTemplate'">
-                <div title="{{getUsageTypeHint(item)}}">{{item.name}}</div>
+            <div class="title-section">
+                <h2 class="dialog-title">
+                    <span *ngIf="data.field === 'phoneNumber'">{{action === 'Edit' ? 'Edit Phone' : 'Add Phone'}}</span>
+                    <span *ngIf="data.field === 'emailAddress'">{{action === 'Edit' ? 'Edit Email' : 'Add Email'}}</span>
+                    <span *ngIf="data.field === 'url'">{{action === 'Edit' ? 'Edit Link' : 'Add Link'}}</span>
+                </h2>
+                <p class="dialog-subtitle">
+                    <span *ngIf="data.field === 'phoneNumber'">Add a new phone number</span>
+                    <span *ngIf="data.field === 'emailAddress'">Add a new email address</span>
+                    <span *ngIf="data.field === 'url'">Add a new link</span>
+                </p>
             </div>
-            <dx-validator>
-                <dxi-validation-rule type="required" [message]="ls.l('TypeRequired')"></dxi-validation-rule>
-            </dx-validator>
-        </dx-select-box>
-        <br>
-
-        <div *ngIf="data.field == 'url'">
-            <label>{{ls.l('Link')}}</label>
-            <dx-text-box
-                name="email"
-                [disabled]="!isEditAllowed"
-                [(value)]="data.url">
-                <dx-validator>
-                    <dxi-validation-rule type="required" message="{{ls.l('LinkIsRequired')}}."></dxi-validation-rule>
-                    <dxi-validation-rule type="pattern" [pattern]="urlRegEx" message="{{ls.l('LinkIsNotValid')}}."></dxi-validation-rule>
-                </dx-validator>
-            </dx-text-box>
         </div>
-
-        <div *ngIf="data.field == 'emailAddress'">
-            <label>{{ls.l('Email')}}</label>
-            <dx-text-box
-                name="email"
-                [disabled]="!isEditAllowed"
-                [(value)]="data.emailAddress">
-                <dx-validator>
-                    <dxi-validation-rule type="required" message="{{ls.l('EmailIsRequired')}}."></dxi-validation-rule>
-                    <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{ls.l('EmailIsNotValid')}}."></dxi-validation-rule>
-                </dx-validator>
-            </dx-text-box>
+        <div class="header-actions">
+            <button mat-button mat-dialog-close class="cancel-btn">{{ls.l('Cancel')}}</button>
+            <button *ngIf="isEditAllowed" mat-button class="save-btn" (click)="onSave()">
+                {{action == 'Edit' ? ls.l('Update') : 'Save'}}
+            </button>
         </div>
+    </div>
 
-        <div *ngIf="data.field == 'phoneNumber'">
-            <label>{{ls.l('Phone')}}</label>
-            <country-phone-number [(phoneNumber)]="data.phoneNumber" #countryPhoneNumber></country-phone-number>
-        </div>
+    <!-- Content Section -->
+    <div class="dialog-content">
+        <dx-validation-group (onInitialized)="initValidationGroup($event)">
+            
+            <!-- Phone Type Selection Tabs (only for phone numbers) -->
+            <div *ngIf="data.field === 'phoneNumber'" class="type-selection">
+                <div class="type-tabs">
+                    <div class="type-tab" 
+                         [class.active]="getPhoneType() === 'Mobile'"
+                         (click)="setPhoneType('Mobile')">
+                        <i class="fa fa-tablet"></i>
+                        <span>Mobile</span>
+                    </div>
+                    <div class="type-tab" 
+                         [class.active]="getPhoneType() === 'Home'"
+                         (click)="setPhoneType('Home')">
+                        <i class="fa fa-home"></i>
+                        <span>Home</span>
+                    </div>
+                    <div class="type-tab" 
+                         [class.active]="getPhoneType() === 'Work'"
+                         (click)="setPhoneType('Work')">
+                        <i class="fa fa-briefcase"></i>
+                        <span>Work</span>
+                    </div>
+                    <div class="type-tab" 
+                         [class.active]="getPhoneType() === 'Fax'"
+                         (click)="setPhoneType('Fax')">
+                        <i class="fa fa-fax"></i>
+                        <span>Fax</span>
+                    </div>
+                    <div class="type-tab" 
+                         [class.active]="getPhoneType() === 'Other'"
+                         (click)="setPhoneType('Other')">
+                        <i class="fa fa-phone"></i>
+                        <span>Other</span>
+                    </div>
+                </div>
+            </div>
 
-        <div *ngIf="data.field == 'phoneNumber'">
-            <label>{{ls.l('Extension')}}</label>
-            <dx-number-box
-                name="phoneExtension"
-                [disabled]="!isEditAllowed"
-                [(value)]="data.phoneExtension">
-                <dx-validator>
-                    <dxi-validation-rule type="stringLength" [max]="5" message="{{ls.l('PhoneExtensionExceedsMaxSize')}}"></dxi-validation-rule>
-                </dx-validator>
-            </dx-number-box>
-            <br>
-        </div>
+            <!-- Email Type Selection Tabs (only for email addresses) -->
+            <div *ngIf="data.field === 'emailAddress'" class="type-selection">
+                <div class="type-tabs">
+                    <div class="type-tab" 
+                         [class.active]="getEmailType() === 'Personal'"
+                         (click)="setEmailType('Personal')">
+                        <i class="fa fa-user"></i>
+                        <span>Personal</span>
+                    </div>
+                    <div class="type-tab" 
+                         [class.active]="getEmailType() === 'Work'"
+                         (click)="setEmailType('Work')">
+                        <i class="fa fa-briefcase"></i>
+                        <span>Work</span>
+                    </div>
+                    <div class="type-tab" 
+                         [class.active]="getEmailType() === 'Other'"
+                         (click)="setEmailType('Other')">
+                        <i class="fa fa-envelope"></i>
+                        <span>Other</span>
+                    </div>
+                </div>
+            </div>
 
-        <label>{{ls.l('Comment')}}</label>
-        <dx-text-box
-            name="comment"
-            [disabled]="!isEditAllowed"
-            [(value)]="data.comment">
-        </dx-text-box>
-        <br>
+            <!-- URL Field -->
+            <div *ngIf="data.field == 'url'" class="field-group">
+                <label class="field-label">{{ls.l('Link')}}</label>
+                <dx-text-box
+                    name="url"
+                    [disabled]="!isEditAllowed"
+                    [(value)]="data.url"
+                    placeholder="Enter URL">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('LinkIsRequired')}}."></dxi-validation-rule>
+                        <dxi-validation-rule type="pattern" [pattern]="urlRegEx" message="{{ls.l('LinkIsNotValid')}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
 
-        <p>
-            <dx-check-box
-                [text]="ls.l('ActiveContact')"
-                [disabled]="!isEditAllowed"
-                [(value)]="data.isActive">
-            </dx-check-box>
-            <dx-check-box
-                [text]="contactsService.getConfirmedContactText(data)"
-                [disabled]="!isEditAllowed"
-                [(value)]="data.isConfirmed">
-            </dx-check-box>
-        </p>
-    </dx-validation-group>
-</mat-dialog-content>
-<mat-dialog-actions>
-    <button *ngIf="isEditAllowed && (action=='Edit')" mat-button class="button-layout button-clean-red" (click)="data.deleteItem($event)">
-        <i class="delete fa fa-times" aria-hidden="true"></i>{{ls.l('Delete')}}
-    </button>
-    <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
-    <button *ngIf="isEditAllowed" mat-button class="button-layout button-primary" (click)="onSave()">{{action == 'Edit' ? ls.l('Update'): action}}</button>
-</mat-dialog-actions>
+            <!-- Email Address Field -->
+            <div *ngIf="data.field == 'emailAddress'" class="field-group">
+                <label class="field-label">Email address</label>
+                <input
+                    type="email"
+                    name="email"
+                    class="form-control"
+                    [disabled]="!isEditAllowed"
+                    [(ngModel)]="data.emailAddress"
+                    placeholder="Enter email address"
+                    required
+                    [pattern]="emailRegEx">
+            </div>
+
+            <!-- Phone Number Field -->
+            <div *ngIf="data.field == 'phoneNumber'" class="field-group">
+                <label class="field-label">Phone number</label>
+                <div class="phone-input-container">
+                    <country-phone-number [(phoneNumber)]="data.phoneNumber" #countryPhoneNumber></country-phone-number>
+                </div>
+            </div>
+
+            <!-- Phone Extension Field -->
+            <div *ngIf="data.field == 'phoneNumber'" class="field-group">
+                <label class="field-label">Extension (optional)</label>
+                <input
+                    type="text"
+                    name="phoneExtension"
+                    class="form-control extension-input"
+                    [disabled]="!isEditAllowed"
+                    [(ngModel)]="data.phoneExtension"
+                    placeholder="Extension (optional)"
+                    maxlength="5">
+            </div>
+
+            <!-- Comment/Note Field -->
+            <div class="field-group comment-field">
+                <label class="field-label">
+                    <span *ngIf="data.field === 'phoneNumber'">Note about this phone number (optional)</span>
+                    <span *ngIf="data.field === 'emailAddress'">Note about this email (optional)</span>
+                    <span *ngIf="data.field === 'url'">{{ls.l('Comment')}}</span>
+                </label>
+                <textarea
+                    name="comment"
+                    class="form-control"
+                    [disabled]="!isEditAllowed"
+                    [(ngModel)]="data.comment"
+                    [placeholder]="data.field === 'phoneNumber' ? 'Note about this phone number (optional)' : data.field === 'emailAddress' ? 'Add a note about this email' : 'Add a comment'"
+                    rows="3">
+                </textarea>
+            </div>
+
+            <!-- Status Checkboxes -->
+            <div class="status-checkboxes">
+                <div class="checkbox-item">
+                    <dx-check-box
+                        text="Active"
+                        [disabled]="!isEditAllowed"
+                        [(value)]="data.isActive">
+                    </dx-check-box>
+                </div>
+                <div class="checkbox-item">
+                    <dx-check-box
+                        text="Confirmed"
+                        [disabled]="!isEditAllowed"
+                        [(value)]="data.isConfirmed">
+                    </dx-check-box>
+                </div>
+            </div>
+
+            <!-- Delete Button (for edit mode) -->
+            <div *ngIf="isEditAllowed && (action=='Edit')" class="delete-section">
+                <button mat-button class="delete-btn" (click)="data.deleteItem($event)">
+                    <i class="fa fa-trash"></i>
+                    {{ls.l('Delete')}}
+                </button>
+            </div>
+        </dx-validation-group>
+    </div>
+</div>

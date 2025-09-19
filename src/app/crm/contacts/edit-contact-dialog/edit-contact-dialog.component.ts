@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Inject, ElementRef, ViewChild } from '@angular/core';
+import { Component, Inject, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
@@ -34,7 +34,7 @@ import { ContactsService } from '../contacts.service';
         '(document:mousemove)': 'mouseMove($event)'
     }
 })
-export class EditContactDialog {
+export class EditContactDialog implements AfterViewInit {
     @ViewChild('countryPhoneNumber') countryPhoneNumber;
     isValid = false;
     action: string = this.data.value ? 'Edit' : 'Create';
@@ -128,8 +128,21 @@ export class EditContactDialog {
     }
 
     onSave() {
-        if (this.validator.validate().isValid && (this.data.field != 'phoneNumber' || this.countryPhoneNumber.isValid()))
-            this.dialogRef.close(true);
+        // Validate email field
+        if (this.data.field === 'emailAddress') {
+            const emailInput = document.querySelector('input[name="email"]') as HTMLInputElement;
+            if (emailInput && !emailInput.checkValidity()) {
+                emailInput.reportValidity();
+                return;
+            }
+        }
+        
+        // Validate phone field
+        if (this.data.field === 'phoneNumber' && !this.countryPhoneNumber.isValid()) {
+            return;
+        }
+        
+        this.dialogRef.close(true);
     }
 
     initValidationGroup(event) {
@@ -171,4 +184,116 @@ export class EditContactDialog {
     getUsageTypeHint(item) {
         return item && (['emailAddress', 'phoneNumber'].indexOf(this.data.field) >= 0) ?
             this.ls.l('ContactInformation_' + capitalize(this.data.field.slice(0, 5)) + 'TypeTooltip_' + item.id) : '';
-    }}
+    }
+
+    getEmailType() {
+        if (this.data.field !== 'emailAddress') return null;
+        
+        // Map usage type to display name
+        const type = this.types.find(t => t.id === this.data.usageTypeId);
+        if (!type) return 'Personal';
+        
+        const typeName = type.name.toLowerCase();
+        if (typeName.includes('personal') || typeName.includes('home')) return 'Personal';
+        if (typeName.includes('work') || typeName.includes('business')) return 'Work';
+        return 'Other';
+    }
+
+    setEmailType(type: string) {
+        if (this.data.field !== 'emailAddress') return;
+        
+        // Map display name to usage type
+        let targetType;
+        switch (type) {
+            case 'Personal':
+                targetType = this.types.find(t => t.name.toLowerCase().includes('personal') || t.name.toLowerCase().includes('home'));
+                break;
+            case 'Work':
+                targetType = this.types.find(t => t.name.toLowerCase().includes('work') || t.name.toLowerCase().includes('business'));
+                break;
+            case 'Other':
+                targetType = this.types.find(t => t.name.toLowerCase().includes('other') || t.name.toLowerCase().includes('additional'));
+                break;
+        }
+        
+        if (targetType) {
+            this.data.usageTypeId = targetType.id;
+        }
+    }
+
+    getPhoneType() {
+        if (this.data.field !== 'phoneNumber') return null;
+        
+        // Map usage type to display name
+        const type = this.types.find(t => t.id === this.data.usageTypeId);
+        if (!type) return 'Mobile';
+        
+        const typeName = type.name.toLowerCase();
+        if (typeName.includes('mobile') || typeName.includes('cell')) return 'Mobile';
+        if (typeName.includes('home') || typeName.includes('personal')) return 'Home';
+        if (typeName.includes('work') || typeName.includes('business')) return 'Work';
+        if (typeName.includes('fax')) return 'Fax';
+        return 'Other';
+    }
+
+    setPhoneType(type: string) {
+        if (this.data.field !== 'phoneNumber') return;
+        
+        // Map display name to usage type
+        let targetType;
+        switch (type) {
+            case 'Mobile':
+                targetType = this.types.find(t => t.name.toLowerCase().includes('mobile') || t.name.toLowerCase().includes('cell'));
+                break;
+            case 'Home':
+                targetType = this.types.find(t => t.name.toLowerCase().includes('home') || t.name.toLowerCase().includes('personal'));
+                break;
+            case 'Work':
+                targetType = this.types.find(t => t.name.toLowerCase().includes('work') || t.name.toLowerCase().includes('business'));
+                break;
+            case 'Fax':
+                targetType = this.types.find(t => t.name.toLowerCase().includes('fax'));
+                break;
+            case 'Other':
+                targetType = this.types.find(t => t.name.toLowerCase().includes('other') || t.name.toLowerCase().includes('additional'));
+                break;
+        }
+        
+        if (targetType) {
+            this.data.usageTypeId = targetType.id;
+        }
+    }
+
+    ngAfterViewInit() {
+        // Handle placeholder behavior for all input fields
+        setTimeout(() => {
+            // Handle email address input
+            const emailInput = document.querySelector('input[name="email"]') as HTMLInputElement;
+            if (emailInput) {
+                emailInput.addEventListener('focus', () => {
+                    emailInput.placeholder = '';
+                });
+                
+                emailInput.addEventListener('blur', () => {
+                    if (!emailInput.value) {
+                        emailInput.placeholder = 'Enter email address';
+                    }
+                });
+            }
+
+            // Handle comment/note textarea
+            const textarea = document.querySelector('textarea[name="comment"]') as HTMLTextAreaElement;
+            if (textarea) {
+                textarea.addEventListener('focus', () => {
+                    textarea.placeholder = '';
+                });
+                
+                textarea.addEventListener('blur', () => {
+                    if (!textarea.value) {
+                        textarea.placeholder = this.data.field === 'emailAddress' ? 'Add a note about this email' : 'Add a comment';
+                    }
+                });
+            }
+        }, 100);
+    }
+}
