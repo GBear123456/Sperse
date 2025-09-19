@@ -22,6 +22,23 @@ public-receipt {
         margin: auto;
         padding: 20px 0 0;
 
+        .info-section {
+            width: 100%;
+            padding: 23px;
+            margin: 10px 0;
+            background: #fff;
+            border-radius: 20px;
+
+            .info-section-header {
+                font-family: Poppins;
+                font-size: 18px;
+                font-weight: 500;
+                line-height: 27px;
+                letter-spacing: -0.02em;
+                color: rgba(7, 13, 68, 1);
+            }
+        }
+
         .header {
             display: flex;
             margin-bottom: 32px;
@@ -40,10 +57,6 @@ public-receipt {
         }
 
         .content {
-            background-color: white;
-            border-radius: 20px;
-            padding: 33px 23px;
-
             .approved {
                 display: flex;
                 margin-bottom: 30px;
@@ -208,22 +221,46 @@ public-receipt {
         }
     }
 
-    .downloads {
-        width: 100%;
-        padding: 23px;
-        margin: 10px 0;
-        background: #fff;
-        border-radius: 20px;
+    .discord-section {
+        button {
+            width: 100%;
 
-        h1 {
-            font-family: Poppins;
-            font-size: 18px;
-            font-weight: 500;
-            line-height: 27px;
-            letter-spacing: -0.02em;
-            color: rgba(7, 13, 68, 1);
+            &.discord-auth {
+                border: 1px solid #5865F2;
+                background-color: #5865F2;
+                color: white;
+
+                .discord-icon {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    &:before {
+                        content: "";
+                        display: inline-block;
+                        margin-right: 14px;
+                        width: 25px;
+                        height: 21px;
+                        background-image: url(../../../assets/common/icons/discord-icon.svg);
+                    }
+                }
+
+                &:not([disabled]):hover {
+                    opacity: .8;
+                }
+            }
         }
 
+        .discord-user-info {
+            margin: 12px 0;
+        }
+
+        .discord-success-message {
+            color: green;
+        }
+    }
+
+    .downloads {
         .resource {
             height: 44px;
             padding: 0 5px;
@@ -293,23 +330,10 @@ public-receipt {
     }
 
     .events {
-        width: 100%;
-        padding: 23px;
-        margin: 10px 0;
-        background: #fff;
-        border-radius: 20px;
         letter-spacing: -0.02em;
 
         div, h1, span {
             font-family: Poppins !important;
-        }
-
-        h1 {
-            font-size: 18px;
-            font-weight: 500;
-            line-height: 27px;
-            color: rgba(7, 13, 68, 1);
-            margin-bottom: 23px;
         }
 
         .event {
