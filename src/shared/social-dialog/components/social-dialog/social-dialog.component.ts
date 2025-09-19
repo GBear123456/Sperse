@@ -11,7 +11,7 @@ export interface SocialLinkData {
   isActive?: boolean;
   isConfirmed?: boolean;
   linkTypeId?: string;
-  id?: string; // Add ID to detect edit mode
+  id?: string; 
 }
 
 @Component({
@@ -24,7 +24,7 @@ export class SocialDialogComponent implements OnInit {
   platforms: Platform[] = platforms;
   showPlatformSelector: boolean = false;
   selectedPlatform: Platform | null = null;
-  isEditMode: boolean = false; // Track if we're editing an existing link
+  isEditMode: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -32,7 +32,6 @@ export class SocialDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: SocialLinkData
   ) {
     this.socialForm = this.fb.group({
-      platform: ['', Validators.required],
       url: ['', [Validators.required]],
       comment: [''],
       isActive: [true],
@@ -41,28 +40,24 @@ export class SocialDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Check if we're in edit mode
     this.isEditMode = !!(this.data && this.data.id);
     
     if (this.data) {
-      // If editing, try to find the platform based on the provided platform name
       if (this.data.platform) {
         this.selectedPlatform = this.platforms.find(p => p.name === this.data.platform) || null;
       }
       
-      // If no platform found by name and we have a URL, try to find platform by URL
       if (!this.selectedPlatform && this.data.url) {
         this.selectedPlatform = this.findPlatformByUrl(this.data.url);
       }
       
-      console.log(this.data.platform, "ssss")
       this.socialForm.patchValue({
-        platform: this.data.platform || '',
         url: this.data.url || '',
         comment: this.data.comment || '',
         isActive: this.data.isActive !== undefined ? this.data.isActive : true,
         isConfirmed: this.data.isConfirmed || false
       });
+      
     }
   }
 
@@ -122,9 +117,9 @@ export class SocialDialogComponent implements OnInit {
   onPlatformSelected(platform: Platform): void {
     console.log('Platform selected:', platform);
     this.selectedPlatform = platform;
+    // Clear URL when platform changes
     this.socialForm.patchValue({
-      platform: platform.name,
-      url: platform.urlPrefix || '' // Clear URL when platform changes
+      url: platform.urlPrefix || ''
     });
     this.showPlatformSelector = false;
     console.log('Form updated after platform selection:', this.socialForm.value);
