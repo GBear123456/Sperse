@@ -60,12 +60,13 @@
     </div>
 
     <!-- Platform List View -->
-    <div class="platform-list" *ngIf="!isGridView && filteredPlatforms.length > 0">
+    <div class="platform-list" *ngIf="!isGridView && filteredPlatforms.length > 0" #platformList>
       <div 
         *ngFor="let platform of filteredPlatforms" 
         class="platform-item"
         [class.selected]="platform.id === selectedPlatformId"
         (click)="selectPlatform(platform)"
+        [attr.data-platform-id]="platform.id"
       >
         <div class="platform-icon">
           <img [src]="platform.icon" [alt]="platform.name" class="icon-image">
@@ -75,12 +76,13 @@
     </div>
 
     <!-- Platform Icons Grid View -->
-    <div class="platform-grid" *ngIf="isGridView && filteredPlatforms.length > 0">
+    <div class="platform-grid" *ngIf="isGridView && filteredPlatforms.length > 0" #platformGrid>
       <div 
         *ngFor="let platform of filteredPlatforms" 
         class="platform-grid-item"
         [class.selected]="platform.id === selectedPlatformId"
         (click)="selectPlatform(platform)"
+        [attr.data-platform-id]="platform.id"
         [attr.data-tooltip]="platform.name"
       >
         <div class="platform-grid-icon" >
