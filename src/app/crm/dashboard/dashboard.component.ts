@@ -480,74 +480,11 @@ export class DashboardComponent implements AfterViewInit, OnInit {
    * Uses conversion rates to calculate the equivalent value
    */
   private updateGrossEarningsForCurrency(): void {
-    const conversionRates: { [key: string]: number } = {
-      'USD': 1.0,
-      'EUR': 0.85,
-      'GBP': 0.73,
-      'JPY': 110.0,
-      'CAD': 1.25,
-      'AUD': 1.35,
-      'CHF': 0.92,
-      'CNY': 6.45,
-      'INR': 74.5,
-      'BRL': 5.2,
-      'MXN': 20.0,
-      'KRW': 1100.0,
-      'SGD': 1.35,
-      'HKD': 7.8,
-      'SEK': 8.5,
-      'NOK': 8.8,
-      'DKK': 6.3,
-      'PLN': 3.8,
-      'CZK': 21.5,
-      'HUF': 300.0
-    };
-
-    if (this.selectedCurrency && conversionRates[this.selectedCurrency.id]) {
-      const rate = conversionRates[this.selectedCurrency.id];
-      this.grossEarnings = Math.round(148491.48 * rate * 100) / 100; // Round to 2 decimal places
-    } else {
-      // If currency not found, keep the original value
-      this.grossEarnings = 148491.48;
-    }
+    // Initialize gross earnings to 0 when no data is available
+    this.grossEarnings = 0;
   }
 
-  /**
-   * Converts currency amounts using predefined rates
-   */
-  private convertCurrency(amount: number, fromCurrency: string, toCurrency: string): number {
-    const conversionRates: { [key: string]: number } = {
-      'USD': 1.0,
-      'EUR': 0.85,
-      'GBP': 0.73,
-      'JPY': 110.0,
-      'CAD': 1.25,
-      'AUD': 1.35,
-      'CHF': 0.92,
-      'CNY': 6.45,
-      'INR': 74.5,
-      'BRL': 5.2,
-      'MXN': 20.0,
-      'KRW': 1100.0,
-      'SGD': 1.35,
-      'HKD': 7.8,
-      'SEK': 8.5,
-      'NOK': 8.8,
-      'DKK': 6.3,
-      'PLN': 3.8,
-      'CZK': 21.5,
-      'HUF': 300.0
-    };
-
-    const fromRate = conversionRates[fromCurrency] || 1.0;
-    const toRate = conversionRates[toCurrency] || 1.0;
-    
-    // Convert to USD first, then to target currency
-    const usdAmount = amount / fromRate;
-    const convertedAmount = usdAmount * toRate;
-    
-    return Math.round(convertedAmount * 100) / 100; // Round to 2 decimal places
-  }
+ 
 
   /**
    * Updates the KPI cards with new currency and value data

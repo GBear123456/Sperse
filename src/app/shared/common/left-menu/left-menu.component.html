@@ -1,25 +1,58 @@
 <div class="left-menu">
-    <p *ngIf="headerTitle" class="title">
-        <a *ngIf="headerLink; else simpleText" [routerLink]="headerLink">{{ headerTitle }}</a>
-        <ng-template #simpleText>{{ headerTitle }}</ng-template>
-    </p>
-    <ul class="items-progress">
+    <div class="top">
+      <img src="assets/common/icons/home.svg" alt="home-icon" class="home-icon" />
+      <button class="home-button" (click)="onClick($event, items[0])">Home</button>
+      <button class="close-button" (click)="closeMenu()">
+        <img src="assets/common/icons/close.svg" alt="close-icon" />
+      </button>
+    </div>
+    <div class="items-list">
+      <ul class="items-progress">
         <ng-template ngFor let-item [ngForOf]="items" let-i="index">
-            <li *ngIf="itemIsVisible(item) | async"
-                [ngClass]="{
-                    'items-progress-item': true,
-                    'passed': i < selectedItemIndex,
-                    'current': !item.isModalDialog && i == selectedItemIndex,
-                    'disabled': item.disabled
-                }">
-                <div class="img">
-                    <img [src]="item.iconSrc">
-                </div>
-                <div [ngClass]="{ 'link': item.component || item.onClick }" (click)="onClick($event, item)">
-                    <span>{{item.caption}}</span>
-                    <span *ngIf="item.showPlus" class="add-button" (click)="addButtonClick($event, item)">+</span>
-                </div>
-            </li>
+          <li
+            *ngIf="(itemIsVisible(item) | async) && i > 0"
+            [ngClass]="{
+              'items-progress-item': true,
+              passed: i < selectedItemIndex,
+              current: !item.isModalDialog && i == selectedItemIndex,
+              disabled: item.disabled
+            }"
+          >
+            <div class="img">
+              <img [src]="item.iconSrc" />
+            </div>
+            <div [ngClass]="{ link: item.component || item.onClick }" (click)="onClick($event, item)">
+              <span>{{ item.caption }}</span>
+              <div *ngIf="item.showPlus" class="add-button" (click)="addButtonClick($event, item)">
+                +
+              </div>
+            </div>
+          </li>
         </ng-template>
-    </ul>
-</div>
+      </ul>
+    </div>
+    <!-- Side switch at the bottom -->
+    <div class="side-switch-bottom">
+      <span
+        class="side-switch-label"
+        [class.active]="menuSide === 'left'"
+        (click)="setMenuSide('left')"
+        >Left</span
+      >
+      <label class="side-switch">
+        <input
+          type="checkbox"
+          [checked]="menuSide === 'right'"
+          (change)="setMenuSide($event.target.checked ? 'right' : 'left')"
+        />
+        <span class="slider"></span>
+      </label>
+      <span
+        class="side-switch-label"
+        [class.active]="menuSide === 'right'"
+        (click)="setMenuSide('right')"
+        >Right</span
+      >
+    </div>
+  </div>
+  
