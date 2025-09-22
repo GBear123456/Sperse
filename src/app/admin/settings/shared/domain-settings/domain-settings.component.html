@@ -884,6 +884,107 @@
             </div>
         </dx-scroll-view>
     </mat-tab>
+    <mat-tab *ngIf="isTenantHostCreateGranted || isTenantHostEditGranted">
+        <ng-template mat-tab-label>
+            <img src="./assets/common/icons/blocks.svg">
+            <div class="title">Whitelisted Domains</div>
+        </ng-template>
+
+        <dx-scroll-view [height]="scrollableAreaHeight" showScrollbar="onHover">
+            <div class="domains">
+                <div class="box1">
+                    <div class="element">
+                        <div class="tab">
+                            <div class="overlap-2">
+                                <div class="rectangle-2"></div>
+                                <div class="vector-wrapper" [ngClass]="{valid: newWhitelistDomain?.value && newWhitelistDomain.isValid}"><img class="vector" src="./assets/common/icons/check-white.svg" /></div>
+                                <div class="overlap-group-wrapper">
+                                    <div class="overlap-group-2">
+                                        <div class="ellipse"></div>
+                                        <div class="text-wrapper-2">1</div>
+                                    </div>
+                                </div>
+                                <div class="text-wrapper-3">Enter domain to whitelist it</div>
+                                <img (click)="enterBlock.classList.toggle('hidden')" [ngClass]="{closed: enterBlock.classList.contains('hidden')}" class="img" src="./assets/common/icons/arrow-down-black.svg" />
+                                <div class="rectangle-3"></div>
+                            </div>
+                        </div>
+                        <div class="block" #enterBlock>
+                            <div class="overlap">
+                                <div class="rectangle"></div>
+                                <p class="text-wrapper">
+                                    You can set a whitelisted domain. We recommend using
+                                    the convention <b><i>my.yourdomain.com / yourdomain.com</i></b>.
+                                    Wildcard domains (e.g., <b><i>*.yourdomain.com</i></b>) are also supported.
+                                </p>
+                                <div class="group">
+                                    <div class="overlap-group">
+                                        <div class="div">
+                                            <dx-text-box #newWhitelistDomain
+                                                         [placeholder]="l('HostName') + ' (custom.mysite.com)'"
+                                                         (onValueChanged)="onDomainChanged($event)">
+                                                <dx-validator #domainValidator>
+                                                    <dxi-validation-rule type="required"
+                                                                         message="{{l('ThisFieldIsRequired')}}.">
+                                                    </dxi-validation-rule>
+                                                    <dxi-validation-rule type="pattern"
+                                                                         [pattern]="regexPatterns.whitelistDomain"
+                                                                         [message]="l('LetsEncrypt_FailedToValidateDomain')">
+                                                    </dxi-validation-rule>
+                                                </dx-validator>
+                                            </dx-text-box>
+                                            <button class="btn btn-layout" [disabled]="!newWhitelistDomain?.value || !newWhitelistDomain.isValid" (click)="addWhitelistDomain(newWhitelistDomain)">
+                                                Add <i [ngClass]="{ 'fa fa-spinner fa-spin': isNewWhitelistDomainAdding }"></i>
+                                            </button>
+                                        </div>
+                                        <div class="type-the-domain-you-wrapper">
+                                            <p class="type-the-domain-you">Type the domain<br />you want to use</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box2">
+                    <div class="element">
+                        <div class="block" #wldomainsBlock>
+                            <div class="overlap-group">
+                                <div class="group">
+                                    <dx-data-grid *ngIf="whitelistDomains && whitelistDomains.length"
+                                                  #whitelistDomainsGrid
+                                                  class="grid-compact-view main-component-view"
+                                                  accessKey="whitelistDomainsGrid"
+                                                  [masterDetail]="{template: 'detailsTemplate'}"
+                                                  [dataSource]="whitelistDomains"
+                                                  [allowColumnReordering]="false"
+                                                  [columnAutoWidth]="true"
+                                                  [allowColumnResizing]="true"
+                                                  (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                                        <dxi-column dataField="hostName" [caption]="l('Domain')" cellTemplate="domainNameCell"></dxi-column>
+
+                                        <dxi-column [width]="190" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                                        <div *dxTemplate="let data of 'domainNameCell'" class="clipboard-holder">
+                                            {{data.value}}
+                                            <a href="https://{{data.value}}" target="_blank">
+                                                <img class="host-name-share-img" src="assets/common/icons/share-black.svg" />
+                                            </a>
+                                        </div>
+                                        <div *dxTemplate="let data of 'editDeleteTemplate'" style="text-align: right;">
+                                            <a *ngIf="isTenantHostDeleteGranted" class="dx-link action" (click)="deleteSSLBinding(data)">{{l('Delete')}} <i [ngClass]="{ 'fa fa-spinner fa-spin': data.data.isDeleting }"></i></a>
+                                        </div>
+                                    </dx-data-grid>
+
+                                    <p class="no-found" *ngIf="!whitelistDomains || !whitelistDomains?.length">No domains found.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </mat-tab>
     <mat-tab>
         <ng-template mat-tab-label>
             <lucide-angular [img]="ShieldIcon"></lucide-angular>

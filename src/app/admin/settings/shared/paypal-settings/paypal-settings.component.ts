@@ -116,6 +116,7 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
         return AppConsts.remoteServiceBaseUrl + `/api/paypal/ProcessWebhook?tenantId=${tenantId}`;
     }
 
+
     onTabChange(tab: MatTabChangeEvent) {
         if (tab.index === 0) {
             this.paypalPaymentSettings.environment = 'sandbox';
@@ -126,4 +127,12 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
     }
 
     
+    get isMerchantConnected(): boolean {
+        return this.paypalPaymentSettings.merchantId && this.paypalPaymentSettings.merchantEmailConfirmed && this.paypalPaymentSettings.merchantPaymentsReceivable;
+    }
+
+    copyToClipboard(value: string) {
+        this.clipboardService.copyFromContent(value.trim());
+        this.notify.info(this.l('SavedToClipboard'));
+    }
 }
