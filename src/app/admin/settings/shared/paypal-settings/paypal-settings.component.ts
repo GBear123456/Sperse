@@ -47,6 +47,8 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
         },
     ]
 
+    selectedTabIndex = 0;
+
     constructor(
         _injector: Injector,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy
@@ -116,6 +118,7 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
         return AppConsts.remoteServiceBaseUrl + `/api/paypal/ProcessWebhook?tenantId=${tenantId}`;
     }
 
+<<<<<<< HEAD
     onTabChange(tab: MatTabChangeEvent) {
         if (tab.index === 0) {
             this.paypalPaymentSettings.environment = 'sandbox';
@@ -126,4 +129,14 @@ export class PaypalSettingsComponent extends SettingsComponentBase {
     }
 
     
+=======
+    get isMerchantConnected(): boolean {
+        return this.paypalPaymentSettings.merchantId && this.paypalPaymentSettings.merchantEmailConfirmed && this.paypalPaymentSettings.merchantPaymentsReceivable;
+    }
+
+    copyToClipboard(value: string) {
+        this.clipboardService.copyFromContent(value.trim());
+        this.notify.info(this.l('SavedToClipboard'));
+    }
+>>>>>>> 1c3a5799bd301441f1be5bbe82ffeecb3dd8c51e
 }

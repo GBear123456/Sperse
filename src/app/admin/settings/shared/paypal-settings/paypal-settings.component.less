@@ -1,5 +1,6 @@
 :host {
     display: block;
+<<<<<<< HEAD
     padding: 1rem;
 
     @media (min-width: 640px) {
@@ -119,10 +120,72 @@
                                     font-size: 1rem;
                                     line-height: 2rem;
                                 }
+=======
+
+    ::ng-deep .mat-tab-body-content {
+        padding: 20px 0 0 10px;
+
+        .introduction-tab {
+            .take-payments-header {
+                display: flex;
+                justify-content: space-between;
+
+                h3 {
+                    font-size: 26px;
+                    font-weight: 600;
+                }
+
+                span {
+                    font-size: 13px;
+                }
+
+                .stripe-button {
+                    height: 43px;
+                    width: 180px;
+                }
+            }
+
+            .video-block {
+                display: flex;
+                margin-top: 33px;
+                padding: 20px;
+                background-color: #F1F9FF;
+                border-radius: 10px;
+
+                img {
+                    width: 306px;
+                    height: 205px;
+                    border-radius: 4px;
+                }
+
+                .video-block-text {
+                    margin-left: 33px;
+
+                    .video-block-title {
+                        margin-top: 25px;
+                        font-size: 22px;
+                        font-weight: 600;
+                    }
+
+                    ul {
+                        margin-top: 13px;
+                        padding: 0;
+                        font-size: 13px;
+                        line-height: 23px;
+                        list-style-type: disc;
+                        list-style-position: inside;
+
+                        li {
+                            margin-bottom: 6px;
+
+                            &::marker {
+                                color: #00A8ED;
+>>>>>>> 1c3a5799bd301441f1be5bbe82ffeecb3dd8c51e
                             }
                         }
                     }
 
+<<<<<<< HEAD
                     .content-info {
                         border-radius: .5rem;
                         background-color: rgb(249 250 251);
@@ -217,11 +280,20 @@
                             @media (min-width: 640px) {
                                 margin-top: 1.5rem;
                             }
+=======
+                    .video-block-learnmore {
+                        font-size: 13px;
+                        font-weight: 600;
+
+                        a {
+                            color: #5C5968;
+>>>>>>> 1c3a5799bd301441f1be5bbe82ffeecb3dd8c51e
                         }
                     }
                 }
             }
 
+<<<<<<< HEAD
             .faq-side {
                 border-radius: .5rem;
                 background-color: #F1EFF8;
@@ -243,6 +315,55 @@
                         margin-bottom: 1.5rem;
                     }
                 }
+=======
+            .payments-block {
+                margin-top: 20px;
+                padding: 20px 30px;
+                border: 1px solid #EAEFF4;
+
+                h2 {
+                    font-size: 22px;
+                    line-height: 27px;
+                    font-weight: 600;
+                }
+
+                h3 {
+                    font-size: 15px;
+                    line-height: 27px;
+                    font-weight: 500;
+                }
+
+                ul {
+                    font-size: 13px;
+                    padding: 0;
+                    list-style-type: none;
+                    margin-bottom: 0;
+
+                    li {
+                        margin-bottom: 6px;
+                        line-height: 23px;
+
+                        &:before {
+                            content: '\f058';
+                            font-size: 18px;
+                            font-family: FontAwesome !important;
+                            color: #00BA00;
+                            margin-right: 8px;
+                        }
+                    }
+                }
+            }
+
+            .faq-block {
+                background-color: #F1EFF8;
+                border-radius: 10px;
+                padding: 30px;
+
+                .faq-block-title {
+                    font-size: 23px;
+                    margin-bottom: 18px;
+                }
+>>>>>>> 1c3a5799bd301441f1be5bbe82ffeecb3dd8c51e
 
                 .faq-block-row {
                     background-color: #e9e7f1;
@@ -262,6 +383,7 @@
                         color: #5C5968;
                     }
                 }
+<<<<<<< HEAD
             }    
         }
 
@@ -613,9 +735,147 @@
                     ::ng-deep lucide-angular svg {
                         width: 1.25rem;
                         height: 1.25rem;
+=======
+            }
+        }
+
+        .connected-tab {
+            .block {
+                width: 500px;
+            }
+
+            .connected-account {
+                .name-title {
+                    font-size: 17px;
+                    font-weight: 600;
+                    margin-left: 10px;
+                }
+
+                .account-info {
+                    .stripe-button-container {
+                        margin-bottom: 25px;
+
+                        .paypal-button {
+                            background-color: #ffc439;
+                            color: black;
+                        }
+                    }
+                }
+
+                .account-warning {
+                    color: red;
+                    line-height: 20px;
+                    font-style: italic;
+                }
+            }
+        }
+
+        .api-keys-tab {
+            input {
+                width: 100%;
+                border: 1px solid #E1E7ED;
+                border-radius: 6px;
+                height: 45px;
+                padding: 0 10px;
+
+                &::placeholder {
+                    color: #b1b0ae;
+                }
+            }
+        }
+
+        .blocks-tab {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+
+            .block {
+                border: 1px solid #E1E7ED;
+                border-radius: 10px;
+                padding: 16px 20px;
+                font-size: 13px;
+                font-weight: 500;
+                line-height: 28px;
+
+                &.active {
+                    border-color: #00CA6A;
+                    background-color: #E6FAF03B;
+
+                    .check-icon {
+                        color: var(--app-button-color) !important;
+                    }
+                }
+
+                .section {
+                    border-bottom: 1px solid #DFEBE7;
+                    padding-bottom: 12px;
+                    margin-bottom: 20px;
+                }
+
+                .top-bar {
+                    .check-icon {
+                        font-size: 20px;
+                        color: #DFEBE7;
+                    }
+
+                    inplace-edit {
+                        display: inline-block;
+                        width: 90%;
+                        margin-left: 10px;
+                        font-size: 17px;
+                        font-weight: 600;
+                    }
+                }
+
+                h6 {
+                    font-size: 16px;
+                    font-weight: 600;
+                    margin: 15px 0;
+                }
+
+                .small {
+                    font-size: 11px;
+                }
+
+                ::ng-deep .dx-checkbox .dx-checkbox-text {
+                    font-size: 13px;
+                    font-weight: 500;
+                }
+
+                .account-actions {
+                    display: flex;
+                    justify-content: space-around;
+                    font-size: 13px;
+                    font-weight: 500;
+                    color: #08295B;
+                    opacity: .6;
+
+                    span {
+                        cursor: pointer;
+
+                        i {
+                            margin-right: 7px;
+                            font-size: 13px;
+                        }
+>>>>>>> 1c3a5799bd301441f1be5bbe82ffeecb3dd8c51e
                     }
                 }
             }
         }
     }
+<<<<<<< HEAD
+=======
+
+    .clipboard-holder {
+        .save-to-clipboard {
+            display: none;
+        }
+
+        &:hover {
+            .save-to-clipboard {
+                display: inline-block;
+            }
+        }
+    }
+>>>>>>> 1c3a5799bd301441f1be5bbe82ffeecb3dd8c51e
 }
