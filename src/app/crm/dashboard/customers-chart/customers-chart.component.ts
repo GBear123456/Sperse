@@ -60,14 +60,39 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log('Chart component changes detected:', changes);
+    
     // When customerStatsData changes, update the chart
-    if (changes['customerStatsData'] && this.customerStatsData && this.customerStatsData.length > 0) {
-      this.transformApiDataToChartData(this.customerStatsData);
+    if (changes['customerStatsData']) {
+      if (this.customerStatsData && this.customerStatsData.length > 0) {
+        console.log('Customer stats data changed, updating chart');
+        this.transformApiDataToChartData(this.customerStatsData);
+      } else {
+        console.log('Customer stats data is empty, generating empty chart data');
+        this.generateEmptyChartData();
+      }
     }
     
     // When grossEarningsStatsData changes, update the chart
-    if (changes['grossEarningsStatsData'] && this.grossEarningsStatsData && this.grossEarningsStatsData.length > 0) {
-      this.transformGrossEarningsDataToChartData(this.grossEarningsStatsData);
+    if (changes['grossEarningsStatsData']) {
+      if (this.grossEarningsStatsData && this.grossEarningsStatsData.length > 0) {
+        console.log('Gross earnings stats data changed, updating chart');
+        this.transformGrossEarningsDataToChartData(this.grossEarningsStatsData);
+      } else {
+        console.log('Gross earnings stats data is empty, generating empty chart data');
+        this.generateEmptyChartData();
+      }
+    }
+
+    // When startDate or endDate changes, regenerate chart with new date range
+    if (changes['startDate'] || changes['endDate']) {
+      console.log('Date range changed, regenerating chart:', {
+        startDate: this.startDate,
+        endDate: this.endDate,
+        startDateChanged: changes['startDate'],
+        endDateChanged: changes['endDate']
+      });
+      this.regenerateChartWithNewDateRange();
     }
   }
 
@@ -148,26 +173,53 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
    * Transforms API response data to chart data format
    */
   private transformApiDataToChartData(apiData: GetCustomerAndLeadStatsOutput[]): void {
+    console.log('Transforming customer API data to chart data:', {
+      apiDataLength: apiData?.length || 0,
+      startDate: this.startDate,
+      endDate: this.endDate
+    });
+    
     if (!apiData || apiData.length === 0) {
-      this.initializeChartData();
+      this.generateEmptyChartData();
       return;
     }
 
-    // Transform current period data
-    const currentPeriodSeries: CustomerDataPoint[] = apiData.map(item => ({
-      name: moment(item.date).format('MM/DD'),
-      value: item.customerCount || 0,
-      date: moment(item.date).toDate()
-    }));
+    // Generate complete date range labels for x-axis
+    const dateRangeLabels = this.generateDateRangeLabels(this.startDate, this.endDate);
+    console.log('Generated date range labels:', dateRangeLabels.length, 'labels');
+    
+    // Create a map of API data by date for easy lookup
+    const apiDataMap = new Map<string, GetCustomerAndLeadStatsOutput>();
+    apiData.forEach(item => {
+      const dateKey = moment(item.date).format('YYYY-MM-DD');
+      apiDataMap.set(dateKey, item);
+    });
+
+    // Transform current period data with complete date range
+    const currentPeriodSeries: CustomerDataPoint[] = dateRangeLabels.map(label => {
+      const dateKey = moment(label.date).format('YYYY-MM-DD');
+      const apiItem = apiDataMap.get(dateKey);
+      return {
+        name: label.name,
+        value: apiItem ? (apiItem.customerCount || 0) : 0,
+        date: label.date
+      };
+    });
+
+    console.log('Current period series generated:', currentPeriodSeries.length, 'data points');
 
     // Calculate comparison period data (same duration before current period)
     const periodDuration = this.endDate.getTime() - this.startDate.getTime();
     const comparisonStartDate = new Date(this.startDate.getTime() - periodDuration);
     const comparisonEndDate = new Date(this.startDate.getTime());
 
-    // For now, we'll use sample data for comparison period since we only have current period data
-    // In a real implementation, you might want to make another API call for comparison period
-    const comparisonPeriodSeries = this.generateSampleData(comparisonStartDate, comparisonEndDate, 'Comparison Period')[0]?.series || [];
+    // Generate comparison period data with complete date range
+    const comparisonDateRangeLabels = this.generateDateRangeLabels(comparisonStartDate, comparisonEndDate);
+    const comparisonPeriodSeries: CustomerDataPoint[] = comparisonDateRangeLabels.map(label => ({
+      name: label.name,
+      value: 0, // For now, using zero values for comparison period
+      date: label.date
+    }));
 
     // Update chart data
     this.currentPeriodData = [{
@@ -183,9 +235,8 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
     // Update total and percentage change
     this.updateChartMetrics(currentPeriodSeries);
 
-    // Reinitialize chart with new data
-    this.initializeChartData();
-    this.initializeChart();
+    // Update the chart with new data
+    this.updateChartWithNewData();
   }
 
 
@@ -205,26 +256,53 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
    * Transforms Gross Earnings API response data to chart data format
    */
   private transformGrossEarningsDataToChartData(apiData: GetGrossEarningsStatsOutput[]): void {
+    console.log('Transforming gross earnings API data to chart data:', {
+      apiDataLength: apiData?.length || 0,
+      startDate: this.startDate,
+      endDate: this.endDate
+    });
+    
     if (!apiData || apiData.length === 0) {
-      this.initializeChartData();
+      this.generateEmptyChartData();
       return;
     }
 
-    // Transform current period data (handle API response data)
-    const currentPeriodSeries: CustomerDataPoint[] = apiData.map(item => ({
-      name: moment(item.date).format('MM/DD'),
-      value: item.amount || 0,
-      date: moment(item.date).toDate()
-    }));
+    // Generate complete date range labels for x-axis
+    const dateRangeLabels = this.generateDateRangeLabels(this.startDate, this.endDate);
+    console.log('Generated date range labels for gross earnings:', dateRangeLabels.length, 'labels');
+    
+    // Create a map of API data by date for easy lookup
+    const apiDataMap = new Map<string, GetGrossEarningsStatsOutput>();
+    apiData.forEach(item => {
+      const dateKey = moment(item.date).format('YYYY-MM-DD');
+      apiDataMap.set(dateKey, item);
+    });
+
+    // Transform current period data with complete date range
+    const currentPeriodSeries: CustomerDataPoint[] = dateRangeLabels.map(label => {
+      const dateKey = moment(label.date).format('YYYY-MM-DD');
+      const apiItem = apiDataMap.get(dateKey);
+      return {
+        name: label.name,
+        value: apiItem ? (apiItem.amount || 0) : 0,
+        date: label.date
+      };
+    });
+
+    console.log('Gross earnings current period series generated:', currentPeriodSeries.length, 'data points');
 
     // Calculate comparison period data (same duration before current period)
     const periodDuration = this.endDate.getTime() - this.startDate.getTime();
     const comparisonStartDate = new Date(this.startDate.getTime() - periodDuration);
     const comparisonEndDate = new Date(this.startDate.getTime());
 
-    // For now, we'll use sample data for comparison period since we only have current period data
-    // In a real implementation, you might want to make another API call for comparison period
-    const comparisonPeriodSeries = this.generateSampleData(comparisonStartDate, comparisonEndDate, 'Comparison Period')[0]?.series || [];
+    // Generate comparison period data with complete date range
+    const comparisonDateRangeLabels = this.generateDateRangeLabels(comparisonStartDate, comparisonEndDate);
+    const comparisonPeriodSeries: CustomerDataPoint[] = comparisonDateRangeLabels.map(label => ({
+      name: label.name,
+      value: 0, // For now, using zero values for comparison period
+      date: label.date
+    }));
 
     // Update chart data
     this.currentPeriodData = [{
@@ -240,9 +318,8 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
     // Update total and percentage change for gross earnings
     this.updateGrossEarningsMetrics(currentPeriodSeries);
 
-    // Reinitialize chart with new data
-    this.initializeChartData();
-    this.initializeChart();
+    // Update the chart with new data
+    this.updateChartWithNewData();
   }
 
   /**
@@ -286,6 +363,13 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
     const labels = this.currentPeriodData[0]?.series.map(point => point.name) || [];
     const currentData = this.currentPeriodData[0]?.series.map(point => point.value) || [];
     const comparisonData = this.comparisonPeriodData[0]?.series.map(point => point.value) || [];
+    
+    console.log('Chart initialization data:', {
+      labels: labels,
+      currentDataLength: currentData.length,
+      comparisonDataLength: comparisonData.length,
+      title: this.title
+    });
 
     const datasets = [
       {
@@ -440,6 +524,220 @@ export class CustomersChartComponent implements OnInit, OnDestroy, AfterViewInit
     });
 
     return data;
+  }
+
+  /**
+   * Generates date range labels for the x-axis based on the selected date range
+   */
+  private generateDateRangeLabels(startDate: Date, endDate: Date): CustomerDataPoint[] {
+    console.log('Generating date range labels:', {
+      startDate: startDate,
+      endDate: endDate
+    });
+    
+    const labels: CustomerDataPoint[] = [];
+    const currentDate = new Date(startDate);
+    const endDateObj = new Date(endDate);
+
+    while (currentDate <= endDateObj) {
+      labels.push({
+        name: moment(currentDate).format('MM/DD'),
+        value: 0, // Will be filled with actual data
+        date: new Date(currentDate)
+      });
+
+      // Move to next day
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    console.log('Generated', labels.length, 'date range labels:', labels.map(l => l.name));
+    return labels;
+  }
+
+  /**
+   * Regenerates the chart when date range changes
+   */
+  private regenerateChartWithNewDateRange(): void {
+    console.log('Regenerating chart with new date range:', {
+      startDate: this.startDate,
+      endDate: this.endDate,
+      hasCustomerData: this.customerStatsData && this.customerStatsData.length > 0,
+      hasGrossEarningsData: this.grossEarningsStatsData && this.grossEarningsStatsData.length > 0,
+      title: this.title
+    });
+    
+    // Always update the x-axis with the new date range, regardless of data availability
+    // This ensures the chart shows the correct date range even if there's an API error
+    
+    // If we have existing data, regenerate the chart with the new date range
+    if (this.title === 'Gross Earnings' && this.grossEarningsStatsData && this.grossEarningsStatsData.length > 0) {
+      console.log('Using gross earnings stats data for chart regeneration');
+      this.transformGrossEarningsDataToChartData(this.grossEarningsStatsData);
+    } else if (this.title === 'Customers' && this.customerStatsData && this.customerStatsData.length > 0) {
+      console.log('Using customer stats data for chart regeneration');
+      this.transformApiDataToChartData(this.customerStatsData);
+    } else {
+      console.log('No data available or API error, generating empty chart data for new date range');
+      // If no data or API error, generate empty chart data for the new date range
+      // This ensures the x-axis is updated even when there's no data
+      this.generateEmptyChartData();
+    }
+  }
+
+  /**
+   * Generates empty chart data for the current date range
+   * This is used when there's no API data but we still need to show the chart with proper x-axis
+   */
+  private generateEmptyChartData(): void {
+    console.log('Generating empty chart data for date range:', {
+      startDate: this.startDate,
+      endDate: this.endDate
+    });
+
+    // Generate complete date range labels for x-axis
+    const dateRangeLabels = this.generateDateRangeLabels(this.startDate, this.endDate);
+    
+    // Create empty data series for current period
+    const currentPeriodSeries: CustomerDataPoint[] = dateRangeLabels.map(label => ({
+      name: label.name,
+      value: 0,
+      date: label.date
+    }));
+
+    // Calculate comparison period data (same duration before current period)
+    const periodDuration = this.endDate.getTime() - this.startDate.getTime();
+    const comparisonStartDate = new Date(this.startDate.getTime() - periodDuration);
+    const comparisonEndDate = new Date(this.startDate.getTime());
+
+    // Generate comparison period data with complete date range
+    const comparisonDateRangeLabels = this.generateDateRangeLabels(comparisonStartDate, comparisonEndDate);
+    const comparisonPeriodSeries: CustomerDataPoint[] = comparisonDateRangeLabels.map(label => ({
+      name: label.name,
+      value: 0,
+      date: label.date
+    }));
+
+    // Update chart data
+    this.currentPeriodData = [{
+      name: 'Current Period',
+      series: currentPeriodSeries
+    }];
+
+    this.comparisonPeriodData = [{
+      name: 'Comparison Period',
+      series: comparisonPeriodSeries
+    }];
+
+    // Update the chart with new data
+    this.updateChartWithNewData();
+  }
+
+  /**
+   * Updates the chart with new data without recreating it
+   */
+  private updateChartWithNewData(): void {
+    if (!this.chart) {
+      console.log('No chart instance, initializing new chart');
+      this.initializeChart();
+      return;
+    }
+
+    console.log('Updating existing chart with new data');
+    
+    // Extract labels and data
+    const labels = this.currentPeriodData[0]?.series.map(point => point.name) || [];
+    const currentData = this.currentPeriodData[0]?.series.map(point => point.value) || [];
+    const comparisonData = this.comparisonPeriodData[0]?.series.map(point => point.value) || [];
+
+    console.log('Updating chart with new data:', {
+      labels: labels,
+      currentDataLength: currentData.length,
+      comparisonDataLength: comparisonData.length,
+      title: this.title
+    });
+
+    // Update chart data
+    this.chart.data.labels = labels;
+    this.chart.data.datasets[0].data = currentData;
+    
+    if (this.chart.data.datasets.length > 1) {
+      this.chart.data.datasets[1].data = comparisonData;
+    }
+
+    // Update the chart with animation
+    this.chart.update('active');
+  }
+
+  /**
+   * Forces chart regeneration with current date range
+   * This method can be called externally to force a chart update
+   */
+  public forceChartUpdate(): void {
+    console.log('Forcing chart update with current date range');
+    this.regenerateChartWithNewDateRange();
+  }
+
+  /**
+   * Forces x-axis update with current date range
+   * This method specifically updates the x-axis even when there's no data
+   */
+  public forceXAxisUpdate(): void {
+    console.log('Forcing x-axis update with current date range');
+    this.generateEmptyChartData();
+  }
+
+  /**
+   * Handles the case where data is empty but we still need to update the chart
+   * This ensures the x-axis is updated even when there's no data
+   */
+  public handleEmptyData(): void {
+    console.log('Handling empty data, updating chart with current date range');
+    this.generateEmptyChartData();
+  }
+
+  /**
+   * Updates the chart when date range changes but there's no data
+   * This method is called when the date range changes but there's no API data
+   */
+  public updateChartForDateRangeChange(): void {
+    console.log('Updating chart for date range change with current data state');
+    
+    // Check if we have any data to work with
+    if (this.title === 'Gross Earnings' && this.grossEarningsStatsData && this.grossEarningsStatsData.length > 0) {
+      this.transformGrossEarningsDataToChartData(this.grossEarningsStatsData);
+    } else if (this.title === 'Customers' && this.customerStatsData && this.customerStatsData.length > 0) {
+      this.transformApiDataToChartData(this.customerStatsData);
+    } else {
+      // No data available, generate empty chart with proper x-axis
+      this.generateEmptyChartData();
+    }
+  }
+
+  /**
+   * Public method to force chart update when date range changes
+   * This can be called from parent components to ensure x-axis is updated
+   */
+  public forceDateRangeUpdate(): void {
+    console.log('Forcing date range update for chart');
+    this.updateChartForDateRangeChange();
+  }
+
+  /**
+   * Public method to force chart update when there's an API error
+   * This ensures the x-axis is updated even when there's no data
+   */
+  public forceUpdateOnApiError(): void {
+    console.log('Forcing chart update on API error');
+    this.generateEmptyChartData();
+  }
+
+  /**
+   * Public method to force chart update when there's no data
+   * This ensures the x-axis is updated even when there's no data
+   */
+  public forceUpdateOnNoData(): void {
+    console.log('Forcing chart update on no data');
+    this.generateEmptyChartData();
   }
 
   formatDate(date: Date): string {

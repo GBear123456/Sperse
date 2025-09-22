@@ -75,6 +75,11 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   @ViewChild(ClientsByRegionComponent) clientsByRegion: ClientsByRegionComponent;
   @ViewChild(TotalsBySourceComponent) totalsBySource: TotalsBySourceComponent;
   @ViewChild(LeftMenuComponent) leftMenu: LeftMenuComponent;
+  @ViewChild('grossEarningsChart') grossEarningsChart: any;
+  @ViewChild('customersChart') customersChart: any;
+  @ViewChild('upgradesChart') upgradesChart: any;
+  @ViewChild('shopOrdersChart') shopOrdersChart: any;
+  @ViewChild('cancelledChart') cancelledChart: any;
 
   private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
   showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable().pipe(
@@ -601,11 +606,26 @@ export class DashboardComponent implements AfterViewInit, OnInit {
           this.chartComparisonStartDate = new Date(this.chartStartDate.getTime() - periodDuration);
           this.chartComparisonEndDate = new Date(this.chartStartDate.getTime());
           
+          console.log('Date range changed:', {
+            startDate: this.chartStartDate,
+            endDate: this.chartEndDate,
+            comparisonStartDate: this.chartComparisonStartDate,
+            comparisonEndDate: this.chartComparisonEndDate
+          });
+          
           // Reload customer stats with new date range
           this.loadCustomerStats();
 
           // Reload gross earnings stats with new date range
           this.loadGrossEarningsStats();
+
+          // Force update the gross earnings chart if it exists
+          if (this.grossEarningsChart) {
+            this.grossEarningsChart.forceChartUpdate();
+          }
+
+          // Also force update x-axis for all charts to ensure they show the new date range
+          this.updateAllChartsXAxis();
 
           // Trigger change detection
           this.changeDetectorRef.markForCheck();
@@ -653,6 +673,11 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         error: (error) => {
           console.error('Error loading customer stats:', error);
           this.isLoadingCustomerStats = false;
+          
+          // Set empty data to trigger chart x-axis update even on API error
+          this.customerStatsData = [];
+          
+          // Trigger change detection
           this.changeDetectorRef.markForCheck();
         }
       });
@@ -737,9 +762,17 @@ export class DashboardComponent implements AfterViewInit, OnInit {
           console.error('Error details:', error.message, error.status);
           this.isLoadingGrossEarningsStats = false;
           
+          // Set empty data to trigger chart x-axis update even on API error
+          this.grossEarningsStatsData = [];
+          
           // Keep using hardcoded values on error
           this.updateGrossEarningsForCurrency();
           this.updateKpiCards();
+          
+          // Force update the gross earnings chart x-axis even on API error
+          if (this.grossEarningsChart) {
+            this.grossEarningsChart.forceXAxisUpdate();
+          }
           
           // Trigger change detection
           this.changeDetectorRef.markForCheck();
@@ -963,5 +996,29 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   switchVersion(version: 'v1' | 'v2'): void {
     this.selectedVersion = version;
     this.changeDetectorRef.markForCheck();
+  }
+
+  /**
+   * Updates x-axis for all charts when date range changes
+   * This ensures all charts show the correct date range even if there's no data
+   */
+  private updateAllChartsXAxis(): void {
+    console.log('Updating x-axis for all charts with new date range');
+    
+    // Force update all charts x-axis
+    const charts = [
+      this.grossEarningsChart,
+      this.customersChart,
+      this.upgradesChart,
+      this.shopOrdersChart,
+      this.cancelledChart
+    ];
+    
+    charts.forEach((chart, index) => {
+      if (chart && chart.forceXAxisUpdate) {
+        console.log(`Updating chart ${index + 1} x-axis`);
+        chart.forceXAxisUpdate();
+      }
+    });
   }
 }
