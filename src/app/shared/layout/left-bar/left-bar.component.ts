@@ -224,6 +224,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit, OnDestroy {
 
     navigate(event) {
         let route = event.itemData.route;
+        console.log({route})
         /** Avoid redirect to the same route */
         if (route && (location.pathname !== event.itemData.route || location.search != UrlHelper.getUrl('', event.itemData.params))) {
             if (route.startsWith('/')) {
