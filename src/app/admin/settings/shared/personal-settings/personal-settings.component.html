@@ -34,12 +34,21 @@
                                         <div style="position: relative;">
                                           <div class="profile-settings-image">
                                             <img 
-                                              src=""
+                                              [src]="profilePictureUrl"
                                               alt="Profile" 
+                                              *ngIf="!isUploadingProfilePicture"
+                                              (error)="onImageError($event)"
+                                              (load)="onImageLoad($event)"
                                             />
+                                            <div *ngIf="isUploadingProfilePicture" class="uploading-indicator">
+                                              <span>Uploading...</span>
+                                            </div>
                                           </div>
                                           <label 
                                             htmlFor="profile-image" 
+                                            class="camera-icon-label"
+                                            [class.disabled]="isUploadingProfilePicture"
+                                            (click)="onCameraIconClick()"
                                           >
                                             <lucide-angular [img]="CameraIcon"></lucide-angular>
                                           </label>
@@ -48,7 +57,20 @@
                                             type="file" 
                                             accept="image/*" 
                                             style="display: none;"
+                                            (change)="onProfilePictureSelected($event)"
+                                            [disabled]="isUploadingProfilePicture"
                                           />
+                                          <button 
+                                            *ngIf="isProfilePictureCustom() && !isUploadingProfilePicture"
+                                            type="button"
+                                            class="clear-profile-picture-btn"
+                                            (click)="clearProfilePicture()"
+                                            title="Remove profile picture"
+                                          >
+                                            <lucide-angular [img]="TrashIcon"></lucide-angular>
+                                          </button>
+                                          
+                                          
                                         </div>
                                     </div>
 

@@ -15,7 +15,7 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { forkJoin, Observable, throwError } from 'rxjs';
 import { finalize, tap, catchError } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
-import { Camera, FileSignature, KeyRound, Mail, UserCircle } from 'lucide-angular';
+import { Camera, FileSignature, KeyRound, Mail, Trash2, UserCircle } from 'lucide-angular';
 import { NotifyService } from 'abp-ng2-module';
 import { SettingService } from 'abp-ng2-module';
 import { MessageService } from 'abp-ng2-module';
@@ -26,7 +26,7 @@ import { AppTimezoneScope } from '@shared/AppEnums';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     GetCurrentUserProfileEditDto, CurrentUserProfileEditDto, SettingScopes, UserEmailSettings, EmailFromSettings, EmailSmtpSettings,
-    SendSMTPTestEmailInput, ProfileServiceProxy, GoogleServiceProxy, GmailSettingsDto, GmailSettingsEditDto, UpdateSignatureDto
+    SendSMTPTestEmailInput, ProfileServiceProxy, GoogleServiceProxy, GmailSettingsDto, GmailSettingsEditDto, UpdateSignatureDto, UpdateProfilePictureInput
 } from '@shared/service-proxies/service-proxies';
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
@@ -46,7 +46,8 @@ export class PersonalSettingsComponent extends SettingsComponentBase implements 
     readonly EmailIcon = Mail;
     readonly SignatureIcon = FileSignature;
     readonly KeyIcon = KeyRound;
-    readonly CameraIcon = Camera
+    readonly CameraIcon = Camera;
+    readonly TrashIcon = Trash2;
 
     @ViewChild('smsVerificationModal') smsVerificationModal: SmsVerificationModalComponent;
     @ViewChild(MatTabGroup) tabs: MatTabGroup;
@@ -132,6 +133,9 @@ export class PersonalSettingsComponent extends SettingsComponentBase implements 
     selectedProvider: any;
     selectedIndex: number;
 
+    profilePictureUrl: string = '';
+    isUploadingProfilePicture: boolean = false;
+
     constructor(
         _injector: Injector,
         private profileServiceProxy: ProfileServiceProxy,
@@ -179,6 +183,10 @@ export class PersonalSettingsComponent extends SettingsComponentBase implements 
                     this._initialUserSettings = cloneDeep(this.user);
                     this._initialTimezone = this.user.timezone;
                 }, 600);
+                
+                // Initialize profile picture after user data is loaded
+                this.initializeProfilePicture();
+                
                 this.changeDetectorRef.detectChanges();
             });
         this.gmailSettingsService.initGmail(() => this.initGmailClient());
@@ -483,5 +491,185 @@ export class PersonalSettingsComponent extends SettingsComponentBase implements 
             else
                 resolve(true);
         });
+    }
+
+   
+
+    // Profile picture methods
+    initializeProfilePicture(): void {
+        console.log('Initializing profile picture...');
+        console.log('User:', this.appSessionService.user);
+        console.log('Profile picture ID:', this.appSessionService.user?.profilePictureId);
+        
+        if (this.appSessionService.user && this.appSessionService.user.profilePictureId) {
+            this.profilePictureUrl = this.getProfilePictureUrl(this.appSessionService.user.profilePictureId);
+        } else {
+            this.profilePictureUrl = this.getProfilePictureUrl();
+        }
+        
+        console.log('Profile picture URL:', this.profilePictureUrl);
+        this.changeDetectorRef.detectChanges();
+    }
+
+    onProfilePictureSelected(event: any): void {
+        console.log('Profile picture selected:', event);
+        const file = event.target.files[0];
+        if (file) {
+            console.log('File selected:', file.name, file.size, file.type);
+            this.uploadProfilePicture(file);
+        }
+    }
+
+    uploadProfilePicture(file: File): void {
+        if (!file) return;
+
+        console.log('Starting profile picture upload...');
+        this.isUploadingProfilePicture = true;
+        this.changeDetectorRef.detectChanges();
+
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+            const base64String = e.target.result.split(',')[1]; // Remove data:image/...;base64, prefix
+            
+            const input = new UpdateProfilePictureInput({
+                originalImage: base64String,
+                thumbnail: base64String,
+                source: 'Profile',
+                userId: this.appSessionService.user.id,
+                useGravatarProfilePicture: false
+            });
+
+            this.profileServiceProxy.updateProfilePicture(input)
+                .subscribe(
+                    (thumbnailId: string) => {
+                        console.log('Profile picture upload successful, thumbnail ID:', thumbnailId);
+                        this.isUploadingProfilePicture = false;
+                        this.profilePictureUrl = this.getProfilePictureUrl(thumbnailId);
+                        this.changeDetectorRef.detectChanges();
+                        
+                        // Trigger profile picture change event
+                        abp.event.trigger('profilePictureChanged', thumbnailId);
+                        
+                        this.notifyService.success('Profile picture updated successfully');
+                    },
+                    (error) => {
+                        console.error('Profile picture update error:', error);
+                        this.isUploadingProfilePicture = false;
+                        this.changeDetectorRef.detectChanges();
+                        this.notifyService.error('Failed to update profile picture');
+                    }
+                );
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    getProfilePictureUrl(thumbnailId?: string): string {
+        console.log('Getting profile picture URL for thumbnail ID:', thumbnailId);
+        console.log('AppConsts.imageUrls.profileDefault:', AppConsts.imageUrls.profileDefault);
+        console.log('AppConsts.remoteServiceBaseUrl:', AppConsts.remoteServiceBaseUrl);
+        console.log('Tenant ID:', this.appSessionService.tenantId);
+        
+        if (!thumbnailId) {
+            const defaultUrl = AppConsts.imageUrls.profileDefault;
+            console.log('Returning default URL:', defaultUrl);
+            return defaultUrl;
+        }
+        
+        const tenantId = this.appSessionService.tenantId || 0;
+        const url = AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + tenantId + '/' + thumbnailId;
+        console.log('Returning profile picture URL:', url);
+        return url;
+    }
+
+    isProfilePictureCustom(): boolean {
+        return this.profilePictureUrl && this.profilePictureUrl !== this.getProfilePictureUrl();
+    }
+
+    onImageError(event: any): void {
+        console.log('Image load error:', event);
+        // Fallback to default image if the profile picture fails to load
+        this.profilePictureUrl = this.getProfilePictureUrl();
+        this.changeDetectorRef.detectChanges();
+    }
+
+    onImageLoad(event: any): void {
+        console.log('Image loaded successfully:', event);
+    }
+
+    onCameraIconClick(): void {
+        const fileInput = document.getElementById('profile-image') as HTMLInputElement;
+        if (fileInput) {
+            console.log('File input found, triggering click');
+            fileInput.click();
+        } else {
+            console.log('File input not found');
+        }
+    }
+
+    clearProfilePicture(): void {
+        this.messageService.confirm(
+            this.l('AreYouSure'),
+            'Are you sure you want to remove your profile picture?',
+            isConfirmed => {
+                if (isConfirmed) {
+                    this.profileServiceProxy.clearProfilePicture()
+                        .subscribe(
+                            () => {
+                                this.profilePictureUrl = AppConsts.imageUrls.profileDefault;
+                                this.changeDetectorRef.detectChanges();
+                                
+                                // Trigger profile picture change event
+                                abp.event.trigger('profilePictureChanged', null);
+                                
+                                this.notifyService.success('Profile picture removed successfully');
+                            },
+                            (error) => {
+                                this.notifyService.error('Failed to remove profile picture');
+                                console.error('Profile picture removal error:', error);
+                            }
+                        );
+                }
+            }
+        );
+    }
+
+   
+
+    
+
+   
+
+   
+
+    getPlatformColor(platformName: string): string {
+        const platform = this.getPlatformByName(platformName);
+        return platform ? platform.color : '#6B7280';
+    }
+
+    getPlatformIcon(platformName: string): string {
+        const platform = this.getPlatformByName(platformName);
+        return platform ? platform.icon : 'assets/images/platforms/globe.svg';
+    }
+
+    private getPlatformByName(platformName: string): any {
+        // This would need to be imported from the platforms data
+        // For now, returning a default platform object
+        const platformColors: { [key: string]: string } = {
+            'LinkedIn': '#0077B5',
+            'Facebook': '#1877F2',
+            'Twitter': '#1DA1F2',
+            'Instagram': '#E4405F',
+            'GitHub': '#181717',
+            'BBB.org': '#1E4D8C',
+            'AngelList': '#000000',
+            'Twitch': '#9146FF',
+            'Vimeo': '#1AB7EA'
+        };
+        
+        return {
+            color: platformColors[platformName] || '#6B7280',
+            icon: `assets/images/platforms/${platformName.toLowerCase().replace(/[^a-zA-Z0-9]/g, '')}.svg`
+        };
     }
 }
