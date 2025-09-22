@@ -1479,7 +1479,7 @@ export class EmailTemplateDialogComponent implements OnInit, AfterViewInit, OnDe
         let field = event.component.option("name"),
             values = event.text
                 .trim()
-                .split(/[,|;]+(?=(?:(?:[^"]*"){2})*[^"]*$)/),
+                .split(/[,|;\s]+(?=(?:(?:[^"]*"){2})*[^"]*$)/),
             validValues = [],
             invalidValues = [],
             currentList = this.data[field];
