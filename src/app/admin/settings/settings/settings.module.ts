@@ -73,7 +73,7 @@ import { CurrencySelectorModule } from '@shared/common/currency-selector/currenc
 import { TenantSettingsWizardModule } from '@root/shared/common/tenant-settings-wizard/tenant-settings-wizard.module';
 import { ZapierModule } from '@shared/common/zapier/zapier.module';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
-import { SettingService } from './settings.service'
+import { SettingService } from './settings.service';
 import { ImpersonationService } from '../../users/impersonation.service';
 import { SettingsHeaderComponent } from '../shared/header/settings-header.component';
 import { MainMenuItemComponent } from './navigation/main-menu-item/main-menu-item.component';
@@ -124,9 +124,9 @@ import { ExternalAuthInfoComponent } from '../shared/helpers/external-auth-info/
 import { UploadSSLCertificateModalComponent } from '../shared/domain-settings/modals/upload-ssl-cert-modal.component';
 import { AddOrEditSSLBindingModalComponent } from '../shared/domain-settings/modals/add-or-edit-ssl-binding-modal.component';
 import { DocumentsComponent } from '../shared/documents-settings/documents-settings.component';
-import { SettingsCardComponent } from '../shared/card/settings-card.component'
-import { SettingsItemComponent } from '../shared/general-settings/setting-item/settings-item.component'
-import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-uploader.component'
+import { SettingsCardComponent } from '../shared/card/settings-card.component';
+import { SettingsItemComponent } from '../shared/general-settings/setting-item/settings-item.component';
+import { SettingsUploaderComponent } from '../shared/settings-uploader/settings-uploader.component';
 import { InvoiceSettingsComponent } from '../shared/invoice-settings/invoice-settings.component';
 import { CommissionsComponent } from "../shared/commissions-settings/commissions-settings.component";
 import { OtherSettingsComponent } from '../shared/other-settings/other-settings.component';
