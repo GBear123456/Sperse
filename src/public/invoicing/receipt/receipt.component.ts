@@ -53,12 +53,42 @@ export class ReceiptComponent implements OnInit {
     publicId = this.activatedRoute.snapshot.paramMap.get('publicId');
     preventRedirect: boolean = Boolean(this.activatedRoute.snapshot.queryParamMap.get('preventRedirect'));
     usePortal = !!this.activatedRoute.snapshot.queryParamMap.get('usePortal');
+    isTestMode: boolean = this.activatedRoute.snapshot.url[0]?.path === 'test-thank-you';
 
     discordPopup: Window;
     discordUserId: string;
     discordUserName: string;
     discordUserUpdated: boolean;
     discordUserUpdating: boolean;
+    
+    // Theme switching
+    currentTheme: 'original' | 'modern' = 'modern';
+    
+    // Modern theme properties
+    showConfetti: boolean = false;
+    confettiPieces: any[] = [];
+    defaultBenefits: any[] = [
+        {
+            icon: '💬',
+            title: 'Private Discord Channels',
+            description: 'Access exclusive member-only channels and community discussions'
+        },
+        {
+            icon: '📄',
+            title: 'Premium Content & Files',
+            description: 'Download exclusive resources, guides, and member materials'
+        },
+        {
+            icon: '📅',
+            title: 'Member Events',
+            description: 'Join live sessions, workshops, and community events'
+        },
+        {
+            icon: '🎧',
+            title: 'Priority Support',
+            description: 'Get faster responses and dedicated member support'
+        }
+    ];
 
     constructor(
         private router: Router,
@@ -74,8 +104,36 @@ export class ReceiptComponent implements OnInit {
 
     ngOnInit(): void {
         this.clearQueryParam();
+        this.initializeConfetti();
         abp.ui.setBusy();
-        this.getInvoiceInfo(this.tenantId, this.publicId);
+        
+        if (this.isTestMode) {
+            this.loadTestData();
+        } else {
+            this.getInvoiceInfo(this.tenantId, this.publicId);
+        }
+    }
+
+    initializeConfetti() {
+        // Create confetti pieces for animation
+        this.confettiPieces = [];
+        const colors = ['#FFC107', '#E91E63', '#2196F3', '#4CAF50', '#FF9800', '#9C27B0'];
+        
+        for (let i = 0; i < 50; i++) {
+            this.confettiPieces.push({
+                left: Math.random() * 100,
+                delay: Math.random() * 3,
+                color: colors[Math.floor(Math.random() * colors.length)]
+            });
+        }
+        
+        // Show confetti on load
+        setTimeout(() => {
+            this.showConfetti = true;
+            setTimeout(() => {
+                this.showConfetti = false;
+            }, 3000);
+        }, 500);
     }
 
     clearQueryParam() {
@@ -85,6 +143,115 @@ export class ReceiptComponent implements OnInit {
             },
             queryParamsHandling: 'merge'
         });
+    }
+
+    loadTestData() {
+        // Mock data for testing the thank you page - matching the screenshot
+        this.invoiceInfo = {
+            invoiceStatus: 'Paid' as any,
+            invoiceAmount: 594.00,
+            currencyId: 'USD',
+            invoiceNumber: 'MEXIJQDE-0001',
+            paymentDate: new Date('2025-09-19'),
+            paymentCardNumber: '****4242',
+            paymentCardNetwork: 'visa',
+            downloadInvoiceUrl: '#',
+            downloadReceiptUrl: '#',
+            tenantLogo: 'assets/common/images/logo.png',
+            tenantHasTerms: true,
+            tenantHasPrivacyPolicy: true,
+            isTenantInvoice: true,
+            redirectUrls: [],
+            resources: [
+                {
+                    id: 1,
+                    name: 'Trading Strategy Guide',
+                    url: 'https://example.com/strategy-guide.pdf',
+                    type: 'pdf'
+                },
+                {
+                    id: 2,
+                    name: 'Market Analysis Template',
+                    url: 'https://example.com/analysis-template.xlsx',
+                    type: 'excel'
+                }
+            ],
+            events: [
+                {
+                    productName: 'Advanced Trading Masterclass',
+                    location: 'Online',
+                    date: new Date('2024-12-15'),
+                    time: '14:00',
+                    timezone: 'US Mountain Standard Time',
+                    durationMinutes: 120,
+                    languageName: 'English',
+                    link: 'https://example.com/join-event',
+                    address: {
+                        streetAddress: '',
+                        city: '',
+                        stateName: '',
+                        countryName: '',
+                        zip: ''
+                    }
+                }
+            ],
+            discordInfo: {
+                showDiscordAuthButton: true,
+                discordAppId: 'test-app-id'
+            },
+            // Additional data for modern theme
+            membershipBenefits: [
+                {
+                    title: 'Private Discord Channels',
+                    description: 'Access exclusive member-only channels and community discussions.',
+                    icon: 'discord'
+                },
+                {
+                    title: 'Premium Content & Files',
+                    description: 'Download exclusive resources, guides, and member materials.',
+                    icon: 'download'
+                },
+                {
+                    title: 'Member Events',
+                    description: 'Join live sessions, workshops, and community events.',
+                    icon: 'calendar'
+                },
+                {
+                    title: 'Priority Support',
+                    description: 'Get faster responses and dedicated member support.',
+                    icon: 'support'
+                }
+            ],
+            externalResources: [
+                {
+                    title: 'Premium Trading Tools',
+                    description: 'Access to advanced charting and analysis tools.',
+                    link: 'https://example.com/trading-tools',
+                    platform: 'Web Platform'
+                },
+                {
+                    title: 'Member Resource Library',
+                    description: 'Exclusive collection of trading resources and guides.',
+                    link: 'https://example.com/resource-library',
+                    platform: 'Resource Portal'
+                }
+            ],
+            telegramInfo: {
+                showTelegramAuth: true,
+                authorizedUser: 'TradingPro @tradingpro',
+                userId: 'tradingpro'
+            }
+        } as any;
+
+        this.hasToSOrPolicy = this.invoiceInfo.tenantHasTerms || this.invoiceInfo.tenantHasPrivacyPolicy;
+        this.initEventsInfo();
+        this.setReturnLinkInfo();
+        this.loading = false;
+        abp.ui.clearBusy();
+    }
+
+    switchTheme(theme: 'original' | 'modern') {
+        this.currentTheme = theme;
     }
 
     getInvoiceInfo(tenantId, publicId) {
@@ -317,6 +484,52 @@ export class ReceiptComponent implements OnInit {
         })).subscribe(() => {
             this.discordUserUpdated = true;
         });
+    }
+
+    disconnectDiscord() {
+        this.discordUserId = null;
+        this.discordUserName = null;
+        this.discordUserUpdated = false;
+    }
+
+    addToCalendar(event: any) {
+        // Create calendar event data
+        const startDate = new Date(event.date);
+        if (event.time) {
+            const timeArr = event.time.split(':');
+            startDate.setHours(parseInt(timeArr[0]), parseInt(timeArr[1]));
+        }
+        
+        const endDate = new Date(startDate.getTime() + (event.durationMinutes || 60) * 60000);
+        
+        const calendarData = {
+            title: event.productName,
+            startDate: startDate.toISOString(),
+            endDate: endDate.toISOString(),
+            location: event.location,
+            description: `${event.productName} - ${event.isOnline ? 'Online Event' : event.location}`
+        };
+        
+        // Copy to clipboard for now (can be enhanced with actual calendar integration)
+        const calendarText = `${calendarData.title}\nStart: ${startDate.toLocaleString()}\nEnd: ${endDate.toLocaleString()}\nLocation: ${calendarData.location}`;
+        this.clipboardService.copyFromContent(calendarText);
+        abp.notify.info('Event details copied to clipboard');
+    }
+
+    openExternalResource(url: string) {
+        window.open(url, '_blank');
+    }
+
+    downloadInvoice() {
+        if (this.invoiceInfo.downloadInvoiceUrl) {
+            window.open(this.invoiceInfo.downloadInvoiceUrl, '_blank');
+        }
+    }
+
+    downloadReceipt() {
+        if (this.invoiceInfo.downloadReceiptUrl) {
+            window.open(this.invoiceInfo.downloadReceiptUrl, '_blank');
+        }
     }
 
     @HostListener('window:beforeunload', ['$event'])

@@ -8,6 +8,12 @@ import { LocalizationResolver } from '@shared/common/localization-resolver';
     imports: [
         RouterModule.forChild([
             {
+                path: 'test-thank-you',
+                component: ReceiptComponent,
+                canActivate: [],
+                canActivateChild: []
+            },
+            {
                 path: ':tenantId/:publicId',
                 component: ReceiptComponent,
                 canActivate: [],

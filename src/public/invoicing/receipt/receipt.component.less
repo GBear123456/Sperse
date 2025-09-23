@@ -399,4 +399,1655 @@ public-receipt {
     .gray {
         color: rgba(121, 132, 140, 1);
     }
+
+    // Theme Switcher
+    .theme-switcher {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        gap: 10px;
+        background: white;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+        .theme-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+
+            &.active {
+                background: #6366f1;
+                color: white;
+                border-color: #6366f1;
+            }
+
+            &:hover:not(.active) {
+                border-color: #6366f1;
+                color: #6366f1;
+            }
+        }
+    }
+
+    // Modern Theme Styles - Based on React Thank You Page
+    .modern-container {
+        background: hsl(210, 25%, 95%);
+        min-height: 100vh;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        width: 100%;
+        position: relative;
+
+        // Confetti Container
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confetti-fall 3s linear forwards;
+            border-radius: 2px;
+        }
+
+        .modern-header {
+            background: hsl(210, 40%, 96.1%);
+            padding: 20px 0;
+            border-bottom: 1px solid hsl(214.3, 31.8%, 91.4%);
+
+            .header-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                height: 60px;
+
+                .brand-icon {
+                    position: absolute;
+                    left: 20px;
+                    width: 40px;
+                    height: 40px;
+                    background: hsl(210, 40%, 96.1%);
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+                    .sun-icon {
+                        font-size: 20px;
+                        color: hsl(222.2, 47.4%, 11.2%);
+                        font-weight: bold;
+                    }
+                }
+
+                .brand-text {
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: hsl(222.2, 47.4%, 11.2%);
+                    letter-spacing: 0.5px;
+                }
+            }
+        }
+
+        .modern-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+
+            @media (max-width: 768px) {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        // Celebration Header
+        .celebration-header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: bounce-in 0.8s ease-out forwards;
+
+            .celebration-icon-container {
+                position: relative;
+                display: inline-block;
+                margin-bottom: 20px;
+
+                .celebration-icon {
+                    width: 80px;
+                    height: 80px;
+                    background: hsl(142, 76%, 36%);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    animation: pulse-success 2s ease-in-out infinite;
+
+                    .check-circle {
+                        font-size: 40px;
+                        color: white;
+                        font-weight: bold;
+                    }
+                }
+
+                .sparkle {
+                    position: absolute;
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    animation: pulse 2s ease-in-out infinite;
+
+                    &.sparkle-1 {
+                        background: hsl(43, 96%, 56%);
+                        top: -10px;
+                        right: -10px;
+                    }
+
+                    &.sparkle-2 {
+                        background: hsl(330, 81%, 60%);
+                        bottom: -5px;
+                        right: -15px;
+                        animation-delay: 0.5s;
+                    }
+
+                    &.sparkle-3 {
+                        background: hsl(217, 91%, 60%);
+                        top: -5px;
+                        left: -10px;
+                        animation-delay: 1s;
+                    }
+                }
+            }
+
+            .celebration-title {
+                font-size: 48px;
+                font-weight: 700;
+                color: hsl(222.2, 84%, 4.9%);
+                margin: 0 0 15px;
+                line-height: 1.2;
+
+                @media (max-width: 768px) {
+                    font-size: 36px;
+                }
+            }
+
+            .celebration-subtitle {
+                font-size: 20px;
+                color: hsl(215.4, 16.3%, 46.9%);
+                margin: 0;
+                line-height: 1.4;
+                max-width: 500px;
+                margin: 0 auto;
+
+                @media (max-width: 768px) {
+                    font-size: 18px;
+                }
+            }
+        }
+
+        // Congratulations Section
+        .congratulations-section {
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+            .congratulations-header {
+                .success-icon-container {
+                    position: relative;
+                    display: inline-block;
+                    margin-bottom: 20px;
+
+                    .success-icon {
+                        width: 60px;
+                        height: 60px;
+                        background: #4CAF50;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 30px;
+                        color: white;
+                        font-weight: bold;
+                        position: relative;
+                        z-index: 2;
+                    }
+
+                    .confetti {
+                        position: absolute;
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 50%;
+                        z-index: 1;
+
+                        &.confetti-1 {
+                            background: #FFC107;
+                            top: -5px;
+                            right: -5px;
+                            animation: confetti-float 2s ease-in-out infinite;
+                        }
+
+                        &.confetti-2 {
+                            background: #E91E63;
+                            top: 10px;
+                            right: -10px;
+                            animation: confetti-float 2s ease-in-out infinite 0.5s;
+                        }
+
+                        &.confetti-3 {
+                            background: #2196F3;
+                            top: -10px;
+                            left: -5px;
+                            animation: confetti-float 2s ease-in-out infinite 1s;
+                        }
+                    }
+                }
+
+                h1 {
+                    font-size: 28px;
+                    font-weight: 700;
+                    color: #333333;
+                    margin: 0 0 15px;
+                    line-height: 1.2;
+                }
+
+                p {
+                    font-size: 16px;
+                    color: #4A4A4A;
+                    margin: 0;
+                    line-height: 1.4;
+                }
+            }
+        }
+
+        // Welcome Section
+        .welcome-section {
+            h3 {
+                font-size: 18px;
+                font-weight: 600;
+                color: hsl(142, 76%, 36%);
+                margin: 0;
+                padding: 0 5px;
+            }
+        }
+
+        // Discord Connection Section
+        .discord-connection-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid hsl(214.3, 31.8%, 91.4%);
+
+            .discord-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 20px;
+
+                .discord-icon-small {
+                    width: 32px;
+                    height: 32px;
+                    background: hsl(235, 86%, 65%);
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 16px;
+                }
+
+                h3 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: hsl(222.2, 84%, 4.9%);
+                    margin: 0;
+                }
+            }
+
+            .discord-content {
+                text-align: center;
+
+                .discord-auth-button {
+                    background: hsl(235, 86%, 65%);
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 16px 24px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    margin-bottom: 12px;
+                    transition: background-color 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    width: 100%;
+
+                    .discord-logo {
+                        font-size: 18px;
+                    }
+
+                    &:hover:not(:disabled) {
+                        background: hsl(235, 86%, 60%);
+                    }
+
+                    &:disabled {
+                        opacity: 0.6;
+                        cursor: not-allowed;
+                    }
+                }
+
+                .discord-description {
+                    color: hsl(215.4, 16.3%, 46.9%);
+                    font-size: 14px;
+                    margin: 0;
+                    line-height: 1.4;
+                }
+            }
+
+            .discord-authorized {
+                .discord-user-info {
+                    h4 {
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: hsl(222.2, 84%, 4.9%);
+                        margin: 0 0 15px;
+                    }
+
+                    .discord-user-card {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        padding: 15px;
+                        background: hsl(210, 40%, 96.1%);
+                        border-radius: 8px;
+                        margin-bottom: 15px;
+
+                        .discord-avatar {
+                            width: 48px;
+                            height: 48px;
+                            background: hsl(235, 86%, 65%);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: white;
+                            font-weight: bold;
+                            font-size: 18px;
+                        }
+
+                        .discord-user-details {
+                            flex: 1;
+
+                            .discord-username {
+                                font-size: 18px;
+                                font-weight: 500;
+                                color: hsl(222.2, 84%, 4.9%);
+                                margin: 0 0 4px;
+                            }
+
+                            .discord-userid {
+                                font-size: 14px;
+                                color: hsl(215.4, 16.3%, 46.9%);
+                                margin: 0;
+                            }
+                        }
+                    }
+
+                    .use-discord-btn {
+                        background: hsl(142, 76%, 36%);
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 12px 20px;
+                        font-size: 14px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        margin-bottom: 8px;
+                        transition: background-color 0.3s ease;
+                        width: 100%;
+
+                        &:hover:not(:disabled) {
+                            background: hsl(142, 76%, 32%);
+                        }
+
+                        &:disabled {
+                            opacity: 0.6;
+                            cursor: not-allowed;
+                        }
+                    }
+
+                    .disconnect-discord-btn {
+                        background: transparent;
+                        color: hsl(215.4, 16.3%, 46.9%);
+                        border: 1px solid hsl(214.3, 31.8%, 91.4%);
+                        border-radius: 8px;
+                        padding: 12px 20px;
+                        font-size: 14px;
+                        font-weight: 500;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        width: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 8px;
+
+                        .disconnect-icon {
+                            font-size: 12px;
+                        }
+
+                        &:hover {
+                            background: hsl(210, 40%, 96.1%);
+                            border-color: hsl(215.4, 16.3%, 46.9%);
+                        }
+                    }
+                }
+            }
+
+            .discord-connected {
+                .discord-success-card {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 12px;
+                    background: hsl(142, 30%, 85%);
+                    border-radius: 8px;
+                    margin-bottom: 15px;
+
+                    .discord-avatar {
+                        width: 40px;
+                        height: 40px;
+                        background: hsl(235, 86%, 65%);
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: bold;
+                        font-size: 16px;
+                    }
+
+                    .discord-success-info {
+                        flex: 1;
+
+                        .discord-connected-text {
+                            font-size: 16px;
+                            font-weight: 500;
+                            color: hsl(222.2, 84%, 4.9%);
+                            margin: 0 0 2px;
+                        }
+
+                        .discord-ready-text {
+                            font-size: 14px;
+                            color: hsl(142, 76%, 36%);
+                            margin: 0;
+                        }
+                    }
+                }
+
+                .join-discord-btn {
+                    background: hsl(235, 86%, 65%);
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 12px 20px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease;
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+
+                    .external-icon {
+                        font-size: 16px;
+                    }
+
+                    &:hover {
+                        background: hsl(235, 86%, 60%);
+                    }
+                }
+            }
+        }
+
+        // Discord Connect Section
+        .discord-connect-section {
+            background: #F8F8F8;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+            h3 {
+                font-size: 16px;
+                font-weight: 600;
+                color: #333333;
+                margin: 0 0 20px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                &::before {
+                    content: "💬";
+                    font-size: 18px;
+                }
+            }
+
+            .discord-card {
+                text-align: center;
+
+                .discord-icon {
+                    font-size: 40px;
+                    margin-bottom: 15px;
+                }
+
+                .discord-auth-btn {
+                    background: #7289DA;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    padding: 12px 20px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    margin-bottom: 12px;
+                    transition: background-color 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    margin: 0 auto 12px;
+
+                    .discord-logo {
+                        font-size: 16px;
+                    }
+
+                    &:hover:not(:disabled) {
+                        background: #5b6eae;
+                    }
+
+                    &:disabled {
+                        opacity: 0.6;
+                        cursor: not-allowed;
+                    }
+                }
+
+                p {
+                    color: #4A4A4A;
+                    font-size: 13px;
+                    margin: 0;
+                    line-height: 1.4;
+                }
+            }
+        }
+
+        // Membership Benefits Section
+        .membership-benefits-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid hsl(214.3, 31.8%, 91.4%);
+
+            .benefits-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 20px;
+
+                .benefits-icon {
+                    width: 32px;
+                    height: 32px;
+                    background: hsl(142, 76%, 36%);
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: bold;
+                }
+
+                h3 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: hsl(222.2, 84%, 4.9%);
+                    margin: 0;
+                }
+            }
+
+            .benefits-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .benefit-card {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+
+                .benefit-icon-container {
+                    width: 32px;
+                    height: 32px;
+                    background: hsl(142, 30%, 85%);
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                    margin-top: 2px;
+
+                    .benefit-icon-inner {
+                        font-size: 16px;
+                        color: hsl(142, 76%, 36%);
+                    }
+                }
+
+                .benefit-content {
+                    flex: 1;
+
+                    .benefit-title {
+                        font-size: 14px;
+                        font-weight: 600;
+                        color: hsl(222.2, 84%, 4.9%);
+                        margin: 0 0 4px;
+                    }
+
+                    .benefit-description {
+                        font-size: 13px;
+                        color: hsl(215.4, 16.3%, 46.9%);
+                        margin: 0;
+                        line-height: 1.4;
+                    }
+                }
+            }
+
+            .benefits-footer {
+                margin-top: 20px;
+                padding-top: 16px;
+                border-top: 1px solid hsl(214.3, 31.8%, 91.4%);
+
+            .benefits-note {
+                    font-size: 14px;
+                    color: hsl(215.4, 16.3%, 46.9%);
+                    margin: 0;
+                    text-align: center;
+                }
+            }
+        }
+
+        // Downloads Section
+        .downloads-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid hsl(214.3, 31.8%, 91.4%);
+
+            .downloads-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 20px;
+
+                .downloads-icon {
+                    width: 32px;
+                    height: 32px;
+                    background: linear-gradient(135deg, hsl(262, 83%, 58%), hsl(262, 83%, 68%));
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 16px;
+                }
+
+                h3 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: hsl(222.2, 84%, 4.9%);
+                    margin: 0;
+                }
+            }
+
+            .downloads-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .download-card {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 15px;
+                background: linear-gradient(135deg, hsl(262, 83%, 98%), hsl(262, 83%, 95%));
+                border: 1px solid hsl(262, 83%, 85%);
+                border-radius: 8px;
+                transition: all 0.3s ease;
+
+                &:hover {
+                    border-color: hsl(262, 83%, 70%);
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                }
+
+                .download-icon-container {
+                    width: 32px;
+                    height: 32px;
+                    background: linear-gradient(135deg, hsl(262, 83%, 85%), hsl(262, 83%, 90%));
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    .download-icon-inner {
+                        font-size: 16px;
+                        color: hsl(262, 83%, 50%);
+                    }
+                }
+
+                .download-content {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 2px;
+
+                    .download-name {
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: hsl(222.2, 84%, 4.9%);
+                    }
+
+                    .download-type {
+                        font-size: 12px;
+                        color: hsl(262, 83%, 50%);
+                        background: hsl(262, 83%, 90%);
+                        padding: 2px 6px;
+                        border-radius: 4px;
+                        display: inline-block;
+                        width: fit-content;
+                    }
+                }
+
+                .download-action-btn {
+                    background: transparent;
+                    border: 1px solid hsl(262, 83%, 70%);
+                    border-radius: 6px;
+                    padding: 8px 12px;
+                    font-size: 12px;
+                    font-weight: 500;
+                    color: hsl(262, 83%, 50%);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+
+                    .action-icon {
+                        font-size: 14px;
+                    }
+
+                    &:hover {
+                        background: hsl(262, 83%, 50%);
+                        color: white;
+                        border-color: hsl(262, 83%, 50%);
+                    }
+                }
+            }
+        }
+
+        // Events Section
+        .events-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid hsl(214.3, 31.8%, 91.4%);
+
+            .events-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 20px;
+
+                .events-icon {
+                    width: 32px;
+                    height: 32px;
+                    background: linear-gradient(135deg, hsl(217, 91%, 60%), hsl(217, 91%, 70%));
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 16px;
+                }
+
+                h3 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: hsl(222.2, 84%, 4.9%);
+                    margin: 0;
+                }
+            }
+
+            .events-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .event-card {
+                background: linear-gradient(135deg, hsl(217, 91%, 98%), hsl(217, 91%, 95%));
+                border: 1px solid hsl(217, 91%, 85%);
+                border-radius: 8px;
+                padding: 20px;
+                transition: all 0.3s ease;
+
+                &:hover {
+                    border-color: hsl(217, 91%, 70%);
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                }
+
+                .event-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 15px;
+
+                    .event-title {
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: hsl(222.2, 84%, 4.9%);
+                        margin: 0;
+                    }
+
+                    .calendar-btn {
+                        background: transparent;
+                        border: 1px solid hsl(217, 91%, 70%);
+                        border-radius: 6px;
+                        padding: 8px 12px;
+                        font-size: 12px;
+                        font-weight: 500;
+                        color: hsl(217, 91%, 50%);
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+
+                        .calendar-icon {
+                            font-size: 14px;
+                        }
+
+                        &:hover {
+                            background: hsl(217, 91%, 50%);
+                            color: white;
+                            border-color: hsl(217, 91%, 50%);
+                        }
+                    }
+                }
+
+                .event-details {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+
+                .event-detail-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    font-size: 13px;
+
+                    .detail-label {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                        color: hsl(217, 91%, 50%);
+                        font-weight: 500;
+
+                    .detail-icon {
+                        font-size: 14px;
+                        }
+                    }
+
+                    .detail-value {
+                        color: hsl(222.2, 84%, 4.9%);
+                        font-weight: 500;
+                        text-align: right;
+                    }
+
+                    .detail-link {
+                        color: hsl(217, 91%, 50%);
+                        text-decoration: none;
+                        font-weight: 500;
+
+                        &:hover {
+                            text-decoration: underline;
+                        }
+                    }
+                }
+            }
+        }
+
+        // External Resources Section
+        .external-resources-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid hsl(214.3, 31.8%, 91.4%);
+
+            .external-resources-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 20px;
+
+                .external-resources-icon {
+                    width: 32px;
+                    height: 32px;
+                    background: linear-gradient(135deg, hsl(142, 76%, 36%), hsl(142, 76%, 46%));
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 16px;
+                }
+
+                h3 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: hsl(222.2, 84%, 4.9%);
+                    margin: 0;
+                }
+            }
+
+            .external-resources-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .external-resource-card {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px;
+                background: linear-gradient(135deg, hsl(142, 76%, 98%), hsl(142, 76%, 95%));
+                border: 1px solid hsl(142, 76%, 85%);
+                border-radius: 8px;
+                transition: all 0.3s ease;
+
+                &:hover {
+                    border-color: hsl(142, 76%, 70%);
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                }
+
+                .external-resource-content {
+                    flex: 1;
+
+                    .resource-title {
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: hsl(222.2, 84%, 4.9%);
+                        margin: 0 0 6px;
+                    }
+
+                    .resource-description {
+                        font-size: 14px;
+                        color: hsl(215.4, 16.3%, 46.9%);
+                        margin: 0 0 8px;
+                        line-height: 1.4;
+                    }
+
+                    .resource-platform {
+                        font-size: 12px;
+                        color: hsl(142, 76%, 50%);
+                        background: hsl(142, 76%, 90%);
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        display: inline-block;
+                        width: fit-content;
+                    }
+                }
+
+                .access-resource-btn {
+                    background: transparent;
+                    border: 1px solid hsl(142, 76%, 70%);
+                    border-radius: 6px;
+                    padding: 10px 16px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: hsl(142, 76%, 50%);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+
+                    .access-icon {
+                        font-size: 16px;
+                    }
+
+                    &:hover {
+                        background: hsl(142, 76%, 50%);
+                        color: white;
+                        border-color: hsl(142, 76%, 50%);
+                    }
+                }
+            }
+        }
+
+        // Telegram Section
+        .telegram-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid hsl(214.3, 31.8%, 91.4%);
+
+            .telegram-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 20px;
+
+                .telegram-icon-small {
+                    width: 32px;
+                    height: 32px;
+                    background: linear-gradient(135deg, hsl(200, 80%, 50%), hsl(200, 80%, 60%));
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 16px;
+                }
+
+                h3 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: hsl(222.2, 84%, 4.9%);
+                    margin: 0;
+                }
+            }
+
+            .telegram-content {
+                text-align: center;
+
+                .telegram-auth-button {
+                    background: linear-gradient(135deg, hsl(200, 80%, 50%), hsl(200, 80%, 60%));
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 16px 24px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    margin-bottom: 12px;
+                    transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    width: 100%;
+
+                    .telegram-logo {
+                        font-size: 18px;
+                    }
+
+                    &:hover {
+                        transform: translateY(-1px);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                    }
+                }
+
+                .telegram-description {
+                    color: hsl(215.4, 16.3%, 46.9%);
+                        font-size: 14px;
+                    margin: 0;
+                    line-height: 1.4;
+                }
+            }
+
+            .telegram-authorized {
+                .telegram-user-info {
+                    h4 {
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: hsl(222.2, 84%, 4.9%);
+                        margin: 0 0 15px;
+                    }
+
+                    .telegram-user-card {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        padding: 15px;
+                        background: hsl(210, 40%, 96.1%);
+                        border-radius: 8px;
+                        margin-bottom: 15px;
+
+                        .telegram-avatar {
+                            width: 48px;
+                            height: 48px;
+                            background: linear-gradient(135deg, hsl(200, 80%, 50%), hsl(200, 80%, 60%));
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: white;
+                            font-weight: bold;
+                            font-size: 18px;
+                        }
+
+                        .telegram-user-details {
+                            flex: 1;
+
+                            .telegram-username {
+                                font-size: 18px;
+                                font-weight: 500;
+                                color: hsl(222.2, 84%, 4.9%);
+                                margin: 0 0 4px;
+                            }
+
+                            .telegram-handle {
+                                font-size: 14px;
+                                color: hsl(215.4, 16.3%, 46.9%);
+                                margin: 0;
+                            }
+                        }
+                    }
+
+                    .use-telegram-btn {
+                        background: hsl(142, 76%, 36%);
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 12px 20px;
+                        font-size: 14px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        margin-bottom: 8px;
+                        transition: background-color 0.3s ease;
+                        width: 100%;
+
+                        &:hover {
+                            background: hsl(142, 76%, 32%);
+                        }
+                    }
+
+                    .disconnect-telegram-btn {
+                        background: transparent;
+                        color: hsl(215.4, 16.3%, 46.9%);
+                        border: 1px solid hsl(214.3, 31.8%, 91.4%);
+                        border-radius: 8px;
+                        padding: 12px 20px;
+                        font-size: 14px;
+                        font-weight: 500;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        width: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 8px;
+
+                        .disconnect-icon {
+                            font-size: 12px;
+                        }
+
+                        &:hover {
+                            background: hsl(210, 40%, 96.1%);
+                            border-color: hsl(215.4, 16.3%, 46.9%);
+                        }
+                    }
+                }
+            }
+
+            .telegram-connected {
+                .telegram-success-card {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 12px;
+                    background: hsl(142, 30%, 85%);
+            border-radius: 8px;
+                    margin-bottom: 15px;
+
+                    .telegram-avatar {
+                        width: 40px;
+                        height: 40px;
+                        background: linear-gradient(135deg, hsl(200, 80%, 50%), hsl(200, 80%, 60%));
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: bold;
+                        font-size: 16px;
+                    }
+
+                    .telegram-success-info {
+                        flex: 1;
+
+                        .telegram-connected-text {
+                            font-size: 16px;
+                            font-weight: 500;
+                            color: hsl(222.2, 84%, 4.9%);
+                            margin: 0 0 2px;
+                        }
+
+                        .telegram-ready-text {
+                            font-size: 14px;
+                            color: hsl(142, 76%, 36%);
+                            margin: 0;
+                        }
+                    }
+                }
+
+                .join-telegram-btn {
+                    background: linear-gradient(135deg, hsl(200, 80%, 50%), hsl(200, 80%, 60%));
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 12px 20px;
+                font-size: 16px;
+                font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    width: 100%;
+                display: flex;
+                align-items: center;
+                    justify-content: center;
+                gap: 8px;
+
+                    .external-icon {
+                        font-size: 16px;
+                    }
+
+                    &:hover {
+                        transform: translateY(-1px);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                    }
+                }
+            }
+        }
+
+        // Payment Confirmation Card (Right Column)
+        .payment-confirmation-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid hsl(214.3, 31.8%, 91.4%);
+
+            .payment-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 20px;
+
+                .payment-icon {
+                    width: 32px;
+                    height: 32px;
+                    background: linear-gradient(135deg, hsl(43, 96%, 56%), hsl(43, 96%, 66%));
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 16px;
+                }
+
+                h3 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: hsl(222.2, 84%, 4.9%);
+                    margin: 0;
+                }
+            }
+
+            .payment-success {
+                text-align: center;
+                margin-bottom: 25px;
+                padding: 20px;
+                background: linear-gradient(135deg, hsl(142, 76%, 98%), hsl(142, 76%, 95%));
+                border-radius: 12px;
+                border: 1px solid hsl(142, 76%, 85%);
+
+                .payment-icon-container {
+                    width: 48px;
+                    height: 48px;
+                    background: hsl(142, 30%, 85%);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto 15px;
+
+                    .payment-icon-inner {
+                    font-size: 24px;
+                        color: hsl(142, 76%, 36%);
+                    }
+                }
+
+                .payment-amount-large {
+                    font-size: 36px;
+                    font-weight: 700;
+                    color: hsl(142, 76%, 36%);
+                    margin-bottom: 8px;
+                }
+
+                .payment-status {
+                    font-size: 16px;
+                    color: hsl(215.4, 16.3%, 46.9%);
+                    font-weight: 500;
+                }
+            }
+
+            .payment-info {
+                margin-bottom: 25px;
+
+                .payment-info-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 12px 0;
+                    border-bottom: 1px solid hsl(214.3, 31.8%, 91.4%);
+
+                    &:last-child {
+                        border-bottom: none;
+                    }
+
+                    .info-label {
+                        font-size: 14px;
+                        color: hsl(215.4, 16.3%, 46.9%);
+                        font-weight: 500;
+                    }
+
+                    .info-value {
+                        font-size: 14px;
+                        font-weight: 600;
+                        color: hsl(222.2, 84%, 4.9%);
+                    }
+                }
+            }
+
+            .payment-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                margin-bottom: 25px;
+
+                .download-action-btn {
+                    background: transparent;
+                    border: 1px solid hsl(214.3, 31.8%, 91.4%);
+                    border-radius: 8px;
+                    padding: 12px 16px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: hsl(215.4, 16.3%, 46.9%);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+
+                    .action-icon {
+                        font-size: 16px;
+                    }
+
+                    &:hover {
+                        background: hsl(210, 40%, 96.1%);
+                        border-color: hsl(215.4, 16.3%, 46.9%);
+                        color: hsl(222.2, 84%, 4.9%);
+                    }
+                }
+            }
+
+            .next-steps {
+                border-top: 1px solid hsl(214.3, 31.8%, 91.4%);
+                padding-top: 20px;
+
+                .next-steps-title {
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: hsl(222.2, 84%, 4.9%);
+                    margin: 0 0 15px;
+                }
+
+                .next-step-item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 15px;
+                    background: linear-gradient(135deg, hsl(43, 96%, 98%), hsl(43, 96%, 95%));
+                    border: 1px solid hsl(43, 96%, 85%);
+                    border-radius: 8px;
+                    margin-bottom: 12px;
+                    transition: all 0.3s ease;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                        background: linear-gradient(135deg, hsl(217, 91%, 98%), hsl(217, 91%, 95%));
+                        border-color: hsl(217, 91%, 85%);
+                    }
+
+                    &:hover {
+                        transform: translateY(-1px);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    }
+
+                    .step-content {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+
+                        .step-icon {
+                            font-size: 18px;
+                        }
+
+                        .step-text {
+                        font-size: 14px;
+                            font-weight: 500;
+                            color: hsl(222.2, 84%, 4.9%);
+                        }
+                    }
+
+                    .step-link {
+                        font-size: 14px;
+                        font-weight: 600;
+                        color: hsl(43, 96%, 50%);
+                        text-decoration: none;
+                        transition: color 0.3s ease;
+
+                    &:hover {
+                            color: hsl(43, 96%, 40%);
+                            text-decoration: underline;
+                        }
+                    }
+
+                    &:last-child .step-link {
+                        color: hsl(217, 91%, 50%);
+
+                        &:hover {
+                            color: hsl(217, 91%, 40%);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Next Steps
+        .next-steps {
+            background: #F8F8F8;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+            h3 {
+                font-size: 16px;
+                font-weight: 600;
+                color: #333333;
+                margin: 0 0 20px;
+            }
+
+            .next-step {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 0;
+                border-bottom: 1px solid #E5E5E5;
+
+                &:last-child {
+                    border-bottom: none;
+                }
+
+                .step-content {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+
+                    .step-icon {
+                        font-size: 16px;
+                    }
+
+                    span {
+                        font-size: 12px;
+                        color: #4A4A4A;
+                    }
+                }
+
+                .step-link {
+                    font-size: 12px;
+                    color: #4CAF50;
+                    text-decoration: none;
+                    font-weight: 500;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+
+        // Footer
+        .modern-footer {
+            background: white;
+            border-top: 1px solid hsl(214.3, 31.8%, 91.4%);
+            padding: 30px 0;
+            margin-top: 40px;
+
+            .footer-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
+                text-align: center;
+                font-size: 14px;
+                color: hsl(215.4, 16.3%, 46.9%);
+                font-weight: 500;
+            }
+        }
+    }
+
+    // Modern Theme Animations
+    @keyframes confetti-fall {
+        0% {
+            transform: translateY(-100vh) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(100vh) rotate(720deg);
+            opacity: 0;
+        }
+    }
+
+    @keyframes bounce-in {
+        0% {
+            transform: scale(0.3) translateY(-100px);
+            opacity: 0;
+        }
+        50% {
+            transform: scale(1.05) translateY(-20px);
+            opacity: 1;
+        }
+        70% {
+            transform: scale(0.9) translateY(0);
+        }
+        100% {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes pulse-success {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.2);
+            opacity: 0.7;
+        }
+    }
+}
+
+
+
+.main-container {
+    position: relative;
+}
+
+.theme-switcher {
+    position: fixed;
+    right: 10px;
+    top: 10px;
 }

@@ -6,8 +6,26 @@
         <div>{{failMessage}}</div>
     </ng-template>
 </div>
-<ng-template #mainContainer>
-    <div class="main-container">
+
+<ng-template #mainContainer class="main-container">
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <button 
+            class="theme-btn" 
+            [class.active]="currentTheme === 'original'"
+            (click)="switchTheme('original')">
+            Original
+        </button>
+        <button 
+            class="theme-btn" 
+            [class.active]="currentTheme === 'modern'"
+            (click)="switchTheme('modern')">
+            Modern
+        </button>
+    </div>
+
+    <!-- Original Theme -->
+    <div *ngIf="currentTheme === 'original'" class="main-container original-theme">
         <div class="header">
             <img src="{{invoiceInfo.tenantLogo}}">
         </div>
@@ -128,6 +146,346 @@
             <div *ngIf="hasToSOrPolicy" class="links">
                 <a *ngIf="invoiceInfo.tenantHasTerms" (click)="openConditionsDialog(conditions.Terms)">Terms</a>
                 <a *ngIf="invoiceInfo.tenantHasPrivacyPolicy" (click)="openConditionsDialog(conditions.Policies)">Privacy</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Theme -->
+    <div *ngIf="currentTheme === 'modern'" class="modern-container modern-theme">
+        <!-- Confetti Effect -->
+        <div class="confetti-container" *ngIf="showConfetti">
+            <div class="confetti-piece" *ngFor="let piece of confettiPieces" 
+                 [style.left.%]="piece.left" 
+                 [style.animation-delay.s]="piece.delay"
+                 [style.background-color]="piece.color"></div>
+        </div>
+
+        <!-- Header -->
+        <div class="modern-header">
+            <div class="header-content">
+                <div class="brand-icon">
+                    <div class="sun-icon">☀</div>
+                </div>
+                <div class="brand-text">Your Brand</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="modern-content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Celebration Header -->
+                <div class="celebration-header">
+                    <div class="celebration-icon-container">
+                        <div class="celebration-icon">
+                            <div class="check-circle">✓</div>
+                        </div>
+                        <div class="sparkle sparkle-1"></div>
+                        <div class="sparkle sparkle-2"></div>
+                        <div class="sparkle sparkle-3"></div>
+                    </div>
+                    <h1 class="celebration-title">🎉 Congratulations!</h1>
+                    <p class="celebration-subtitle">Your payment is complete and you can now access your membership.</p>
+                </div>
+
+                <!-- Welcome Section -->
+                <div class="welcome-section">
+                    <h3>Welcome aboard! Start enjoying your benefits:</h3>
+                </div>
+
+                <!-- Discord Connection Section -->
+                <div class="discord-connection-section" *ngIf="invoiceInfo.discordInfo?.showDiscordAuthButton">
+                    <div class="discord-header">
+                        <div class="discord-icon-small">💬</div>
+                        <h3>Connect Discord to Get Started</h3>
+                    </div>
+                    
+                    <div class="discord-content" *ngIf="!discordUserId">
+                        <button class="discord-auth-button" (click)="discordOAuth()" [disabled]="discordPopup || discordUserUpdating">
+                            <span class="discord-logo">🎮</span>
+                            Authorize Discord
+                        </button>
+                        <p class="discord-description">Connect your Discord account to unlock exclusive member channels and community access.</p>
+                    </div>
+
+                    <div class="discord-authorized" *ngIf="discordUserId && !discordUserUpdated">
+                        <div class="discord-user-info">
+                            <h4>Authorized Discord User:</h4>
+                            <div class="discord-user-card">
+                                <div class="discord-avatar">{{discordUserName?.charAt(0)?.toUpperCase()}}</div>
+                                <div class="discord-user-details">
+                                    <p class="discord-username">{{discordUserName}}</p>
+                                    <p class="discord-userid">({{discordUserId}})</p>
+                                </div>
+                            </div>
+                            <button class="use-discord-btn" (click)="confirmDiscord()" [disabled]="discordUserUpdating">
+                                <i [ngClass]="{ 'fa fa-spinner fa-spin': discordUserUpdating }"></i>
+                                Use This Discord Account
+                            </button>
+                            <button class="disconnect-discord-btn" (click)="disconnectDiscord()">
+                                <span class="disconnect-icon">←</span>
+                                Disconnect & Try Another Account
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="discord-connected" *ngIf="discordUserUpdated">
+                        <div class="discord-success-card">
+                            <div class="discord-avatar">{{discordUserName?.charAt(0)?.toUpperCase()}}</div>
+                            <div class="discord-success-info">
+                                <p class="discord-connected-text">Connected as @{{discordUserName}}</p>
+                                <p class="discord-ready-text">✓ Ready for Discord access</p>
+                            </div>
+                        </div>
+                        <button class="join-discord-btn">
+                            <span class="external-icon">↗</span>
+                            Join Discord Server
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Membership Benefits -->
+                <div class="membership-benefits-section">
+                    <div class="benefits-header">
+                        <div class="benefits-icon">✓</div>
+                        <h3>Your Membership Benefits</h3>
+                    </div>
+                    <div class="benefits-grid">
+                        <div *ngFor="let benefit of defaultBenefits" class="benefit-card">
+                            <div class="benefit-icon-container">
+                                <div class="benefit-icon-inner">{{benefit.icon}}</div>
+                            </div>
+                            <div class="benefit-content">
+                                <h4 class="benefit-title">{{benefit.title}}</h4>
+                                <p class="benefit-description">{{benefit.description}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="benefits-footer">
+                        <p class="benefits-note">🎉 Start by connecting Discord above to unlock all your benefits.</p>
+                    </div>
+                </div>
+
+                <!-- Downloads Section -->
+                <div class="downloads-section" *ngIf="invoiceInfo.resources && invoiceInfo.resources.length">
+                    <div class="downloads-header">
+                        <div class="downloads-icon">📄</div>
+                        <h3>Downloads</h3>
+                    </div>
+                    <div class="downloads-grid">
+                        <div *ngFor="let resource of invoiceInfo.resources" class="download-card">
+                            <div class="download-icon-container">
+                                <div class="download-icon-inner">📄</div>
+                            </div>
+                            <div class="download-content">
+                                <span class="download-name">{{resource.name || resource.url}}</span>
+                                <span class="download-type" *ngIf="resource.type">{{resource.type.toUpperCase()}}</span>
+                            </div>
+                            <button class="download-action-btn" (click)="resourceClick($event, resource)">
+                                <span class="action-icon">{{resource.url ? '📋' : '⬇'}}</span>
+                                {{resource.url ? 'Copy' : 'Download'}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events Section -->
+                <div class="events-section" *ngIf="invoiceInfo.events && invoiceInfo.events.length">
+                    <div class="events-header">
+                        <div class="events-icon">📅</div>
+                        <h3>Events</h3>
+                    </div>
+                    <div class="events-grid">
+                        <div *ngFor="let event of invoiceInfo.events" class="event-card">
+                            <div class="event-header">
+                                <h4 class="event-title">{{event.productName}}</h4>
+                                <button class="calendar-btn" (click)="addToCalendar(event)">
+                                    <span class="calendar-icon">📅</span>
+                                    Add to Calendar
+                                </button>
+                            </div>
+                            <div class="event-details">
+                                <div class="event-detail-row">
+                                    <div class="detail-label">
+                                        <span class="detail-icon">📍</span>
+                                        Location
+                                    </div>
+                                    <span class="detail-value">{{ls.l('ProductEventLocation_' + event.location)}}</span>
+                                </div>
+                                <div class="event-detail-row" *ngIf="event.dateStr">
+                                    <div class="detail-label">
+                                        <span class="detail-icon">📅</span>
+                                        Date
+                                    </div>
+                                    <span class="detail-value">{{event.dateStr}} <span *ngIf="event.time">({{event.timezone}})</span></span>
+                                </div>
+                                <div class="event-detail-row" *ngIf="event.link">
+                                    <div class="detail-label">
+                                        <span class="detail-icon">🔗</span>
+                                        Link
+                                    </div>
+                                    <a [href]="event.link" target="_blank" class="detail-link">Join Event</a>
+                                </div>
+                                <div class="event-detail-row" *ngIf="event.durationStr">
+                                    <div class="detail-label">
+                                        <span class="detail-icon">⏱️</span>
+                                        Duration
+                                    </div>
+                                    <span class="detail-value">{{event.durationStr}}</span>
+                                </div>
+                                <div class="event-detail-row">
+                                    <div class="detail-label">
+                                        <span class="detail-icon">🌐</span>
+                                        Language
+                                    </div>
+                                    <span class="detail-value">{{event.languageName}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- External Resources -->
+                <div class="external-resources-section" *ngIf="invoiceInfo.externalResources && invoiceInfo.externalResources.length">
+                    <div class="external-resources-header">
+                        <div class="external-resources-icon">↗</div>
+                        <h3>External Resources</h3>
+                    </div>
+                    <div class="external-resources-grid">
+                        <div *ngFor="let resource of invoiceInfo.externalResources" class="external-resource-card">
+                            <div class="external-resource-content">
+                                <h4 class="resource-title">{{resource.title}}</h4>
+                                <p class="resource-description">{{resource.description}}</p>
+                                <span class="resource-platform">{{resource.platform}}</span>
+                            </div>
+                            <button class="access-resource-btn" (click)="openExternalResource(resource.link)">
+                                <span class="access-icon">↗</span>
+                                Access
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Telegram Section -->
+                <div class="telegram-section" *ngIf="invoiceInfo.telegramInfo?.showTelegramAuth">
+                    <div class="telegram-header">
+                        <div class="telegram-icon-small">📱</div>
+                        <h3>Premium Channel Access</h3>
+                    </div>
+                    
+                    <div class="telegram-content" *ngIf="!invoiceInfo.telegramInfo?.authorizedUser">
+                        <button class="telegram-auth-button">
+                            <span class="telegram-logo">📱</span>
+                            Authorize Telegram
+                        </button>
+                        <p class="telegram-description">Connect your Telegram account to access exclusive trading signals and premium channels.</p>
+                    </div>
+
+                    <div class="telegram-authorized" *ngIf="invoiceInfo.telegramInfo?.authorizedUser">
+                        <div class="telegram-user-info">
+                            <h4>Authorized Telegram User:</h4>
+                            <div class="telegram-user-card">
+                                <div class="telegram-avatar">T</div>
+                                <div class="telegram-user-details">
+                                    <p class="telegram-username">TradingPro</p>
+                                    <p class="telegram-handle">@tradingpro</p>
+                                </div>
+                            </div>
+                            <button class="use-telegram-btn">Use This Telegram Account</button>
+                            <button class="disconnect-telegram-btn">
+                                <span class="disconnect-icon">←</span>
+                                Disconnect & Try Another Account
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="telegram-connected" *ngIf="invoiceInfo.telegramInfo?.connected">
+                        <div class="telegram-success-card">
+                            <div class="telegram-avatar">T</div>
+                            <div class="telegram-success-info">
+                                <p class="telegram-connected-text">Connected as @tradingpro</p>
+                                <p class="telegram-ready-text">✓ Ready for premium channels</p>
+                            </div>
+                        </div>
+                        <button class="join-telegram-btn">
+                            <span class="external-icon">↗</span>
+                            Join Premium Channels
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Payment Confirmation -->
+                <div class="payment-confirmation-card">
+                    <div class="payment-header">
+                        <div class="payment-icon">⭐</div>
+                        <h3>Thank you for the payment! Here's your confirmation:</h3>
+                    </div>
+                    
+                    <div class="payment-success">
+                        <div class="payment-icon-container">
+                            <div class="payment-icon-inner">📄</div>
+                        </div>
+                        <div class="payment-amount-large">{{invoiceInfo.invoiceAmount | currency:invoiceInfo.currencyId:'symbol':'1.2-2'}}</div>
+                        <div class="payment-status">Invoice paid</div>
+                    </div>
+                    
+                    <div class="payment-info">
+                        <div class="payment-info-row">
+                            <span class="info-label">Invoice number</span>
+                            <span class="info-value">{{invoiceInfo.invoiceNumber}}</span>
+                        </div>
+                        <div class="payment-info-row">
+                            <span class="info-label">Payment date</span>
+                            <span class="info-value">{{invoiceInfo.paymentDate | date:'MMM d, y'}}</span>
+                        </div>
+                        <div class="payment-info-row" *ngIf="invoiceInfo.paymentCardNumber">
+                            <span class="info-label">Payment method</span>
+                            <span class="info-value">{{invoiceInfo.paymentCardNetwork?.toUpperCase()}} •••• {{invoiceInfo.paymentCardNumber}}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-actions">
+                        <button class="download-action-btn" (click)="downloadInvoice()">
+                            <span class="action-icon">⬇</span>
+                            Download Invoice
+                        </button>
+                        <button class="download-action-btn" (click)="downloadReceipt()">
+                            <span class="action-icon">📄</span>
+                            Download Receipt
+                        </button>
+                    </div>
+                    
+                    <div class="next-steps">
+                        <h4 class="next-steps-title">Next Steps:</h4>
+                        
+                        <div class="next-step-item">
+                            <div class="step-content">
+                                <span class="step-icon">✉</span>
+                                <span class="step-text">Check your email for further details</span>
+                            </div>
+                            <a href="mailto:" class="step-link">Verify Your Email →</a>
+                        </div>
+                        
+                        <div class="next-step-item">
+                            <div class="step-content">
+                                <span class="step-icon">📄</span>
+                                <span class="step-text">Manage Your Subscription</span>
+                            </div>
+                            <a href="https://portal.upgrade.chat" target="_blank" class="step-link">My Member Portal →</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="modern-footer">
+            <div class="footer-content">
+                <span>{{currentYear}} © Powered by Upgrade.chat</span>
             </div>
         </div>
     </div>
